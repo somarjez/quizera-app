@@ -66,7 +66,11 @@ def block_requests():
     if MAINTENANCE:
         return {"error": "Service temporarily disabled"}, 503
 
-
+@socketio.on("connect")
+def block_socket():
+    if os.getenv("MAINTENANCE") == "true":
+        return False
+    
 @app.template_filter('get_animal_emoji')
 def get_animal_emoji(animal_id):
     """Template filter to get animal emoji"""
