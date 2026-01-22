@@ -46,7 +46,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 # Ensure upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
+MAINTENANCE_MODE = os.getenv('MAINTENANCE_MODE', 'false').lower() == 'true'
 
 # Helper function for file validation
 def allowed_file(filename):
@@ -60,6 +60,7 @@ class User:
         self.username = username
         self.email = email
         self.role = role
+
 
 def is_database_enabled():
     """Check if database access is enabled"""
@@ -77,6 +78,14 @@ def check_database_access():
     # Skip static files and the maintenance page itself
     if request.endpoint and request.endpoint != 'static' and request.endpoint != 'maintenance':
         if not is_database_enabled():
+            return render_template('maintenance.html'), 503
+
+@app.before_request
+def check_maintenance():
+    """Block all requests if in maintenance mode"""
+    # Skip static files and maintenance page
+    if request.endpoint not in ['static', 'maintenance', None]:
+        if MAINTENANCE_MODE:
             return render_template('maintenance.html'), 503
 
 @app.route('/maintenance')
