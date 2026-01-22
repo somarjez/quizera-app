@@ -30,6 +30,8 @@ import urllib.parse
 from flask import send_file
 
 
+### Step 3: Create Firestore Config Document
+# Initialize Flask app and SocketIO
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -58,6 +60,30 @@ class User:
         self.username = username
         self.email = email
         self.role = role
+
+def is_database_enabled():
+    """Check if database access is enabled"""
+    try:
+        config = db.collection('app_settings').document('config').get()
+        if config.exists:
+            return config.to_dict().get('database_enabled', True)
+        return True  # Default to enabled if config doesn't exist
+    except:
+        return True  # Default to enabled on error
+
+@app.before_request
+def check_database_access():
+    """Block all requests if database is disabled"""
+    # Skip static files and the maintenance page itself
+    if request.endpoint and request.endpoint != 'static' and request.endpoint != 'maintenance':
+        if not is_database_enabled():
+            return render_template('maintenance.html'), 503
+
+@app.route('/maintenance')
+def maintenance():
+    return render_template('maintenance.html'), 503
+
+
 
 @app.template_filter('get_animal_emoji')
 def get_animal_emoji(animal_id):
