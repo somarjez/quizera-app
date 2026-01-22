@@ -1,25 +1,10 @@
-from flask import Flask, jsonify
 import sys
+import os
 
-app = Flask(__name__)
+# Add the parent directory to the path so we can import app
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-@app.route('/')
-@app.route('/api')
-def home():
-    return jsonify({
-        "status": "success",
-        "message": "Quizera API is running!",
-        "python_version": sys.version
-    })
+from app import app, socketio
 
-@app.route('/api/test')
-def test():
-    return jsonify({"test": "passed"})
-
-# Error handler
-@app.errorhandler(Exception)
-def handle_error(e):
-    return jsonify({
-        "error": str(e),
-        "type": type(e).__name__
-    }), 500
+# Vercel requires the app to be exported
+app = app
