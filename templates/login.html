@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Login - Quizera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}"
+    />
+    <style>
+      /* Full-screen fixed background container */
+      #bg-container {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        background: #e8ecf1;
+      }
+
+      /* Layered radial gradients */
+      #bg-container .layer1 {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            circle at 15% 25%,
+            rgba(50, 100, 200, 0.45) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 85% 75%,
+            rgba(255, 140, 66, 0.33) 0%,
+            transparent 45%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 120, 180, 0.25) 0%,
+            transparent 70%
+          );
+        z-index: 0;
+        opacity: 1;
+      }
+
+      /* Linear gradient overlay with animation */
+      #bg-container .layer2 {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.5) 20%,
+            transparent 50%,
+            rgba(220, 225, 230, 0.5) 80%,
+            transparent 100%
+          ),
+          linear-gradient(
+            -45deg,
+            transparent 0%,
+            rgba(210, 215, 225, 0.4) 30%,
+            transparent 60%,
+            rgba(255, 255, 255, 0.3) 85%,
+            transparent 100%
+          );
+        background-size: 400% 400%;
+        opacity: 0.8;
+        animation: bgfloat 28s linear infinite;
+      }
+
+      /* Soft large ellipses for depth */
+      #bg-container .soft-ellipses {
+        position: absolute;
+        width: 220%;
+        height: 220%;
+        top: -60%;
+        left: -60%;
+        z-index: -1;
+        opacity: 0.12;
+        background: radial-gradient(
+            ellipse 40% 35% at 30% 40%,
+            rgba(150, 160, 175, 0.38),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 30% 25% at 70% 60%,
+            rgba(160, 170, 185, 0.34),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 45% 35% at 50% 80%,
+            rgba(140, 150, 165, 0.28),
+            transparent
+          );
+        transform: translate3d(0, 0, 0);
+      }
+
+      @keyframes bgfloat {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Main content sits above background */
+      .app-wrap {
+        position: relative;
+        z-index: 10;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+      /* Decorative floating code-like blocks for left panel */
+      .code-float {
+        position: absolute;
+        z-index: 5;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.5rem 0.7rem;
+        border-radius: 0.6rem;
+        box-shadow: 0 10px 28px rgba(3, 7, 18, 0.3);
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        opacity: 0.85;
+        color: rgba(255, 255, 255, 0.94);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+          "Courier New", monospace;
+        font-size: 0.9rem;
+        pointer-events: none;
+        white-space: nowrap;
+        transform-origin: center;
+      }
+      .code-float.small {
+        padding: 0.36rem 0.45rem;
+        font-size: 0.78rem;
+        opacity: 0.72;
+      }
+      /* Stronger floating animation that composes with initial rotate/scale via CSS var */
+      .code-float.moving {
+        animation: floaty 5s ease-in-out infinite;
+      }
+      @keyframes floaty {
+        0% {
+          transform: var(--init-transform) translateY(0px);
+        }
+        50% {
+          transform: var(--init-transform) translateY(-18px);
+        }
+        100% {
+          transform: var(--init-transform) translateY(0px);
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen flex flex-col justify-center items-center p-6 bg-transparent overflow-y-auto"
+  >
+    <!-- Background container -->
+    <div id="bg-container" aria-hidden="true">
+      <div class="layer1"></div>
+      <div class="layer2"></div>
+      <div class="soft-ellipses"></div>
+    </div>
+
+    <!-- App content -->
+    <div
+      class="app-wrap my-auto max-w-7xl w-full bg-white/70 rounded-2xl shadow-2xl overflow-hidden flex flex-col lg:flex-row"
+      style="max-width: calc(80rem + 1cm)"
+    >
+      <!-- Left Panel - Branding -->
+      <div
+        class="hidden lg:flex lg:w-1/2 py-10 px-10 flex-col justify-between text-white relative overflow-hidden"
+        style="
+          background-color: #0d1863;
+          background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20viewBox%3D%270%200%20800%20800%27%3E%3Cg%20%3E%3Ccircle%20fill%3D%27%230D1863%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27600%27%2F%3E%3Ccircle%20fill%3D%27%234d2458%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27500%27%2F%3E%3Ccircle%20fill%3D%27%2372334b%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27400%27%2F%3E%3Ccircle%20fill%3D%27%2393443d%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27300%27%2F%3E%3Ccircle%20fill%3D%27%23b3572b%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27200%27%2F%3E%3Ccircle%20fill%3D%27%23D36A05%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27100%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+          background-attachment: scroll;
+          background-size: cover;
+          padding-top: 0.5cm;
+          padding-bottom: 0.5cm;
+        "
+      >
+        <div style="transform: translateY(-0.5cm)"></div>
+        <!-- Decorative floating code-like blocks (behind text) -->
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div
+            class="code-float moving"
+            style="
+              left: 6%;
+              top: 30%;
+              --init-transform: rotate(-6deg) scale(0.98);
+              transform: var(--init-transform);
+              animation-delay: 0s;
+            "
+          >
+            <code>&lt;div&gt;...&lt;/div&gt;</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              right: 8%;
+              top: 45%;
+              --init-transform: rotate(4deg) scale(0.95);
+              transform: var(--init-transform);
+              animation-delay: 0.6s;
+            "
+          >
+            <code>.btn { padding: .5rem; }</code>
+          </div>
+          <div
+            class="code-float moving"
+            style="
+              left: 22%;
+              top: 58%;
+              --init-transform: rotate(-3deg) scale(0.92);
+              transform: var(--init-transform);
+              animation-delay: 1s;
+            "
+          >
+            <code>def foo(): pass</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              right: 24%;
+              top: 22%;
+              --init-transform: rotate(8deg) scale(0.9);
+              transform: var(--init-transform);
+              animation-delay: 1.8s;
+            "
+          >
+            <code>for i in range(3): …</code>
+          </div>
+          <!-- Additional floating snippets -->
+          <div
+            class="code-float moving"
+            style="
+              left: 12%;
+              top: 22%;
+              --init-transform: rotate(-12deg) scale(0.88);
+              transform: var(--init-transform);
+              animation-delay: 0.9s;
+            "
+          >
+            <code>&lt;span&gt;…&lt;/span&gt;</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              left: 34%;
+              top: 22%;
+              --init-transform: rotate(3deg) scale(0.9);
+              transform: var(--init-transform);
+              animation-delay: 1.4s;
+            "
+          >
+            <code>var x = 3;</code>
+          </div>
+          <div
+            class="code-float moving"
+            style="
+              right: 12%;
+              top: 62%;
+              --init-transform: rotate(-2deg) scale(0.93);
+              transform: var(--init-transform);
+              animation-delay: 0.3s;
+            "
+          >
+            <code># TODO: refactor</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              left: 44%;
+              top: 40%;
+              --init-transform: rotate(6deg) scale(0.88);
+              transform: var(--init-transform);
+              animation-delay: 2.1s;
+            "
+          >
+            <code>.grid { gap:.6rem }</code>
+          </div>
+          <!-- Three more larger moving snippets -->
+          <div
+            class="code-float moving"
+            style="
+              left: 2%;
+              top: 22%;
+              --init-transform: rotate(-8deg) scale(1.05) translateY(3cm);
+              transform: var(--init-transform);
+              animation-delay: 0.5s;
+            "
+          >
+            <code>&lt;header&gt;…&lt;/header&gt;</code>
+          </div>
+          <div
+            class="code-float moving"
+            style="
+              right: 4%;
+              top: 66%;
+              --init-transform: rotate(5deg) scale(1.02);
+              transform: var(--init-transform);
+              animation-delay: 0.8s;
+            "
+          >
+            <code>async fn()</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              left: 28%;
+              top: 68%;
+              --init-transform: rotate(-4deg) scale(1);
+              transform: var(--init-transform);
+              animation-delay: 1.7s;
+            "
+          >
+            <code>.btn--ghost { }</code>
+          </div>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center mb-2 -mt-4">
+            <span
+              class="text-3xl font-extrabold"
+              style="display: inline-block; transform: translateY(-4.5cm)"
+              >Quizera</span
+            >
+          </div>
+        </div>
+
+        <div class="relative z-10 mt-2">
+          <h2
+            class="text-4xl font-bold mb-4 leading-tight"
+            style="transform: translateY(-1.1cm)"
+          >
+            Welcome Back to Quizera
+          </h2>
+          <p
+            class="text-blue-100 text-xl mt-1"
+            style="transform: translateY(-1.1cm)"
+          >
+            Access your personalized courses and academic tools.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Panel - Login Form -->
+      <div
+        class="w-full lg:w-1/2 py-12 px-12 lg:py-14 lg:px-20 bg-white/70 backdrop-blur-md"
+        style="
+          padding-top: calc(1.5rem + 1cm + 0.5cm);
+          padding-bottom: calc(1.5rem + 1cm + 0.5cm);
+        "
+      >
+        <div style="transform: translateY(-0.5cm)">
+          <div class="lg:hidden flex items-center mb-8">
+            <span class="text-xl font-bold text-gray-800">Quizera</span>
+          </div>
+
+          <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Log In</h1>
+            <p class="text-gray-600">
+              Enter your credentials to access your account
+            </p>
+          </div>
+
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <div class="mb-6">
+            {% for message in messages %}
+            <div
+              class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded mb-2"
+            >
+              {{ message|safe }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
+
+          <form method="POST" class="space-y-6">
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                placeholder="Martin@gmail.com"
+              />
+            </div>
+
+            <div>
+              <label
+                for="password"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Password</label
+              >
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  class="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  id="togglePassword"
+                  aria-label="Toggle password visibility"
+                  class="absolute inset-y-0 right-0 pr-4 flex items-center"
+                >
+                  <!-- Eye (open) icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5 text-gray-500 hover:text-gray-700 transition eye-icon hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M1.5 12s3.75-6.75 10.5-6.75S22.5 12 22.5 12s-3.75 6.75-10.5 6.75S1.5 12 1.5 12z"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <!-- Eye-slash (closed) icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5 text-gray-500 hover:text-gray-700 transition eye-slash"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 0 0 1.5 12s3.75 6.75 10.5 6.75c1.896 0 3.678-.424 5.25-1.173m2.743-1.936A10.45 10.45 0 0 0 22.5 12s-3.75-6.75-10.5-6.75a10.45 10.45 0 0 0-5.25 1.173"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 3l18 18"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  name="remember"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span class="ml-2 text-sm text-gray-600">Remember me</span>
+              </label>
+              <a
+                href="{{ url_for('forgot_password') }}"
+                class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >Forgot password?</a
+              >
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition font-medium"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <div class="my-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-200"></div>
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-3 bg-white text-gray-500">Or</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <p class="text-sm text-gray-600">
+              Don't have an account?
+              <a
+                href="{{ url_for('signup') }}"
+                class="text-blue-600 hover:text-blue-700 font-semibold"
+                >Sign up here</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Toggle password visibility and swap eye icons (open vs slash)
+      document
+        .getElementById("togglePassword")
+        .addEventListener("click", function () {
+          const p = document.getElementById("password");
+          const makeVisible = p.type === "password";
+          p.type = makeVisible ? "text" : "password";
+
+          const openIcon = this.querySelector(".eye-icon");
+          const slashIcon = this.querySelector(".eye-slash");
+          if (openIcon && slashIcon) {
+            openIcon.classList.toggle("hidden", !makeVisible);
+            slashIcon.classList.toggle("hidden", makeVisible);
+          }
+        });
+    </script>
+  </body>
+</html>

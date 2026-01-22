@@ -1,0 +1,1353 @@
+{% extends 'base.html' %} {% block title %}Help Center - Quizera{% endblock %}
+{% block content %}
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Paytone+One&display=swap");
+  @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* Enhanced Help Center Styles */
+  .help-hero {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #1e5e98 100%);
+    padding: 5rem 2rem;
+    text-align: center;
+    color: white;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+
+    /* Adjustable height */
+    min-height: 350px; /* you can change this */
+    height: auto; /* keeps it flexible */
+  }
+
+  /* Animated floating emojis - spread across hero with varying sizes */
+  .help-hero::before {
+    content: "💡";
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    font-size: 10rem;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+    z-index: 0;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .help-hero::after {
+    content: "✨";
+    position: absolute;
+    top: 15%;
+    right: 8%;
+    font-size: 6rem;
+    opacity: 0.15;
+    transform: rotate(20deg);
+    z-index: 0;
+    animation: float 7s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  /* Floating animation */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-15deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(-10deg);
+    }
+  }
+
+  .dark .help-hero {
+    background: linear-gradient(#0f6fab 0%, #c2fdff 100%);
+    box-shadow: 0 10px 40px rgba(67, 56, 202, 0.4);
+  }
+
+  .help-hero h1 {
+    font-size: 3.5rem;
+    font-family: "Paytone One", sans-serif;
+    margin-bottom: 1.2rem;
+
+    font-weight: 1000; /* TRUE max bold */
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3), 2px 2px 3px rgba(0, 0, 0, 0.25);
+
+    animation: fadeInDown 0.8s ease-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  .help-hero p {
+    font-size: 1.1rem;
+    color: #ebeced;
+    opacity: 0.95;
+
+    margin-top: 0.2rem; /* closer to the h1 */
+
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .help-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+    position: relative;
+  }
+
+  /* Additional decorative emojis - spread across hero with varying sizes */
+  .help-container::before {
+    content: "🎓";
+    position: absolute;
+    top: -300px;
+    left: 18%;
+    font-size: 5rem;
+    opacity: 0.08;
+    transform: rotate(-20deg);
+    pointer-events: none;
+  }
+
+  .help-container::after {
+    content: "📚";
+    position: absolute;
+    top: -280px;
+    right: 15%;
+    font-size: 3rem;
+    opacity: 0.1;
+    transform: rotate(25deg);
+    pointer-events: none;
+  }
+
+  /* Extra emojis using quick-links pseudo-elements */
+  .quick-links::before {
+    content: "🚀";
+    position: absolute;
+    top: -400px;
+    left: 5%;
+    font-size: 2rem;
+    opacity: 0.09;
+    transform: rotate(30deg);
+    pointer-events: none;
+    z-index: 0;
+
+    /* 🚀 Added animation */
+    animation: float-rocket 6s ease-in-out infinite;
+  }
+
+  @keyframes float-rocket {
+    0%,
+    100% {
+      transform: translateY(0) rotate(30deg);
+    }
+    50% {
+      transform: translateY(-25px) rotate(40deg);
+    }
+  }
+
+  .quick-links::after {
+    content: "⭐";
+    position: absolute;
+    top: -350px;
+    right: 5%;
+    font-size: 2.5rem;
+    opacity: 0.11;
+    transform: rotate(-30deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Bottom corner emojis */
+  .faq-section::before {
+    content: "💻";
+    position: absolute;
+    top: -480px;
+    left: 50%;
+    transform: translateX(-50%) rotate(10deg);
+    font-size: 1.8rem;
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Search Box - Inside Hero */
+  .help-search {
+    max-width: 650px;
+    margin: 2.5rem auto 0;
+    position: relative;
+    animation: slideInDown 0.6s ease-out 0.4s backwards;
+    z-index: 1;
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .help-search input {
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+    padding: 1.2rem 4rem 1.2rem 1.8rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    font-weight: 300;
+    background: white;
+    color: #000000;
+  }
+
+  .dark .help-search input {
+    background: rgba(255, 255, 255, 0.95);
+    color: #ffffff;
+  }
+
+  .help-search input::placeholder {
+    color: #9ca3af;
+  }
+
+  .help-search input:focus {
+    outline: none;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .help-search button {
+    position: absolute;
+    right: 0; /* At the very edge */
+    top: 50%;
+    transform: translateY(-50%);
+    background: #000000;
+    color: white;
+    border: none;
+    width: 63px; /* Fixed width for circle */
+    height: 63px; /* Fixed height for circle */
+    border-radius: 50%; /* Changed from 50px to 50% for perfect circle */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Remove padding for centered icon */
+  }
+
+  .dark .help-search button {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: #000000;
+  }
+
+  .help-search button:hover {
+    transform: translateY(-50%) scale(1.08); /* Slightly increased scale on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Quick Links Section - Minimalist */
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .quick-link-card {
+    font-family: "Poppins", sans-serif;
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+  }
+
+  .quick-link-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(102, 126, 234, 0.05),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .quick-link-card:hover::before {
+    left: 100%;
+  }
+
+  .dark .quick-link-card {
+    background: #1a202c;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: #2d3748;
+  }
+
+  .quick-link-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+  }
+
+  .dark .quick-link-card:hover {
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+    border-color: #6575ff;
+  }
+
+  .quick-link-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0f0c29 0%, #4280ba 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    transition: transform 0.3s ease;
+    color: white;
+  }
+
+  .quick-link-card:hover .quick-link-icon {
+    transform: scale(1.05);
+  }
+
+  .dark .quick-link-icon {
+    background: linear-gradient(#0f6fab 0%, #155052 100%);
+  }
+
+  .quick-link-card h3 {
+    font-family: "Poppins", sans-serif;
+    color: #1f2937;
+    margin-bottom: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .dark .quick-link-card h3 {
+    color: #f3f4f6;
+  }
+
+  .quick-link-card p {
+    font-family: "Poppins", sans-serif;
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  .dark .quick-link-card p {
+    color: #9ca3af;
+  }
+
+  /* FAQ Section - Minimalist */
+  .faq-section {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+  }
+
+  .dark .faq-section {
+    background: #1a202c;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: #2d3748;
+  }
+
+  .faq-section h2 {
+    font-family: "Paytone One", sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #0f0c29 0%, #2b95f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 3rem;
+    margin-top: 0rem;
+    margin-bottom: 2.5rem;
+    font-weight: 800;
+    position: relative;
+    padding-bottom: 1rem;
+    letter-spacing: -0.5px;
+  }
+
+  .faq-section h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, #2b95f7 0%, #0f0c29 100%);
+    border-radius: 2px;
+  }
+
+  .dark .faq-section h2 {
+    background: linear-gradient(#0f6fab 0%, #30a4a8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid #f3f4f6;
+    padding: 1.5rem 0;
+    transition: all 0.3s ease;
+  }
+
+  .dark .faq-item {
+    border-bottom-color: #2d3748;
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .faq-item:hover {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(102, 126, 234, 0.03),
+      transparent
+    );
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 12px;
+  }
+
+  .faq-question {
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: #0f0c29;
+    font-size: 1.05rem;
+    font-weight: 600;
+    user-select: none;
+    padding: 0.5rem 0;
+  }
+
+  .dark .faq-question {
+    color: #f3f4f6;
+  }
+
+  .faq-question:hover {
+    color: #2147f4;
+  }
+
+  .dark .faq-question:hover {
+    color: #30a4a8;
+  }
+
+  .faq-icon {
+    font-size: 1.1rem;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    color: linear-gradient(135deg, #2b95f7 0%, #0f0c29 100%);
+    min-width: 20px;
+    margin-left: 1rem;
+  }
+
+  .dark .faq-icon {
+    color: #302b63;
+  }
+
+  .faq-item.active .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    font-family: "Poppins", sans-serif;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    color: #4b5563;
+    line-height: 1.7;
+    padding-top: 0;
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  .dark .faq-answer {
+    color: #d1d5db;
+  }
+
+  .faq-item.active .faq-answer {
+    max-height: 600px;
+    padding-top: 1.2rem;
+    transition: max-height 0.5s cubic-bezier(1, 0, 1, 0);
+  }
+
+  .faq-answer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .faq-answer a:hover {
+    border-bottom-color: #667eea;
+  }
+
+  .dark .faq-answer a {
+    color: #818cf8;
+  }
+
+  .dark .faq-answer a:hover {
+    border-bottom-color: #818cf8;
+  }
+
+  /* Contact Section - New Design Matching Image */
+  .contact-section {
+    max-width: 100%;
+    margin: 0 auto 4rem;
+    text-align: center;
+  }
+
+  .contact-section h2 {
+    font-family: "Paytone One", sans-serif;
+    background: linear-gradient(135deg, #0f0c29 0%, #2b95f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+  }
+
+  .dark .contact-section h2 {
+    background: linear-gradient(#0f6fab 0%, #30a4a8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Contact Box Container - Smaller */
+  .contact-box-container {
+    background: linear-gradient(135deg, #0f0c29 0%, #4280ba 100%);
+    border-radius: 40px;
+    padding: 1rem 1.5rem;
+
+    margin: 2rem auto 3rem; /* 2rem top, auto left/right, 3rem bottom */
+
+    max-width: 250px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .dark .contact-box-container {
+    background: #1a202c;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: #2d3748;
+  }
+
+  .contact-box-title {
+    font-family: "Paytone One", sans-serif;
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .dark .contact-box-title {
+    color: #f3f4f6;
+  }
+
+  .contact-arrow {
+    font-size: 1.5rem;
+    color: #ffffff;
+  }
+
+  /* Three Contact Methods in Horizontal Line */
+  .contact-methods-horizontal {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .contact-method-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    flex: 0 1 auto;
+    max-width: 250px;
+  }
+
+  /* Ultra Minimalist Icons using Material Icons */
+  .contact-icon-minimal {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    color: #4280ba;
+  }
+
+  .dark .contact-icon-minimal {
+    color: #f3f4f6;
+  }
+
+  .contact-icon-minimal .material-icons {
+    font-size: 45px;
+    font-weight: 100; /* thinnest, minimalist */
+  }
+
+  .contact-method-item:hover .contact-icon-minimal {
+    transform: scale(1.1);
+  }
+
+  /* Contact Method Content */
+  .contact-method-content {
+    text-align: center;
+  }
+
+  .contact-method-content h4 {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+
+  .dark .contact-method-content h4 {
+    color: #f3f4f6;
+  }
+
+  .contact-method-content p {
+    font-family: "Poppins", sans-serif;
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 0.8rem;
+    font-weight: 300;
+  }
+
+  .dark .contact-method-content p {
+    color: #9ca3af;
+  }
+
+  .contact-method-content a {
+    font-family: "Poppins", sans-serif;
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s;
+  }
+
+  .contact-method-content a:hover {
+    border-bottom-color: #667eea;
+    color: #5568d3;
+  }
+
+  .dark .contact-method-content a {
+    color: #818cf8;
+  }
+
+  .dark .contact-method-content a:hover {
+    border-bottom-color: #818cf8;
+    color: #a5b4fc;
+  }
+
+  /* Office Hours Section */
+  .contact-office-hours {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    border-top: 2px solid #e5e7eb;
+  }
+
+  .dark .contact-office-hours {
+    border-top-color: #374151;
+  }
+
+  .contact-office-hours p {
+    font-family: "Poppins", sans-serif;
+    color: #6b7280;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .dark .contact-office-hours p {
+    color: #9ca3af;
+  }
+
+  @media (max-width: 768px) {
+    .contact-methods-horizontal {
+      flex-direction: column;
+      gap: 3rem;
+    }
+    .contact-method-item {
+      max-width: 100%;
+    }
+    .contact-box-container {
+      padding: 1.5rem;
+      max-width: 90%;
+    }
+    .contact-section h2 {
+      font-size: 1.8rem;
+    }
+    .contact-box-title {
+      font-size: 1.3rem;
+    }
+  }
+
+  /* Search result highlighting */
+  .faq-item.search-match {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(102, 126, 234, 0.05),
+      transparent
+    );
+    border-left: 3px solid #667eea;
+    padding-left: 1.5rem !important;
+  }
+
+  .dark .faq-item.search-match {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(129, 140, 248, 0.08),
+      transparent
+    );
+    border-left-color: #818cf8;
+  }
+
+  /* No results message */
+  .no-results {
+    font-family: "Poppins", sans-serif;
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+    font-size: 1rem;
+    display: none;
+    font-weight: 300;
+  }
+
+  .dark .no-results {
+    color: #9ca3af;
+  }
+
+  .no-results.show {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .help-hero h1 {
+      font-size: 2.2rem;
+    }
+    .help-hero p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .help-hero {
+      padding: 4rem 1.5rem 5rem 1.5rem;
+    }
+    .faq-section,
+    .contact-section {
+      padding: 2rem 1.5rem;
+    }
+    .quick-links {
+      gap: 1.2rem;
+    }
+    .help-search button {
+      padding: 0.8rem 1.5rem;
+    }
+    .contact-methods-horizontal {
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .contact-method-item {
+      max-width: 100%;
+    }
+    .contact-box-container {
+      padding: 2rem 1.5rem;
+    }
+    .contact-section h2 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+
+<div class="help-hero">
+  <h1>How Can We Help You?</h1>
+  <p>Find answers to common questions and get the support you need</p>
+
+  <!-- Search Box Inside Hero -->
+  <div class="help-search">
+    <input
+      type="text"
+      id="helpSearch"
+      placeholder="Search for help topics, FAQs, or keywords..."
+    />
+    <button type="button" onclick="searchHelp()">
+      <i class="fas fa-search" style="font-size: 1.2rem"></i>
+    </button>
+  </div>
+</div>
+
+<div class="help-container">
+  <!-- Quick Links -->
+  <div class="quick-links">
+    <div class="quick-link-card" onclick="scrollToSection('faq')">
+      <div class="quick-link-icon"><i class="fas fa-circle-question"></i></div>
+      <h3>FAQs</h3>
+      <p>Quick answers to common questions</p>
+    </div>
+
+    <div class="quick-link-card" onclick="scrollToSection('contact')">
+      <div class="quick-link-icon"><i class="fas fa-envelope"></i></div>
+      <h3>Contact Support</h3>
+      <p>Get in touch with our team</p>
+    </div>
+
+    <div
+      class="quick-link-card"
+      onclick="window.location.href='{{ url_for('view_games') }}'"
+    >
+      <div class="quick-link-icon"><i class="fas fa-gamepad"></i></div>
+      <h3>Learning Games</h3>
+      <p>Explore interactive learning</p>
+    </div>
+
+    <div
+      class="quick-link-card"
+      onclick="window.location.href='{{ url_for('dashboard') }}'"
+    >
+      <div class="quick-link-icon"><i class="fas fa-book"></i></div>
+      <h3>Dashboard</h3>
+      <p>Access your learning hub</p>
+    </div>
+
+    <div
+      class="quick-link-card"
+      onclick="window.location.href='{{ url_for('home') }}#available-subjects'"
+    >
+      <div class="quick-link-icon"><i class="fas fa-magnifying-glass"></i></div>
+      <h3>Browse Subjects</h3>
+      <p>Discover available courses</p>
+    </div>
+
+    <div
+      class="quick-link-card"
+      onclick="window.location.href='{{ url_for('about') }}'"
+    >
+      <div class="quick-link-icon"><i class="fas fa-circle-info"></i></div>
+      <h3>About Quizera</h3>
+      <p>Learn more about our platform</p>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section" id="faq">
+    <h2>Frequently Asked Questions</h2>
+
+    <!-- No results message -->
+    <div class="no-results" id="noResults">
+      <i
+        class="fas fa-magnifying-glass"
+        style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.3"
+      ></i>
+      <p><strong>No results found</strong></p>
+      <p>Try different keywords or browse all FAQs below</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>What is Quizera?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Quizera is a comprehensive e-learning platform designed specifically
+          for Computer Science students. We offer interactive quizzes, study
+          materials, learning games, and collaborative tools to enhance your
+          educational experience. Our platform combines modern technology with
+          proven teaching methods to make learning engaging and effective.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How do I enroll in a subject?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          As a student, you can browse available subjects from your dashboard or
+          the Browse Subjects page. Click on a subject to view its details, then
+          click the "Enroll" button. Once enrolled, you'll have access to all
+          topics, quizzes, and materials for that subject. You can track your
+          progress and complete topics at your own pace.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How do I take a quiz?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Navigate to your enrolled subjects, select a quiz, and click "Take
+          Quiz". You'll have a set time limit to complete all questions. Make
+          sure you have a stable internet connection and enough time before
+          starting. Your progress is automatically saved, and you can view your
+          results immediately after submission. You can also review your answers
+          in the quiz results section.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>Can I retake quizzes?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Quiz retake policies depend on the settings configured by your
+          teacher. Some quizzes allow unlimited attempts, while others may have
+          a maximum attempt limit. Check the quiz details before starting to see
+          the retake policy. All your attempts are saved, and you can review
+          them in your quiz history.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How do I create a subject as a teacher?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          From your teacher dashboard, click "Create Subject". Fill in the
+          subject name, description, and other details. Once created, you can
+          add topics, upload study materials (including PDFs), and create
+          quizzes. Students can then enroll in your subject and access all your
+          content.You can track student progress and engagement through the
+          subject dashboard.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>What types of questions can I create?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Quizera supports multiple question types including Multiple Choice,
+          True/False, Identification, and Enumeration questions. Each type can
+          be customized with points, time limits, and difficulty levels. You can
+          also add images and formatting to make questions more engaging. Mix
+          different question types to create comprehensive assessments.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How do notifications work?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Quizera sends real-time notifications for important events like new
+          quiz publications, enrollment confirmations, quiz results, and
+          announcements. You can access all notifications from the bell icon in
+          the navigation bar. Notifications remain accessible even after logout
+          and can be marked as read or deleted as needed.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How do I use the chat feature?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          The chat feature allows direct messaging between students and
+          teachers. Access it from your dashboard. Search for a user, click on
+          their name, and start a conversation. All messages are persisted in
+          our database, so you can access your chat history even after logging
+          out. Chat supports typing indicators and read receipts for better
+          communication.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>What learning games are available?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Quizera offers several educational games including Fruit Catch
+          (reaction time), Typing Speed Test (keyboard skills), and Code
+          Debugger (programming logic). These games are designed to make
+          learning fun while developing important skills. Access them from the
+          Games section in your dashboard.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How can I track my progress?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Students can track their progress through the dashboard, which shows
+          completed topics, quiz scores, subject progress percentages, and
+          learning streaks. Each subject displays a progress bar showing how
+          many topics you've completed. Your profile also shows overall
+          statistics and recent achievements.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>Is my data secure?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Yes! We use industry-standard security practices including password
+          hashing, secure database connections, and data encryption. Your
+          personal information is never shared with third parties. We comply
+          with data protection regulations and regularly update our security
+          measures. For more details, please read our
+          <a href="{{ url_for('privacy') }}">Privacy Policy</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>Can I customize my profile?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Yes! Visit your profile page to customize your avatar (choose from
+          various animals), update your bio, change your password, and manage
+          account settings. Your profile is visible to other users when they
+          search for you, helping create a connected learning community.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>How do I reset my password?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Click "Forgot Password" on the login page, enter your registered email
+          address, and you'll receive a password reset link. The link is valid
+          for 1 hour. Follow the instructions in the email to create a new
+          password. Make sure to use a strong password with at least 6
+          characters.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>What should I do if I encounter a bug?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Please report any bugs or technical issues to our support team at
+          <a href="mailto:support@quizera.com">support@quizera.com</a>. Include
+          details about what you were doing when the error occurred, your
+          browser type, and if possible, a screenshot. We appreciate your
+          feedback and work quickly to resolve issues.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>Can I access Quizera on mobile devices?</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </div>
+      <div class="faq-answer">
+        <p>
+          Yes! Quizera is fully responsive and works on smartphones, tablets,
+          and desktop computers. Simply access our website through your mobile
+          browser. We're also working on dedicated mobile apps for iOS and
+          Android to enhance the mobile experience.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section - New Design -->
+  <div class="contact-section" id="contact">
+    <h2>Still Need Help? Contact Us</h2>
+
+    <!-- Contact Us Title with Arrow -->
+    <div class="contact-box-container">
+      <h3 class="contact-box-title">Contact Us</h3>
+      <span class="contact-arrow material-icons">arrow_forward</span>
+    </div>
+
+    <!-- Three Contact Methods -->
+    <div class="contact-methods-horizontal">
+      <!-- Email Support -->
+      <div class="contact-method-item">
+        <div class="contact-icon-minimal">
+          <span class="material-icons">mail_outline</span>
+        </div>
+        <div class="contact-method-content">
+          <h4>Email Support</h4>
+          <p>Get help via email</p>
+          <a href="mailto:support@quizera.com">support@quizera.com</a>
+        </div>
+      </div>
+
+      <!-- Live Chat -->
+      <div class="contact-method-item">
+        <div class="contact-icon-minimal">
+          <span class="material-icons">chat_bubble_outline</span>
+        </div>
+        <div class="contact-method-content">
+          <h4>Live Chat</h4>
+          <p>Chat with our team</p>
+          <a href="{{ url_for('chat') }}">Start Chat</a>
+        </div>
+      </div>
+
+      <!-- Documentation -->
+      <div class="contact-method-item">
+        <div class="contact-icon-minimal">
+          <span class="material-icons">menu_book</span>
+        </div>
+        <div class="contact-method-content">
+          <h4>Documentation</h4>
+          <p>Browse our guides</p>
+          <a href="{{ url_for('about') }}">Learn More</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Office Hours -->
+    <div class="contact-office-hours">
+      <p>
+        <strong>📅 Office Hours:</strong> Monday - Friday, 9:00 AM - 5:00 PM
+        (PST)
+      </p>
+      <p>⚡ Average response time: <strong>24 hours</strong></p>
+    </div>
+  </div>
+
+  <script>
+    // Toggle FAQ items with smooth animation
+    function toggleFaq(element) {
+      const faqItem = element.parentElement;
+      const wasActive = faqItem.classList.contains("active");
+
+      // Close all FAQ items
+      document.querySelectorAll(".faq-item").forEach((item) => {
+        item.classList.remove("active");
+      });
+
+      // Toggle current item
+      if (!wasActive) {
+        faqItem.classList.add("active");
+      }
+    }
+
+    // Smooth scroll to section
+    function scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Add a small delay then highlight the section
+        setTimeout(() => {
+          section.style.animation = "pulse 0.5s ease";
+          setTimeout(() => {
+            section.style.animation = "";
+          }, 500);
+        }, 600);
+      }
+    }
+
+    // Enhanced search functionality
+    function searchHelp() {
+      const searchTerm = document
+        .getElementById("helpSearch")
+        .value.toLowerCase()
+        .trim();
+      const faqItems = document.querySelectorAll(".faq-item");
+      const noResults = document.getElementById("noResults");
+      let foundMatch = false;
+      let visibleCount = 0;
+
+      // If search is empty, reset everything
+      if (searchTerm === "") {
+        faqItems.forEach((item) => {
+          item.style.display = "block";
+          item.classList.remove("active", "search-match");
+        });
+        noResults.classList.remove("show");
+        return;
+      }
+
+      // Search through FAQ items
+      faqItems.forEach((item) => {
+        const question = item
+          .querySelector(".faq-question span")
+          .textContent.toLowerCase();
+        const answer = item
+          .querySelector(".faq-answer")
+          .textContent.toLowerCase();
+
+        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+          item.style.display = "block";
+          item.classList.add("active", "search-match");
+          foundMatch = true;
+          visibleCount++;
+        } else {
+          item.style.display = "none";
+          item.classList.remove("active", "search-match");
+        }
+      });
+
+      // Show/hide no results message
+      if (visibleCount === 0) {
+        noResults.classList.add("show");
+      } else {
+        noResults.classList.remove("show");
+        // Scroll to FAQ section if results found
+        scrollToSection("faq");
+      }
+    }
+
+    // Clear search and reset view
+    function clearSearch() {
+      document.getElementById("helpSearch").value = "";
+      searchHelp();
+    }
+
+    // Enter key to search
+    document
+      .getElementById("helpSearch")
+      .addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          searchHelp();
+        }
+      });
+
+    // Real-time search with debouncing
+    let searchTimeout;
+    document
+      .getElementById("helpSearch")
+      .addEventListener("input", function () {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          searchHelp();
+        }, 300); // Debounce for 300ms
+      });
+
+    // Add pulse animation for section highlight
+    const style = document.createElement("style");
+    style.textContent = `
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+  `;
+    document.head.appendChild(style);
+
+    // Clear search matches when clicking outside search
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest(".help-search") && !e.target.closest(".faq-item")) {
+        const searchInput = document.getElementById("helpSearch");
+        if (searchInput.value === "") {
+          document.querySelectorAll(".faq-item").forEach((item) => {
+            item.classList.remove("search-match");
+          });
+        }
+      }
+    });
+  </script>
+
+  {% endblock %}
+</div>

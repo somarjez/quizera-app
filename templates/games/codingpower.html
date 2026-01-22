@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Challenges</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .challenge-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .difficulty {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .difficulty.easy { background: #4caf50; }
+        .difficulty.medium { background: #ff9800; }
+        .difficulty.hard { background: #f44336; }
+
+        .problem-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .problem-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .problem-section p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .code-editor {
+            margin-bottom: 20px;
+        }
+
+        .code-editor label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .output-section {
+            margin-bottom: 20px;
+        }
+
+        .output-terminal {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            border: 2px solid #ddd;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .check-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .start-screen, .certificate-screen {
+            text-align: center;
+        }
+
+        .start-btn, .download-btn, .restart-btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .certificate {
+            border: 10px solid #667eea;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .certificate h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .certificate p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+    <!-- Add Pyodide CDN -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.0/full/pyodide.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 Python Coding Challenges</h1>
+        </div>
+
+        <!-- Language selection screen -->
+        <div id="languageScreen" class="start-screen">
+            <h2>Choose Your Language</h2>
+            <div style="margin: 30px 0;">
+                <button class="start-btn" onclick="selectLanguage('python')">Python</button>
+                <button class="start-btn" onclick="selectLanguage('javascript')">JavaScript</button>
+                <button class="start-btn" onclick="selectLanguage('csharp')">C#</button>
+            </div>
+        </div>
+
+        <div id="startScreen" class="start-screen hidden">
+            <h2 id="welcomeTitle">Welcome to Coding Challenges!</h2>
+            <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
+                Test your <span id="selectedLangText">Python</span> skills with 5 challenges:<br>
+                2 Easy • 2 Medium • 1 Hard
+            </p>
+            <button class="start-btn" onclick="startGame()">Start Challenge</button>
+        </div>
+
+        <div id="gameScreen" class="hidden">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%">
+                    <span id="progressText">0/5</span>
+                </div>
+            </div>
+
+            <div class="challenge-info">
+                <div>
+                    <strong>Challenge <span id="currentChallenge">1</span> of 5</strong>
+                </div>
+                <div>
+                    <span id="difficultyBadge" class="difficulty easy">Easy</span>
+                </div>
+            </div>
+
+            <div class="problem-section">
+                <h3>Problem:</h3>
+                <p id="problemDescription"></p>
+            </div>
+
+            <div class="code-editor">
+                <label for="codeInput">Your Code:</label>
+                <textarea id="codeInput" placeholder="Write your Python code here..."></textarea>
+            </div>
+
+            <div class="output-section">
+                <label><strong>Output:</strong></label>
+                <div id="outputTerminal" class="output-terminal">Run your code to see output...</div>
+            </div>
+
+            <div id="feedbackMessage"></div>
+
+            <div class="button-group">
+                <button class="check-btn" onclick="checkCode()">Check Code</button>
+                <button id="submitBtn" class="submit-btn" onclick="submitAnswer()" disabled>Submit Answer</button>
+            </div>
+        </div>
+
+        <div id="certificateScreen" class="certificate-screen hidden">
+            <div id="certificate" class="certificate">
+                <h2>🏆 Certificate of Completion</h2>
+                <p><strong>This certifies that</strong></p>
+                <p style="font-size: 1.5em; color: #667eea; margin: 20px 0;"><strong id="userName">Coding Champion</strong></p>
+                <p><strong>has successfully completed</strong></p>
+                <p style="font-size: 1.3em; margin: 15px 0;">Python Coding Challenges</p>
+                <p>Score: <span id="finalScore"></span></p>
+                <p style="margin-top: 30px; color: #666;">Date: <span id="certDate"></span></p>
+            </div>
+            <button class="download-btn" onclick="downloadCertificate()">Download Certificate</button>
+            <button class="restart-btn" onclick="location.reload()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Problems for each language
+        const problemsByLanguage = {
+            python: [
+                // Easy Problems
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function that returns the sum of two numbers. The function should be named "add" and take two parameters.',
+                    starterCode: 'def add(a, b):\n    # Your code here\n    return 0',
+                    solution: (a, b) => a + b,
+                    testCases: [
+                        { input: [2, 3], expected: 5 },
+                        { input: [10, 5], expected: 15 },
+                        { input: [-1, 1], expected: 0 }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "is_even" that checks if a number is even. Return True if even, False otherwise.',
+                    starterCode: 'def is_even(n):\n    # Your code here\n    return False',
+                    solution: (n) => n % 2 === 0,
+                    testCases: [
+                        { input: [4], expected: true },
+                        { input: [7], expected: false },
+                        { input: [0], expected: true }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "reverse_string" that takes a string and returns it reversed.',
+                    starterCode: 'def reverse_string(s):\n    # Your code here\n    return ""',
+                    solution: (s) => s.split('').reverse().join(''),
+                    testCases: [
+                        { input: ['hello'], expected: 'olleh' },
+                        { input: ['python'], expected: 'nohtyp' },
+                        { input: ['a'], expected: 'a' }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "max_of_three" that returns the maximum of three numbers.',
+                    starterCode: 'def max_of_three(a, b, c):\n    # Your code here\n    return 0',
+                    solution: (a, b, c) => Math.max(a, b, c),
+                    testCases: [
+                        { input: [1, 2, 3], expected: 3 },
+                        { input: [10, 5, 8], expected: 10 },
+                        { input: [-1, -5, -3], expected: -1 }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "count_vowels" that counts the number of vowels (a, e, i, o, u) in a string (case-insensitive).',
+                    starterCode: 'def count_vowels(s):\n    # Your code here\n    return 0',
+                    solution: (s) => (s.toLowerCase().match(/[aeiou]/g) || []).length,
+                    testCases: [
+                        { input: ['hello'], expected: 2 },
+                        { input: ['programming'], expected: 3 },
+                        { input: ['xyz'], expected: 0 }
+                    ]
+                },
+                // Medium Problems
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "fibonacci" that returns the nth Fibonacci number (starting from 0). For example: fib(0)=0, fib(1)=1, fib(5)=5.',
+                    starterCode: 'def fibonacci(n):\n    # Your code here\n    return 0',
+                    solution: (n) => {
+                        if (n <= 1) return n;
+                        let a = 0, b = 1;
+                        for (let i = 2; i <= n; i++) {
+                            [a, b] = [b, a + b];
+                        }
+                        return b;
+                    },
+                    testCases: [
+                        { input: [0], expected: 0 },
+                        { input: [1], expected: 1 },
+                        { input: [5], expected: 5 },
+                        { input: [10], expected: 55 }
+                    ]
+                },
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "is_palindrome" that checks if a string is a palindrome (reads the same forwards and backwards). Ignore spaces and case.',
+                    starterCode: 'def is_palindrome(s):\n    # Your code here\n    return False',
+                    solution: (s) => {
+                        const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        return cleaned === cleaned.split('').reverse().join('');
+                    },
+                    testCases: [
+                        { input: ['racecar'], expected: true },
+                        { input: ['A man a plan a canal Panama'], expected: true },
+                        { input: ['hello'], expected: false }
+                    ]
+                },
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "factorial" that calculates the factorial of a number (n! = n × (n-1) × ... × 1). Factorial of 0 is 1.',
+                    starterCode: 'def factorial(n):\n    # Your code here\n    return 0',
+                    solution: (n) => {
+                        if (n === 0) return 1;
+                        let result = 1;
+                        for (let i = 2; i <= n; i++) result *= i;
+                        return result;
+                    },
+                    testCases: [
+                        { input: [5], expected: 120 },
+                        { input: [0], expected: 1 },
+                        { input: [3], expected: 6 },
+                        { input: [1], expected: 1 }
+                    ]
+                },
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "remove_duplicates" that removes duplicate elements from a list while maintaining the original order.',
+                    starterCode: 'def remove_duplicates(lst):\n    # Your code here\n    return []',
+                    solution: (lst) => [...new Set(lst)],
+                    testCases: [
+                        { input: [[1, 2, 2, 3, 4, 4, 5]], expected: [1, 2, 3, 4, 5] },
+                        { input: [['a', 'b', 'a', 'c']], expected: ['a', 'b', 'c'] },
+                        { input: [[1, 1, 1]], expected: [1] }
+                    ]
+                },
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "count_words" that counts the number of words in a string. Words are separated by spaces.',
+                    starterCode: 'def count_words(s):\n    # Your code here\n    return 0',
+                    solution: (s) => s.trim() === '' ? 0 : s.trim().split(/\s+/).length,
+                    testCases: [
+                        { input: ['hello world'], expected: 2 },
+                        { input: ['one two three four'], expected: 4 },
+                        { input: [''], expected: 0 }
+                    ]
+                },
+                // Hard Problems
+                {
+                    difficulty: 'hard',
+                    description: 'Write a function named "merge_sorted_lists" that merges two sorted lists into one sorted list.',
+                    starterCode: 'def merge_sorted_lists(list1, list2):\n    # Your code here\n    return []',
+                    solution: (list1, list2) => {
+                        const result = [];
+                        let i = 0, j = 0;
+                        while (i < list1.length && j < list2.length) {
+                            if (list1[i] <= list2[j]) {
+                                result.push(list1[i++]);
+                            } else {
+                                result.push(list2[j++]);
+                            }
+                        }
+                        return result.concat(list1.slice(i)).concat(list2.slice(j));
+                    },
+                    testCases: [
+                        { input: [[1, 3, 5], [2, 4, 6]], expected: [1, 2, 3, 4, 5, 6] },
+                        { input: [[1, 2, 3], [4, 5, 6]], expected: [1, 2, 3, 4, 5, 6] },
+                        { input: [[1], [2]], expected: [1, 2] }
+                    ]
+                },
+                {
+                    difficulty: 'hard',
+                    description: 'Write a function named "longest_substring" that finds the length of the longest substring without repeating characters.',
+                    starterCode: 'def longest_substring(s):\n    # Your code here\n    return 0',
+                    solution: (s) => {
+                        let max = 0, start = 0;
+                        const seen = new Map();
+                        for (let i = 0; i < s.length; i++) {
+                            if (seen.has(s[i]) && seen.get(s[i]) >= start) {
+                                start = seen.get(s[i]) + 1;
+                            }
+                            seen.set(s[i], i);
+                            max = Math.max(max, i - start + 1);
+                        }
+                        return max;
+                    },
+                    testCases: [
+                        { input: ['abcabcbb'], expected: 3 },
+                        { input: ['bbbbb'], expected: 1 },
+                        { input: ['pwwkew'], expected: 3 }
+                    ]
+                },
+                {
+                    difficulty: 'hard',
+                    description: 'Write a function named "find_prime_factors" that returns a list of all prime factors of a given number in ascending order.',
+                    starterCode: 'def find_prime_factors(n):\n    # Your code here\n    return []',
+                    solution: (n) => {
+                        const factors = [];
+                        let num = n;
+                        for (let i = 2; i <= num; i++) {
+                            while (num % i === 0) {
+                                factors.push(i);
+                                num /= i;
+                            }
+                        }
+                        return factors;
+                    },
+                    testCases: [
+                        { input: [12], expected: [2, 2, 3] },
+                        { input: [15], expected: [3, 5] },
+                        { input: [7], expected: [7] }
+                    ]
+                },
+                {
+                    difficulty: 'hard',
+                    description: 'Write a function named "binary_search" that implements binary search on a sorted list. Return the index of the target or -1 if not found.',
+                    starterCode: 'def binary_search(arr, target):\n    # Your code here\n    return -1',
+                    solution: (arr, target) => {
+                        let left = 0, right = arr.length - 1;
+                        while (left <= right) {
+                            const mid = Math.floor((left + right) / 2);
+                            if (arr[mid] === target) return mid;
+                            if (arr[mid] < target) left = mid + 1;
+                            else right = mid - 1;
+                        }
+                        return -1;
+                    },
+                    testCases: [
+                        { input: [[1, 2, 3, 4, 5, 6, 7], 4], expected: 3 },
+                        { input: [[1, 3, 5, 7, 9], 5], expected: 2 },
+                        { input: [[1, 2, 3], 5], expected: -1 }
+                    ]
+                },
+                {
+                    difficulty: 'hard',
+                    description: 'Write a function named "two_sum" that finds two numbers in a list that add up to a target sum. Return their indices as a list, or empty list if not found.',
+                    starterCode: 'def two_sum(nums, target):\n    # Your code here\n    return []',
+                    solution: (nums, target) => {
+                        const map = new Map();
+                        for (let i = 0; i < nums.length; i++) {
+                            const complement = target - nums[i];
+                            if (map.has(complement)) {
+                                return [map.get(complement), i];
+                            }
+                            map.set(nums[i], i);
+                        }
+                        return [];
+                    },
+                    testCases: [
+                        { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
+                        { input: [[3, 2, 4], 6], expected: [1, 2] },
+                        { input: [[3, 3], 6], expected: [0, 1] }
+                    ]
+                }
+            ],
+            javascript: [
+                // Easy
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "add" that returns the sum of two numbers.',
+                    starterCode: 'function add(a, b) {\n    // Your code here\n    return 0;\n}',
+                    solution: (a, b) => a + b,
+                    testCases: [
+                        { input: [2, 3], expected: 5 },
+                        { input: [10, 5], expected: 15 },
+                        { input: [-1, 1], expected: 0 }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "isEven" that checks if a number is even. Return true if even, false otherwise.',
+                    starterCode: 'function isEven(n) {\n    // Your code here\n    return false;\n}',
+                    solution: n => n % 2 === 0,
+                    testCases: [
+                        { input: [4], expected: true },
+                        { input: [7], expected: false },
+                        { input: [0], expected: true }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "reverseString" that takes a string and returns it reversed.',
+                    starterCode: 'function reverseString(s) {\n    // Your code here\n    return "";\n}',
+                    solution: s => s.split('').reverse().join(''),
+                    testCases: [
+                        { input: ['hello'], expected: 'olleh' },
+                        { input: ['python'], expected: 'nohtyp' },
+                        { input: ['a'], expected: 'a' }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "maxOfThree" that returns the maximum of three numbers.',
+                    starterCode: 'function maxOfThree(a, b, c) {\n    // Your code here\n    return 0;\n}',
+                    solution: (a, b, c) => Math.max(a, b, c),
+                    testCases: [
+                        { input: [1, 2, 3], expected: 3 },
+                        { input: [10, 5, 8], expected: 10 },
+                        { input: [-1, -5, -3], expected: -1 }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a function named "countVowels" that counts the number of vowels (a, e, i, o, u) in a string (case-insensitive).',
+                    starterCode: 'function countVowels(s) {\n    // Your code here\n    return 0;\n}',
+                    solution: s => (s.toLowerCase().match(/[aeiou]/g) || []).length,
+                    testCases: [
+                        { input: ['hello'], expected: 2 },
+                        { input: ['programming'], expected: 3 },
+                        { input: ['xyz'], expected: 0 }
+                    ]
+                },
+                // Medium
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "fibonacci" that returns the nth Fibonacci number (starting from 0).',
+                    starterCode: 'function fibonacci(n) {\n    // Your code here\n    return 0;\n}',
+                    solution: n => {
+                        if (n <= 1) return n;
+                        let a = 0, b = 1;
+                        for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
+                        return b;
+                    },
+                    testCases: [
+                        { input: [0], expected: 0 },
+                        { input: [1], expected: 1 },
+                        { input: [5], expected: 5 },
+                        { input: [10], expected: 55 }
+                    ]
+                },
+                {
+                    difficulty: 'medium',
+                    description: 'Write a function named "isPalindrome" that checks if a string is a palindrome (ignore spaces and case).',
+                    starterCode: 'function isPalindrome(s) {\n    // Your code here\n    return false;\n}',
+                    solution: s => {
+                        const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        return cleaned === cleaned.split('').reverse().join('');
+                    },
+                    testCases: [
+                        { input: ['racecar'], expected: true },
+                        { input: ['A man a plan a canal Panama'], expected: true },
+                        { input: ['hello'], expected: false }
+                    ]
+                },
+                // Hard
+                {
+                    difficulty: 'hard',
+                    description: 'Write a function named "mergeSortedLists" that merges two sorted arrays into one sorted array.',
+                    starterCode: 'function mergeSortedLists(list1, list2) {\n    // Your code here\n    return [];\n}',
+                    solution: (list1, list2) => {
+                        const result = [];
+                        let i = 0, j = 0;
+                        while (i < list1.length && j < list2.length) {
+                            if (list1[i] <= list2[j]) result.push(list1[i++]);
+                            else result.push(list2[j++]);
+                        }
+                        return result.concat(list1.slice(i)).concat(list2.slice(j));
+                    },
+                    testCases: [
+                        { input: [[1, 3, 5], [2, 4, 6]], expected: [1, 2, 3, 4, 5, 6] },
+                        { input: [[1, 2, 3], [4, 5, 6]], expected: [1, 2, 3, 4, 5, 6] },
+                        { input: [[1], [2]], expected: [1, 2] }
+                    ]
+                }
+            ],
+            csharp: [
+                // Easy
+                {
+                    difficulty: 'easy',
+                    description: 'Write a method named "Add" that returns the sum of two integers.',
+                    starterCode: 'public int Add(int a, int b)\n{\n    // Your code here\n    return 0;\n}',
+                    solution: (a, b) => a + b,
+                    testCases: [
+                        { input: [2, 3], expected: 5 },
+                        { input: [10, 5], expected: 15 },
+                        { input: [-1, 1], expected: 0 }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a method named "IsEven" that checks if a number is even. Return true if even, false otherwise.',
+                    starterCode: 'public bool IsEven(int n)\n{\n    // Your code here\n    return false;\n}',
+                    solution: n => n % 2 === 0,
+                    testCases: [
+                        { input: [4], expected: true },
+                        { input: [7], expected: false },
+                        { input: [0], expected: true }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a method named "ReverseString" that takes a string and returns it reversed.',
+                    starterCode: 'public string ReverseString(string s)\n{\n    // Your code here\n    return "";\n}',
+                    solution: s => s.split('').reverse().join(''),
+                    testCases: [
+                        { input: ['hello'], expected: 'olleh' },
+                        { input: ['python'], expected: 'nohtyp' },
+                        { input: ['a'], expected: 'a' }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a method named "MaxOfThree" that returns the maximum of three integers.',
+                    starterCode: 'public int MaxOfThree(int a, int b, int c)\n{\n    // Your code here\n    return 0;\n}',
+                    solution: (a, b, c) => Math.max(a, b, c),
+                    testCases: [
+                        { input: [1, 2, 3], expected: 3 },
+                        { input: [10, 5, 8], expected: 10 },
+                        { input: [-1, -5, -3], expected: -1 }
+                    ]
+                },
+                {
+                    difficulty: 'easy',
+                    description: 'Write a method named "CountVowels" that counts the number of vowels (a, e, i, o, u) in a string (case-insensitive).',
+                    starterCode: 'public int CountVowels(string s)\n{\n    // Your code here\n    return 0;\n}',
+                    solution: s => (s.toLowerCase().match(/[aeiou]/g) || []).length,
+                    testCases: [
+                        { input: ['hello'], expected: 2 },
+                        { input: ['programming'], expected: 3 },
+                        { input: ['xyz'], expected: 0 }
+                    ]
+                },
+                // Medium
+                {
+                    difficulty: 'medium',
+                    description: 'Write a method named "Fibonacci" that returns the nth Fibonacci number (starting from 0).',
+                    starterCode: 'public int Fibonacci(int n)\n{\n    // Your code here\n    return 0;\n}',
+                    solution: n => {
+                        if (n <= 1) return n;
+                        let a = 0, b = 1;
+                        for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
+                        return b;
+                    },
+                    testCases: [
+                        { input: [0], expected: 0 },
+                        { input: [1], expected: 1 },
+                        { input: [5], expected: 5 },
+                        { input: [10], expected: 55 }
+                    ]
+                },
+                {
+                    difficulty: 'medium',
+                    description: 'Write a method named "IsPalindrome" that checks if a string is a palindrome (ignore spaces and case).',
+                    starterCode: 'public bool IsPalindrome(string s)\n{\n    // Your code here\n    return false;\n}',
+                    solution: s => {
+                        const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        return cleaned === cleaned.split('').reverse().join('');
+                    },
+                    testCases: [
+                        { input: ['racecar'], expected: true },
+                        { input: ['A man a plan a canal Panama'], expected: true },
+                        { input: ['hello'], expected: false }
+                    ]
+                },
+                // Hard
+                {
+                    difficulty: 'hard',
+                    description: 'Write a method named "MergeSortedLists" that merges two sorted integer arrays into one sorted array.',
+                    starterCode: 'public int[] MergeSortedLists(int[] list1, int[] list2)\n{\n    // Your code here\n    return new int[] {};\n}',
+                    solution: (list1, list2) => {
+                        const result = [];
+                        let i = 0, j = 0;
+                        while (i < list1.length && j < list2.length) {
+                            if (list1[i] <= list2[j]) result.push(list1[i++]);
+                            else result.push(list2[j++]);
+                        }
+                        return result.concat(list1.slice(i)).concat(list2.slice(j));
+                    },
+                    testCases: [
+                        { input: [[1, 3, 5], [2, 4, 6]], expected: [1, 2, 3, 4, 5, 6] },
+                        { input: [[1, 2, 3], [4, 5, 6]], expected: [1, 2, 3, 4, 5, 6] },
+                        { input: [[1], [2]], expected: [1, 2] }
+                    ]
+                }
+            ]
+        };
+
+        let selectedLanguage = null;
+        let gameProblems = [];
+        let currentProblemIndex = 0;
+        let correctAnswers = 0;
+        let isCorrect = false;
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function selectLanguage(lang) {
+            selectedLanguage = lang;
+            document.getElementById('languageScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('selectedLangText').textContent =
+                lang === 'python' ? 'Python' : lang === 'javascript' ? 'JavaScript' : 'C#';
+            document.getElementById('welcomeTitle').textContent =
+                `Welcome to ${lang === 'python' ? 'Python' : lang === 'javascript' ? 'JavaScript' : 'C#'} Coding Challenges!`;
+        }
+
+        function startGame() {
+            const problems = problemsByLanguage[selectedLanguage];
+            const easy = shuffleArray(problems.filter(p => p.difficulty === 'easy')).slice(0, 2);
+            const medium = shuffleArray(problems.filter(p => p.difficulty === 'medium')).slice(0, 2);
+            const hard = shuffleArray(problems.filter(p => p.difficulty === 'hard')).slice(0, 1);
+
+            gameProblems = [...easy, ...medium, ...hard];
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            loadProblem();
+        }
+
+        function loadProblem() {
+            const problem = gameProblems[currentProblemIndex];
+            isCorrect = false;
+
+            document.getElementById('currentChallenge').textContent = currentProblemIndex + 1;
+            document.getElementById('difficultyBadge').textContent = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
+            document.getElementById('difficultyBadge').className = `difficulty ${problem.difficulty}`;
+            document.getElementById('problemDescription').textContent = problem.description;
+            document.getElementById('codeInput').value = problem.starterCode;
+            document.getElementById('outputTerminal').textContent = 'Run your code to see output...';
+            document.getElementById('feedbackMessage').innerHTML = '';
+            document.getElementById('submitBtn').disabled = true;
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentProblemIndex / gameProblems.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${currentProblemIndex}/${gameProblems.length}`;
+        }
+
+        // Load Pyodide once and reuse
+        let pyodideReadyPromise = null;
+        async function ensurePyodide() {
+            if (!pyodideReadyPromise) {
+                pyodideReadyPromise = loadPyodide();
+            }
+            return pyodideReadyPromise;
+        }
+
+        async function checkCode() {
+            const code = document.getElementById('codeInput').value;
+            const problem = gameProblems[currentProblemIndex];
+            const output = document.getElementById('outputTerminal');
+            const feedback = document.getElementById('feedbackMessage');
+
+            output.textContent = '';
+            let allPassed = true;
+            let results = [];
+
+            try {
+                if (selectedLanguage === 'python') {
+                    const pyodide = await ensurePyodide();
+                    await pyodide.runPythonAsync(code);
+                    let funcNameMatch = code.match(/def\s+(\w+)\s*\(/);
+                    if (!funcNameMatch) throw new Error('No function definition found');
+                    let funcName = funcNameMatch[1];
+                    for (let test of problem.testCases) {
+                        let args = test.input.map(arg => {
+                            if (Array.isArray(arg)) {
+                                return JSON.stringify(arg).replace(/\[/g, '(').replace(/\]/g, ')').replace(/"/g, "'");
+                            } else if (typeof arg === 'string') {
+                                return `'${arg.replace(/'/g, "\\'")}'`;
+                            } else {
+                                return arg;
+                            }
+                        }).join(', ');
+                        let pyCall = `${funcName}(${args})`;
+                        let result = await pyodide.runPythonAsync(`
+import json
+def _to_json(val):
+    try:
+        return json.dumps(val)
+    except:
+        return str(val)
+_to_json(${pyCall})
+                        `);
+                        let jsResult;
+                        try { jsResult = JSON.parse(result); } catch { jsResult = result; }
+                        let passed = JSON.stringify(jsResult) === JSON.stringify(test.expected);
+                        results.push(`Test: ${JSON.stringify(test.input)} → Expected: ${JSON.stringify(test.expected)}, Got: ${JSON.stringify(jsResult)} ${passed ? '✓' : '✗'}`);
+                        if (!passed) allPassed = false;
+                    }
+                } else if (selectedLanguage === 'javascript') {
+                    // eslint-disable-next-line no-new-func
+                    let funcMatch = code.match(/function\s+(\w+)\s*\(/);
+                    if (!funcMatch) throw new Error('No function definition found');
+                    let funcName = funcMatch[1];
+                    // Evaluate the function in a sandboxed scope
+                    let userFunc;
+                    try {
+                        userFunc = new Function(`${code}; return ${funcName};`)();
+                    } catch (e) {
+                        throw new Error('Error in your code: ' + e.message);
+                    }
+                    for (let test of problem.testCases) {
+                        let result;
+                        try {
+                            result = userFunc(...test.input);
+                        } catch (e) {
+                            result = 'Error: ' + e.message;
+                        }
+                        let passed = JSON.stringify(result) === JSON.stringify(test.expected);
+                        results.push(`Test: ${JSON.stringify(test.input)} → Expected: ${JSON.stringify(test.expected)}, Got: ${JSON.stringify(result)} ${passed ? '✓' : '✗'}`);
+                        if (!passed) allPassed = false;
+                    }
+                } else if (selectedLanguage === 'csharp') {
+                    // C# code execution in-browser is not supported here.
+                    results.push('C# code checking is not supported in the browser.<br>Review your code and logic, then click "Submit Answer" to proceed.');
+                    allPassed = false;
+                    // Always enable submit for C#
+                    document.getElementById('submitBtn').disabled = false;
+                    isCorrect = true;
+                }
+
+                output.innerHTML = results.join('<br>');
+
+                if (selectedLanguage === 'csharp') {
+                    feedback.innerHTML = '<p class="error-message">C# code cannot be auto-checked in browser. Click "Submit Answer" if you are confident.</p>';
+                } else if (allPassed) {
+                    feedback.innerHTML = '<p class="success-message">✓ All tests passed! You can submit your answer.</p>';
+                    document.getElementById('submitBtn').disabled = false;
+                    isCorrect = true;
+                } else {
+                    feedback.innerHTML = '<p class="error-message">✗ Some tests failed. Keep trying!</p>';
+                    document.getElementById('submitBtn').disabled = true;
+                }
+            } catch (error) {
+                output.textContent = `Error: ${error.message}\n\nMake sure your code:\n- Has the correct function name\n- Uses proper syntax\n- Returns a value`;
+                feedback.innerHTML = '<p class="error-message">✗ There was an error in your code.</p>';
+                document.getElementById('submitBtn').disabled = true;
+            }
+        }
+
+        function submitAnswer() {
+            // For C#, allow submit after checkCode is clicked
+            if (selectedLanguage === 'csharp' || isCorrect) {
+                correctAnswers++;
+                currentProblemIndex++;
+                if (currentProblemIndex < gameProblems.length) {
+                    loadProblem();
+                } else {
+                    showCertificate();
+                }
+            }
+        }
+
+        function showCertificate() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('certificateScreen').classList.remove('hidden');
+            
+            const score = `${correctAnswers}/${gameProblems.length} Challenges Completed`;
+            document.getElementById('finalScore').textContent = score;
+            
+            const date = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('certDate').textContent = date;
+        }
+
+        function downloadCertificate() {
+            const cert = document.getElementById('certificate');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            const gradient = ctx.createLinearGradient(0, 0, 800, 600);
+            gradient.addColorStop(0, '#f5f7fa');
+            gradient.addColorStop(1, '#c3cfe2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 600);
+            
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 20;
+            ctx.strokeRect(10, 10, 780, 580);
+            
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏆 Certificate of Completion', 400, 100);
+            
+            ctx.fillStyle = '#333';
+            ctx.font = '24px Arial';
+            ctx.fillText('This certifies that', 400, 180);
+            
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 36px Arial';
+            ctx.fillText('Coding Champion', 400, 240);
+            
+            ctx.fillStyle = '#333';
+            ctx.font = '24px Arial';
+            ctx.fillText('has successfully completed', 400, 300);
+            
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText('Python Coding Challenges', 400, 350);
+            
+            ctx.font = '20px Arial';
+            ctx.fillText(`Score: ${correctAnswers}/${gameProblems.length} Challenges Completed`, 400, 410);
+            
+            ctx.fillStyle = '#666';
+            ctx.font = '18px Arial';
+            const date = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            ctx.fillText(`Date: ${date}`, 400, 500);
+            
+            const link = document.createElement('a');
+            link.download = 'python-certificate.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

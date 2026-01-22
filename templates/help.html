@@ -1,0 +1,225 @@
+<!-- filepath: c:\Users\Princess Shaira\Desktop\Quizera (6)\Quizera\quizera\templates\contactus.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us - Quizera</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom right, #4f46e5, #7c3aed);
+        min-height: 100vh;
+      }
+
+      .page-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .top-section {
+        text-align: center;
+        color: #ffffff;
+        padding: 50px 20px;
+      }
+
+      .top-section h1 {
+        font-size: 2.8em;
+        margin-bottom: 12px;
+      }
+
+      .top-section p {
+        font-size: 1.1em;
+      }
+
+      .cards-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        justify-content: center;
+        margin: 40px 0;
+      }
+
+      .info-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 35px;
+        width: 100%;
+        max-width: 320px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s;
+      }
+
+      .info-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+      }
+
+      .emoji-wrapper {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(to bottom right, #4f46e5, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2.5em;
+      }
+
+      .info-card h3 {
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.4em;
+      }
+
+      .info-card p {
+        color: #6b7280;
+        line-height: 1.5;
+        margin: 8px 0;
+      }
+
+      .info-card a {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .message-form {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        margin-top: 30px;
+      }
+
+      .message-form h2 {
+        color: #1f2937;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1.9em;
+      }
+
+      .input-wrapper {
+        margin-bottom: 22px;
+      }
+
+      .input-wrapper label {
+        display: block;
+        color: #374151;
+        margin-bottom: 7px;
+        font-weight: 600;
+      }
+
+      .input-wrapper input,
+      .input-wrapper textarea {
+        width: 100%;
+        padding: 13px;
+        border: 2px solid #d1d5db;
+        border-radius: 7px;
+        font-size: 0.95em;
+        font-family: Arial, sans-serif;
+      }
+
+      .input-wrapper input:focus,
+      .input-wrapper textarea:focus {
+        outline: none;
+        border-color: #4f46e5;
+      }
+
+      .input-wrapper textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+
+      .send-button {
+        background: linear-gradient(to bottom right, #4f46e5, #7c3aed);
+        color: #ffffff;
+        padding: 14px 35px;
+        border: none;
+        border-radius: 7px;
+        font-size: 1.05em;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s;
+      }
+
+      .send-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+      }
+
+      @media (max-width: 700px) {
+        .top-section h1 {
+          font-size: 2em;
+        }
+        .info-card {
+          padding: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <div class="top-section">
+        <h1>Get In Touch</h1>
+        <p>Have questions? We're here to help!</p>
+      </div>
+
+      <div class="cards-wrapper">
+        <div class="info-card">
+          <div class="emoji-wrapper">🐼</div>
+          <h3>Email Support</h3>
+          <p>Reach out to us via email</p>
+          <a href="mailto:hello@quizera.com">hello@quizera.com</a>
+        </div>
+
+        <div class="info-card">
+          <div class="emoji-wrapper">🦊</div>
+          <h3>Call Us</h3>
+          <p>Available Mon-Fri 9AM-5PM</p>
+          <a href="tel:+1234567890">+1 (234) 567-890</a>
+        </div>
+
+        <div class="info-card">
+          <div class="emoji-wrapper">🐨</div>
+          <h3>Visit Us</h3>
+          <p>Come see us in person</p>
+          <p>456 Education Ave<br />Learning City, LC 54321</p>
+        </div>
+      </div>
+
+      <div class="message-form">
+        <h2>Drop Us a Message</h2>
+        <form method="POST">
+          <div class="input-wrapper">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" required />
+          </div>
+
+          <div class="input-wrapper">
+            <label for="user-email">Email Address</label>
+            <input type="email" id="user-email" name="user-email" required />
+          </div>
+
+          <div class="input-wrapper">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" required />
+          </div>
+
+          <div class="input-wrapper">
+            <label for="message">Your Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+
+          <button type="submit" class="send-button">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+m%

@@ -1,0 +1,2119 @@
+{% extends "base.html" %} {% block title %}Chat - Quizera{% endblock %} {% block
+content %}
+<!-- Google Font -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  /* Ensure header stays visible */
+  .navbar,
+  header {
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+
+  /* Messenger-like Chat Container */
+  .chat-container {
+    background: #ffffff;
+    min-height: 100vh;
+    padding: 2rem 0 1rem 0;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .chat-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    height: calc(100vh - 120px);
+    display: flex;
+    gap: 0;
+    background: #d9d9d9;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Sidebar - Modern Dark Blue Design */
+  .chat-sidebar {
+    width: 360px;
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+    background: #181e57;
+  }
+
+  .sidebar-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.5px;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .sidebar-search {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    padding: 12px 48px 12px 16px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    font-size: 15px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .sidebar-search input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .sidebar-search input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000000;
+    font-size: 20px;
+    pointer-events: none;
+    background: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-loading {
+    position: absolute;
+    right: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+  }
+
+  /* Search Results Dropdown */
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    right: 20px;
+    background: #181e57;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .search-results.show {
+    display: block;
+  }
+
+  .search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .search-result-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+
+  .search-result-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+    font-size: 18px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .search-result-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .search-result-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #ffffff;
+    margin-bottom: 2px;
+  }
+
+  .search-result-meta {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .search-status-badge.online {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+  }
+
+  .search-status-badge.offline {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .search-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .search-status-dot.online {
+    background: #10b981;
+  }
+
+  .search-status-dot.offline {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .no-search-results {
+    padding: 32px 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .no-search-results i {
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 12px;
+  }
+
+  .no-search-results p {
+    font-size: 14px;
+    margin: 8px 0 0 0;
+  }
+
+  .search-hint {
+    padding: 12px 16px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* User List - Modern Dark Design with Status Dots */
+  .users-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .user-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border-left: 3px solid transparent;
+  }
+
+  .user-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .user-item.active {
+    background: rgba(255, 255, 255, 0.12);
+    border-left-color: #667eea;
+  }
+
+  .user-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+    font-size: 18px;
+    margin-right: 14px;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .user-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #ffffff;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .user-message-time {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: "Poppins", sans-serif;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  .user-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .user-status-dot.online {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  }
+
+  .user-status-dot.offline {
+    background: #6b7280;
+  }
+
+  .user-last-message {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* Chat Main Area */
+  .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #d9d9d9;
+  }
+
+  .chat-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #c0c0c0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #d9d9d9;
+  }
+
+  .chat-header .user-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .chat-header-info {
+    flex: 1;
+  }
+
+  .chat-header-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1a1d2e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .chat-header-status {
+    font-size: 13px;
+    color: #65676b;
+    margin-top: 2px;
+  }
+
+  .chat-header-status.online {
+    color: #10b981;
+  }
+
+  .header-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .header-status-dot.online {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  }
+
+  .header-status-dot.offline {
+    background: #777777;
+  }
+
+  /* Messages Area */
+  /* Messages Area */
+  .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px 80px 24px;
+    background: #d9d9d9;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  /* Cute sticker background pattern */
+  .messages-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' font-size='20' opacity='0.08'%3E⭐%3C/text%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' font-size='18' opacity='0.08'%3E💬%3C/text%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' font-size='18' opacity='0.08'%3E💭%3C/text%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' font-size='16' opacity='0.08'%3E✨%3C/text%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' font-size='18' opacity='0.08'%3E💫%3C/text%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' font-size='16' opacity='0.08'%3E🌟%3C/text%3E%3C/svg%3E");
+    background-position: 0 0, 40px 40px, 80px 20px, 120px 60px, 160px 10px,
+      200px 50px;
+    background-size: 120px 120px;
+    background-repeat: repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .messages-container > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .message-group {
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    animation: messageSlideIn 0.3s ease-out;
+  }
+
+  @keyframes messageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .message-group.own {
+    flex-direction: row-reverse;
+  }
+
+  .message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .message-group.own .message-avatar {
+    display: none;
+  }
+
+  .message-content-wrapper {
+    max-width: 65%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .message-bubble {
+    padding: 10px 16px;
+    border-radius: 20px;
+    word-wrap: break-word;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 4px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    font-family: "Poppins", sans-serif;
+  }
+
+  .message-group.own .message-bubble {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 6px;
+    margin-left: auto;
+  }
+
+  .message-group.other .message-bubble {
+    background: white;
+    color: #1a1d2e;
+    border-bottom-left-radius: 6px;
+    border: 1px solid #e8eaed;
+  }
+
+  .message-time {
+    font-size: 11px;
+    color: #9ca3af;
+    padding: 0 12px;
+    margin-top: 2px;
+  }
+
+  .message-group.own .message-time {
+    text-align: right;
+  }
+
+  /* Typing Indicator */
+  .typing-indicator {
+    display: none;
+    padding: 12px 24px;
+    color: #65676b;
+    font-size: 13px;
+    background: #d9d9d9;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .typing-dots {
+    display: inline-block;
+  }
+
+  .typing-dots::after {
+    content: "";
+    animation: typingDots 1.5s infinite;
+  }
+
+  @keyframes typingDots {
+    0%,
+    20% {
+      content: "";
+    }
+    40% {
+      content: ".";
+    }
+    60% {
+      content: "..";
+    }
+    80%,
+    100% {
+      content: "...";
+    }
+  }
+
+  /* Message Input - Oblong Design */
+  .message-input-container {
+    padding: 16px 24px;
+    border-top: 1px solid #c0c0c0;
+    background: #d9d9d9;
+  }
+
+  .message-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 8px 20px;
+    border: none;
+    box-shadow: none;
+  }
+
+  .message-textarea {
+    flex: 1;
+    border: none;
+    background: transparent;
+    resize: none;
+    max-height: 120px;
+    font-size: 15px;
+    font-family: "Poppins", sans-serif;
+    padding: 8px 0;
+    color: #1a1d2e;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .message-textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    border: none !important;
+  }
+
+  .message-textarea:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .message-textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  .message-textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .send-button {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    color: #000000;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .send-button:hover:not(:disabled) {
+    opacity: 0.7;
+  }
+
+  .send-button:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  .send-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Empty State */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #65676b;
+    background: #d9d9d9;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .empty-state i {
+    font-size: 72px;
+    margin-bottom: 20px;
+    opacity: 0.2;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .empty-state h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: #1a1d2e;
+  }
+
+  .empty-state p {
+    font-size: 15px;
+    color: #9ca3af;
+  }
+
+  /* Scrollbar styling */
+  .users-list::-webkit-scrollbar,
+  .messages-container::-webkit-scrollbar,
+  .search-results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .users-list::-webkit-scrollbar-track,
+  .messages-container::-webkit-scrollbar-track,
+  .search-results::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .users-list::-webkit-scrollbar-thumb,
+  .messages-container::-webkit-scrollbar-thumb,
+  .search-results::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .users-list::-webkit-scrollbar-thumb:hover,
+  .messages-container::-webkit-scrollbar-thumb:hover,
+  .search-results::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .messages-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .messages-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  /* Status indicators */
+  .message-status {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-left: 4px;
+  }
+
+  .message-status.delivered {
+    color: #667eea;
+  }
+
+  .message-status.read {
+    color: #10b981;
+  }
+
+  /* Offline indicator */
+  .offline-banner {
+    background: linear-gradient(90deg, #fee2e2 0%, #fecaca 100%);
+    color: #991b1b;
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 13px;
+    display: none;
+    font-weight: 500;
+  }
+
+  .offline-banner.show {
+    display: block;
+  }
+
+  /* Loading state */
+  .loading-messages {
+    text-align: center;
+    padding: 24px;
+    color: #65676b;
+    font-size: 14px;
+  }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(102, 126, 234, 0.2);
+    border-radius: 50%;
+    border-top-color: #667eea;
+    animation: spin 0.8s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<div class="chat-container">
+  <div class="container-fluid px-3">
+    <!-- Offline Banner -->
+    <div class="offline-banner" id="offlineBanner">
+      ⚠️ You are offline. Messages will be sent when you reconnect.
+    </div>
+
+    <div class="chat-wrapper">
+      <!-- Sidebar -->
+      <div class="chat-sidebar">
+        <div class="sidebar-header">
+          <h2>Chats</h2>
+        </div>
+        <div class="sidebar-search">
+          <input
+            type="text"
+            id="userSearch"
+            placeholder="Search here"
+            autocomplete="off"
+          />
+          <i class="fas fa-search search-icon"></i>
+          <span class="search-loading" id="searchLoading" style="display: none">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+          <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="users-list" id="onlineUsersList">
+          <!-- Users will be populated here -->
+        </div>
+      </div>
+
+      <!-- Main Chat Area -->
+      <div class="chat-main" id="chatMain">
+        <div class="empty-state" id="emptyState">
+          <i class="fas fa-comments"></i>
+          <h3>Your Messages</h3>
+          <p>Select a conversation or search for users to start messaging</p>
+        </div>
+
+        <div
+          id="activeChat"
+          style="display: none; flex-direction: column; height: 100%"
+        >
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div id="activeChatAvatar" class="user-avatar"></div>
+            <div class="chat-header-info">
+              <div class="chat-header-name" id="activeChatName">
+                <span
+                  id="activeChatStatusDot"
+                  class="header-status-dot offline"
+                ></span>
+              </div>
+              <div
+                class="chat-header-status"
+                id="activeChatStatus"
+                style="display: none"
+              >
+                Offline
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages -->
+          <div class="messages-container" id="messagesContainer">
+            <div
+              class="loading-messages"
+              id="loadingMessages"
+              style="display: none"
+            >
+              <div class="loading-spinner"></div>
+              <div style="margin-top: 8px">Loading messages...</div>
+            </div>
+          </div>
+
+          <!-- Typing Indicator -->
+          <div class="typing-indicator" id="typingIndicator">
+            <span class="typing-user"></span> is typing<span
+              class="typing-dots"
+            ></span>
+          </div>
+
+          <!-- Input -->
+          <div class="message-input-container">
+            <div class="message-input-wrapper">
+              <textarea
+                class="message-textarea"
+                id="messageInput"
+                placeholder="Type your message here..."
+                rows="1"
+              ></textarea>
+              <button class="send-button" id="sendButton" type="button">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Load Socket.IO -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+<script>
+  // ============================================
+  // GLOBAL VARIABLES & CONFIGURATION
+  // ============================================
+
+  let socket;
+  let currentUser = {
+    id: "{{ user_id }}",
+    username: "{{ username }}",
+    role: "{{ role }}",
+  };
+  let typingTimer;
+  let isTyping = false;
+  let activePeer = null;
+  let activeConversationId = null;
+  let isOnline = navigator.onLine;
+
+  // Storage keys for persistent data
+  const STORAGE_KEYS = {
+    CONVERSATIONS: "quizera_conversations_v2",
+    LAST_ACTIVE: "quizera_last_dm",
+    PENDING_MESSAGES: "quizera_pending_messages",
+    SYNC_TIMESTAMP: "quizera_last_sync",
+    USER_DATA: "quizera_user_data",
+  };
+
+  // In-memory caches
+  const messageCache = {};
+  const lastMessageCache = {};
+  const userDataCache = {};
+  const onlineUsersSet = new Set();
+  let pendingMessages = [];
+
+  // Search state
+  let searchTimeout;
+  let isSearching = false;
+
+  // ============================================
+  // PERSISTENT STORAGE MANAGER
+  // ============================================
+
+  const StorageManager = {
+    // Save all conversations to localStorage
+    saveAllConversations() {
+      try {
+        const data = {
+          messages: messageCache,
+          lastMessages: lastMessageCache,
+          userData: userDataCache,
+          timestamp: new Date().toISOString(),
+          version: "2.0",
+        };
+        localStorage.setItem(STORAGE_KEYS.CONVERSATIONS, JSON.stringify(data));
+        console.log("💾 Saved all conversations to localStorage");
+        return true;
+      } catch (e) {
+        console.error("❌ Error saving conversations:", e);
+        if (e.name === "QuotaExceededError") {
+          this.cleanup();
+          return false;
+        }
+        return false;
+      }
+    },
+
+    // Load all conversations from localStorage
+    loadAllConversations() {
+      try {
+        const cached = localStorage.getItem(STORAGE_KEYS.CONVERSATIONS);
+        if (cached) {
+          const data = JSON.parse(cached);
+          Object.assign(messageCache, data.messages || {});
+          Object.assign(lastMessageCache, data.lastMessages || {});
+          Object.assign(userDataCache, data.userData || {});
+          console.log(
+            `✅ Loaded ${
+              Object.keys(messageCache).length
+            } conversations from localStorage`
+          );
+          return true;
+        }
+        console.log("📭 No cached conversations found");
+        return false;
+      } catch (e) {
+        console.error("❌ Error loading conversations:", e);
+        return false;
+      }
+    },
+
+    // Save individual conversation
+    saveConversation(conversationId) {
+      try {
+        this.saveAllConversations();
+        return true;
+      } catch (e) {
+        console.error("❌ Error saving conversation:", e);
+        return false;
+      }
+    },
+
+    // Save pending messages (for offline mode)
+    savePendingMessages() {
+      try {
+        sessionStorage.setItem(
+          STORAGE_KEYS.PENDING_MESSAGES,
+          JSON.stringify(pendingMessages)
+        );
+        console.log(`💾 Saved ${pendingMessages.length} pending messages`);
+        return true;
+      } catch (e) {
+        console.error("❌ Error saving pending messages:", e);
+        return false;
+      }
+    },
+
+    // Load pending messages
+    loadPendingMessages() {
+      try {
+        const pending = sessionStorage.getItem(STORAGE_KEYS.PENDING_MESSAGES);
+        if (pending) {
+          pendingMessages = JSON.parse(pending);
+          console.log(`📤 Loaded ${pendingMessages.length} pending messages`);
+          return true;
+        }
+        return false;
+      } catch (e) {
+        console.error("❌ Error loading pending messages:", e);
+        return false;
+      }
+    },
+
+    // Cleanup old messages (keep last 30 days)
+    cleanup() {
+      try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        let totalRemoved = 0;
+        Object.keys(messageCache).forEach((convId) => {
+          const originalLength = (messageCache[convId] || []).length;
+          messageCache[convId] = (messageCache[convId] || []).filter(
+            (msg) => new Date(msg.timestamp) > thirtyDaysAgo
+          );
+          totalRemoved += originalLength - messageCache[convId].length;
+        });
+
+        this.saveAllConversations();
+        console.log(`🧹 Cleaned up ${totalRemoved} old messages`);
+        return totalRemoved;
+      } catch (e) {
+        console.error("❌ Cleanup error:", e);
+        return 0;
+      }
+    },
+
+    // Clear all data (for logout)
+    clearAll() {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.CONVERSATIONS);
+        localStorage.removeItem(STORAGE_KEYS.LAST_ACTIVE);
+        sessionStorage.removeItem(STORAGE_KEYS.PENDING_MESSAGES);
+        console.log("🗑️ Cleared all chat data");
+      } catch (e) {
+        console.error("❌ Error clearing data:", e);
+      }
+    },
+  };
+
+  // ============================================
+  // OFFLINE SYNC MANAGER
+  // ============================================
+
+  const SyncManager = {
+    // Add message to pending queue
+    addPending(messageData) {
+      const pendingMsg = {
+        ...messageData,
+        pendingId: Date.now() + "_" + Math.random(),
+        status: "pending",
+      };
+      pendingMessages.push(pendingMsg);
+      StorageManager.savePendingMessages();
+      console.log("📤 Message queued for sending when online");
+      return pendingMsg;
+    },
+
+    // Sync all pending messages
+    async syncAll() {
+      if (!socket || !socket.connected || pendingMessages.length === 0) {
+        return;
+      }
+
+      console.log(`🔄 Syncing ${pendingMessages.length} pending messages...`);
+
+      const toSync = [...pendingMessages];
+      pendingMessages = [];
+
+      for (const msg of toSync) {
+        if (msg.status === "pending") {
+          socket.emit("send_dm", msg);
+          console.log(`✅ Sent pending message: ${msg.pendingId}`);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+      }
+
+      StorageManager.savePendingMessages();
+      console.log("✅ All pending messages synced");
+    },
+
+    // Update online status
+    updateOnlineStatus(online) {
+      isOnline = online;
+      const banner = document.getElementById("offlineBanner");
+
+      if (!online) {
+        banner.classList.add("show");
+        console.log("📡 You are offline");
+      } else {
+        banner.classList.remove("show");
+        console.log("🌐 You are online");
+        this.syncAll();
+      }
+    },
+  };
+
+  // ============================================
+  // SEARCH FUNCTIONALITY
+  // ============================================
+
+  function initializeSearch() {
+    const searchInput = document.getElementById("userSearch");
+    const searchResults = document.getElementById("searchResults");
+    const searchLoading = document.getElementById("searchLoading");
+
+    if (!searchInput || !searchResults) return;
+
+    // Handle search input
+    searchInput.addEventListener("input", function () {
+      const query = this.value.trim();
+
+      // Clear previous timeout
+      clearTimeout(searchTimeout);
+
+      // Hide results if query is too short
+      if (query.length < 2) {
+        searchResults.classList.remove("show");
+        searchResults.innerHTML = "";
+        searchLoading.style.display = "none";
+        return;
+      }
+
+      // Show loading
+      searchLoading.style.display = "block";
+
+      // Debounce search
+      searchTimeout = setTimeout(() => {
+        performSearch(query);
+      }, 300);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener("click", function (e) {
+      if (
+        !searchInput.contains(e.target) &&
+        !searchResults.contains(e.target)
+      ) {
+        searchResults.classList.remove("show");
+      }
+    });
+
+    // Reopen results when clicking on search input
+    searchInput.addEventListener("focus", function () {
+      if (this.value.trim().length >= 2 && searchResults.innerHTML) {
+        searchResults.classList.add("show");
+      }
+    });
+
+    // Clear search on Escape key
+    searchInput.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        this.value = "";
+        searchResults.classList.remove("show");
+        searchResults.innerHTML = "";
+      }
+    });
+  }
+
+  function performSearch(query) {
+    const searchResults = document.getElementById("searchResults");
+    const searchLoading = document.getElementById("searchLoading");
+
+    if (isSearching) return;
+    isSearching = true;
+
+    fetch(`/api/chat/search-users?q=${encodeURIComponent(query)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        searchLoading.style.display = "none";
+        isSearching = false;
+
+        if (data.success && data.users) {
+          displaySearchResults(data.users, query);
+        } else {
+          searchResults.innerHTML = `
+            <div class="no-search-results">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>Error searching users. Please try again.</p>
+            </div>
+          `;
+          searchResults.classList.add("show");
+        }
+      })
+      .catch((error) => {
+        console.error("Search error:", error);
+        searchLoading.style.display = "none";
+        isSearching = false;
+        searchResults.innerHTML = `
+          <div class="no-search-results">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Connection error. Please check your internet.</p>
+          </div>
+        `;
+        searchResults.classList.add("show");
+      });
+  }
+
+  function displaySearchResults(users, query) {
+    const searchResults = document.getElementById("searchResults");
+
+    if (users.length === 0) {
+      searchResults.innerHTML = `
+        <div class="no-search-results">
+          <i class="fas fa-user-slash"></i>
+          <p><strong>No users found</strong></p>
+          <p>Try searching with a different name</p>
+        </div>
+      `;
+      searchResults.classList.add("show");
+      return;
+    }
+
+    let html = `<div class="search-hint"><i class="fas fa-info-circle"></i> Found ${
+      users.length
+    } user${users.length > 1 ? "s" : ""} matching "${escapeHtml(query)}"</div>`;
+
+    users.forEach((user) => {
+      const avatar = generateAvatar(user.username);
+      const isOnlineNow = user.is_online;
+      const statusClass = isOnlineNow ? "online" : "offline";
+      const statusText = isOnlineNow ? "Online" : "Offline";
+
+      let lastMessagePreview = "";
+      if (user.last_message) {
+        const isOwn = user.last_message.from_user_id === currentUser.id;
+        const content =
+          user.last_message.content.length > 40
+            ? user.last_message.content.substring(0, 40) + "..."
+            : user.last_message.content;
+        lastMessagePreview = `
+          <div class="user-last-message" style="margin-top: 4px;">
+            ${
+              isOwn
+                ? '<i class="fas fa-reply" style="font-size: 11px; margin-right: 4px;"></i>You: '
+                : ""
+            }
+            ${escapeHtml(content)}
+          </div>
+        `;
+      }
+
+      html += `
+        <div class="search-result-item"
+             data-user-id="${user.id}"
+             data-username="${escapeHtml(user.username)}"
+             data-role="${escapeHtml(user.role)}">
+          <div class="search-result-avatar" style="background: ${avatar.color}">
+            ${avatar.text}
+          </div>
+          <div class="search-result-info">
+            <div class="search-result-name">${escapeHtml(user.username)}</div>
+            <div class="search-result-meta">
+              <span class="search-status-badge ${statusClass}">
+                <span class="search-status-dot ${statusClass}"></span>
+                ${statusText}
+              </span>
+              <span>•</span>
+              <span>${escapeHtml(user.role)}</span>
+            </div>
+            ${lastMessagePreview}
+          </div>
+        </div>
+      `;
+    });
+
+    searchResults.innerHTML = html;
+    searchResults.classList.add("show");
+
+    // Add click handlers to search results
+    searchResults.querySelectorAll(".search-result-item").forEach((item) => {
+      item.addEventListener("click", function () {
+        const userId = this.getAttribute("data-user-id");
+        const username = this.getAttribute("data-username");
+        const role = this.getAttribute("data-role");
+
+        // Clear search
+        const searchInput = document.getElementById("userSearch");
+        searchInput.value = "";
+        searchResults.classList.remove("show");
+        searchResults.innerHTML = "";
+
+        // Start conversation
+        const peer = {
+          id: userId,
+          username: username,
+          role: role,
+        };
+
+        startConversation(peer);
+
+        // Add to user list if not already there
+        if (!document.querySelector(`.user-item[data-user-id="${userId}"]`)) {
+          addUserToList(peer);
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // INITIALIZATION
+  // ============================================
+
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("🚀 Initializing Quizera Chat...");
+
+    // Load cached data IMMEDIATELY before socket connects
+    StorageManager.loadAllConversations();
+    StorageManager.loadPendingMessages();
+    populateUserListFromCache();
+
+    // Initialize search
+    initializeSearch();
+
+    // Initialize socket connection
+    socket = io();
+
+    const messageInput = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+
+    // ============================================
+    // SOCKET EVENT HANDLERS
+    // ============================================
+
+    socket.on("connect", function () {
+      console.log("✅ Connected to chat server");
+      SyncManager.updateOnlineStatus(true);
+
+      socket.emit("join_chat", {
+        user_id: currentUser.id,
+        username: currentUser.username,
+        role: currentUser.role,
+      });
+
+      // Restore last active conversation
+      setTimeout(() => restoreLastConversation(), 300);
+
+      // Sync pending messages
+      setTimeout(() => SyncManager.syncAll(), 500);
+    });
+
+    socket.on("disconnect", function () {
+      console.log("❌ Disconnected from chat server");
+      SyncManager.updateOnlineStatus(false);
+    });
+
+    socket.on("reconnect", function () {
+      console.log("🔄 Reconnected to chat server");
+      SyncManager.updateOnlineStatus(true);
+
+      // Reload current conversation from server
+      if (activePeer) {
+        loadChatHistoryFromServer(activePeer.id);
+      }
+    });
+
+    socket.on("dm_message", function (data) {
+      console.log("📨 Received message:", data);
+      handleIncomingMessage(data);
+    });
+
+    socket.on("user_joined", function (data) {
+      console.log("👋 User joined:", data);
+      updateOnlineUsers(data.online_users || []);
+    });
+
+    socket.on("user_left", function (data) {
+      console.log("👋 User left:", data);
+      updateOnlineUsers(data.online_users || []);
+    });
+
+    socket.on("online_users", function (data) {
+      console.log("👥 Online users updated");
+      updateOnlineUsers(data.users || []);
+    });
+
+    socket.on("user_typing_dm", function (data) {
+      if (
+        data.conversation_id === activeConversationId &&
+        String(data.user_id) !== String(currentUser.id)
+      ) {
+        showTypingIndicator(data.username || "");
+      }
+    });
+
+    socket.on("user_stopped_typing_dm", function (data) {
+      if (data.conversation_id === activeConversationId) {
+        hideTypingIndicator();
+      }
+    });
+
+    socket.on("error", function (data) {
+      console.error("❌ Socket error:", data.message);
+      showNotification(data.message, "error");
+    });
+
+    // ============================================
+    // INPUT EVENT HANDLERS
+    // ============================================
+
+    messageInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      } else {
+        handleTyping();
+      }
+    });
+
+    messageInput.addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 120) + "px";
+      handleTyping();
+    });
+
+    sendButton.addEventListener("click", sendMessage);
+
+    // ============================================
+    // LIFECYCLE HANDLERS
+    // ============================================
+
+    // Save before page unload
+    window.addEventListener("beforeunload", () => {
+      console.log("💾 Saving data before page unload...");
+      if (activePeer) {
+        localStorage.setItem(
+          STORAGE_KEYS.LAST_ACTIVE,
+          JSON.stringify(activePeer)
+        );
+      }
+      StorageManager.saveAllConversations();
+      StorageManager.savePendingMessages();
+    });
+
+    // Auto-save every 10 seconds
+    setInterval(() => {
+      if (Object.keys(messageCache).length > 0) {
+        StorageManager.saveAllConversations();
+      }
+    }, 10000);
+
+    // Online/Offline detection
+    window.addEventListener("online", () => {
+      console.log("🌐 Network back online");
+      SyncManager.updateOnlineStatus(true);
+    });
+
+    window.addEventListener("offline", () => {
+      console.log("📡 Network went offline");
+      SyncManager.updateOnlineStatus(false);
+    });
+
+    console.log("✅ Chat initialized successfully");
+  });
+
+  // ============================================
+  // MESSAGE HANDLING
+  // ============================================
+
+  function handleIncomingMessage(data) {
+    const cid = data.conversation_id;
+
+    if (!messageCache[cid]) {
+      messageCache[cid] = [];
+    }
+
+    // Check for duplicates using multiple criteria
+    const isDuplicate = messageCache[cid].some((m) => {
+      const sameUser = m.from_user_id === data.from_user_id;
+      const sameContent = m.content === data.content;
+      const sameTime =
+        Math.abs(new Date(m.timestamp) - new Date(data.timestamp)) < 1000;
+      const sameId = m.id && data.id && m.id === data.id;
+
+      return sameId || (sameUser && sameContent && sameTime);
+    });
+
+    if (!isDuplicate) {
+      messageCache[cid].push(data);
+
+      lastMessageCache[cid] = {
+        content: data.content,
+        timestamp: data.timestamp,
+        from_user_id: data.from_user_id,
+        from_username: data.from_username,
+        to_username: data.to_username,
+      };
+
+      // Cache user data
+      if (data.from_user_id && data.from_username) {
+        userDataCache[data.from_user_id] = {
+          username: data.from_username,
+          lastSeen: data.timestamp,
+        };
+      }
+
+      StorageManager.saveAllConversations();
+      updateUserListPreview(cid);
+
+      if (cid === activeConversationId) {
+        displayMessage(data);
+      }
+
+      console.log(`💬 Message added to conversation ${cid}`);
+    } else {
+      console.log(`⏭️ Duplicate message ignored`);
+    }
+  }
+
+  function sendMessage() {
+    const messageInput = document.getElementById("messageInput");
+    const content = messageInput.value.trim();
+
+    if (!activePeer || !content) {
+      return;
+    }
+
+    const messageData = {
+      conversation_id: activeConversationId,
+      content: content,
+      from_user_id: String(currentUser.id),
+      from_username: currentUser.username,
+      to_user_id: String(activePeer.id),
+      to_username: activePeer.username,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Add to cache immediately (optimistic update)
+    if (!messageCache[activeConversationId]) {
+      messageCache[activeConversationId] = [];
+    }
+    messageCache[activeConversationId].push(messageData);
+
+    lastMessageCache[activeConversationId] = {
+      content: content,
+      timestamp: messageData.timestamp,
+      from_user_id: currentUser.id,
+      from_username: currentUser.username,
+      to_username: activePeer.username,
+    };
+
+    displayMessage(messageData);
+    StorageManager.saveAllConversations();
+    updateUserListPreview(activeConversationId);
+
+    // Send via socket or queue if offline
+    if (socket && socket.connected && isOnline) {
+      socket.emit("send_dm", messageData);
+      console.log("✅ Message sent via socket");
+    } else {
+      SyncManager.addPending(messageData);
+      console.log("📤 Message queued - will send when online");
+    }
+
+    // Clear input
+    messageInput.value = "";
+    messageInput.style.height = "auto";
+
+    // Stop typing indicator
+    if (isTyping && socket && socket.connected) {
+      socket.emit("stop_typing_dm", { conversation_id: activeConversationId });
+      isTyping = false;
+    }
+  }
+
+  function displayMessage(data) {
+    const messagesContainer = document.getElementById("messagesContainer");
+    const loadingEl = document.getElementById("loadingMessages");
+    if (loadingEl) loadingEl.style.display = "none";
+
+    const isOwn = String(data.from_user_id) === String(currentUser.id);
+
+    const messageGroup = document.createElement("div");
+    messageGroup.className = `message-group ${isOwn ? "own" : "other"}`;
+    messageGroup.setAttribute("data-message-id", data.id || "");
+
+    const avatar = generateAvatar(
+      isOwn
+        ? currentUser.username
+        : activePeer?.username || data.from_username || ""
+    );
+    const time = formatTime(data.timestamp);
+
+    messageGroup.innerHTML = `
+      ${
+        !isOwn
+          ? `<div class="message-avatar" style="background: ${avatar.color}">${avatar.text}</div>`
+          : ""
+      }
+      <div class="message-content-wrapper">
+        <div class="message-bubble">
+          ${escapeHtml(data.content || "")}
+        </div>
+        <div class="message-time">${time}</div>
+      </div>
+    `;
+
+    messagesContainer.appendChild(messageGroup);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  function renderMessages(list) {
+    const messagesContainer = document.getElementById("messagesContainer");
+    const loadingEl = document.getElementById("loadingMessages");
+    if (loadingEl) loadingEl.style.display = "none";
+
+    messagesContainer.innerHTML = "";
+
+    if (!list || list.length === 0) {
+      messagesContainer.innerHTML =
+        '<div style="text-align: center; padding: 40px; color: #65676b;">No messages yet. Start the conversation!</div>';
+      return;
+    }
+
+    list.forEach((m) => displayMessage(m));
+  }
+
+  // ============================================
+  // CONVERSATION MANAGEMENT
+  // ============================================
+
+  function startConversation(peer) {
+    console.log("💬 Starting conversation with:", peer.username);
+
+    activePeer = peer;
+    activeConversationId = getConversationId(currentUser.id, activePeer.id);
+
+    localStorage.setItem(STORAGE_KEYS.LAST_ACTIVE, JSON.stringify(peer));
+
+    if (socket && socket.connected) {
+      socket.emit("join_dm", {
+        conversation_id: activeConversationId,
+        peer_id: activePeer.id,
+      });
+    }
+
+    // Show chat area
+    document.getElementById("emptyState").style.display = "none";
+    const activeChat = document.getElementById("activeChat");
+    activeChat.style.display = "flex";
+
+    // Update header
+    const avatar = generateAvatar(peer.username);
+    document.getElementById("activeChatAvatar").style.background = avatar.color;
+    document.getElementById("activeChatAvatar").textContent = avatar.text;
+    document.getElementById("activeChatName").textContent = peer.username;
+
+    updatePeerOnlineStatus(peer.id);
+
+    // Enable input
+    const messageInput = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+    messageInput.disabled = false;
+    sendButton.disabled = false;
+    messageInput.placeholder = "Type a message...";
+
+    // Focus on input
+    setTimeout(() => messageInput.focus(), 100);
+
+    // Load messages
+    loadConversation();
+
+    // Highlight selected user
+    document
+      .querySelectorAll(".user-item")
+      .forEach((el) => el.classList.remove("active"));
+    const el = document.querySelector(`.user-item[data-user-id="${peer.id}"]`);
+    if (el) el.classList.add("active");
+  }
+
+  function loadConversation() {
+    const messagesContainer = document.getElementById("messagesContainer");
+    const loadingEl = document.getElementById("loadingMessages");
+
+    hideTypingIndicator();
+
+    // Show cached messages FIRST
+    const cachedMessages = messageCache[activeConversationId];
+    if (cachedMessages && cachedMessages.length > 0) {
+      console.log(`📨 Displaying ${cachedMessages.length} cached messages`);
+      renderMessages(cachedMessages);
+    } else {
+      console.log("📭 No cached messages for this conversation");
+      // Show empty state instead of loading message for new conversations
+      messagesContainer.innerHTML =
+        '<div style="text-align: center; padding: 40px; color: #65676b;">No messages yet. Start the conversation!</div>';
+    }
+
+    // Then sync with server
+    loadChatHistoryFromServer(activePeer.id);
+  }
+
+  function restoreLastConversation() {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem(STORAGE_KEYS.LAST_ACTIVE) || "null"
+      );
+      if (saved && saved.id && String(saved.id) !== String(currentUser.id)) {
+        console.log("🔄 Restoring last conversation:", saved.username);
+        startConversation(saved);
+      }
+    } catch (e) {
+      console.error("❌ Error restoring conversation:", e);
+    }
+  }
+
+  function loadChatHistoryFromServer(peerId) {
+    console.log(`🔄 Fetching chat history from server for peer: ${peerId}`);
+
+    fetch(`/api/chat/history?peer_id=${encodeURIComponent(peerId)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.messages)) {
+          console.log(
+            `✅ Received ${data.messages.length} messages from server`
+          );
+
+          if (data.messages.length === 0) {
+            renderMessages([]);
+            return;
+          }
+
+          // Create a map of existing messages
+          const existingMap = new Map();
+          (messageCache[activeConversationId] || []).forEach((m) => {
+            const key = `${m.from_user_id}_${m.timestamp}_${m.content}`;
+            existingMap.set(key, m);
+          });
+
+          // Merge server messages
+          const mergedMessages = [...data.messages];
+
+          // Add any cached messages not in server response
+          (messageCache[activeConversationId] || []).forEach((m) => {
+            const serverHasIt = data.messages.some(
+              (sm) =>
+                sm.id === m.id ||
+                (sm.from_user_id === m.from_user_id &&
+                  sm.content === m.content &&
+                  Math.abs(new Date(sm.timestamp) - new Date(m.timestamp)) <
+                    1000)
+            );
+
+            if (!serverHasIt) {
+              mergedMessages.push(m);
+            }
+          });
+
+          // Sort by timestamp
+          mergedMessages.sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          );
+
+          // Update cache
+          messageCache[activeConversationId] = mergedMessages;
+
+          // Update last message
+          if (mergedMessages.length > 0) {
+            const lastMsg = mergedMessages[mergedMessages.length - 1];
+            lastMessageCache[activeConversationId] = {
+              content: lastMsg.content,
+              timestamp: lastMsg.timestamp,
+              from_user_id: lastMsg.from_user_id,
+              from_username: lastMsg.from_username,
+              to_username: lastMsg.to_username,
+            };
+          }
+
+          StorageManager.saveAllConversations();
+          renderMessages(mergedMessages);
+          updateUserListPreview(activeConversationId);
+
+          console.log(
+            `✅ Conversation synced: ${mergedMessages.length} total messages`
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Error loading chat history:", error);
+        const loadingEl = document.getElementById("loadingMessages");
+        if (loadingEl) loadingEl.style.display = "none";
+
+        // Still show cached messages on error
+        if (messageCache[activeConversationId]) {
+          console.log("⚠️ Server error - displaying cached messages only");
+          renderMessages(messageCache[activeConversationId]);
+        }
+      });
+  }
+
+  // ============================================
+  // USER LIST MANAGEMENT
+  // ============================================
+
+  function populateUserListFromCache() {
+    try {
+      const processedUsers = new Set();
+
+      Object.keys(lastMessageCache).forEach((convId) => {
+        const parts = convId.replace("dm:", "").split(":");
+        const peerId = parts[0] === currentUser.id ? parts[1] : parts[0];
+
+        if (!processedUsers.has(peerId)) {
+          processedUsers.add(peerId);
+
+          const lastMsg = lastMessageCache[convId];
+          if (lastMsg) {
+            const peerUsername =
+              lastMsg.from_user_id === peerId
+                ? lastMsg.from_username
+                : lastMsg.to_username;
+
+            if (peerUsername) {
+              addUserToList(
+                {
+                  id: peerId,
+                  username: peerUsername,
+                  role: "offline",
+                },
+                lastMsg
+              );
+            }
+          }
+        }
+      });
+
+      console.log(`📋 Populated ${processedUsers.size} users from cache`);
+    } catch (e) {
+      console.error("❌ Error populating user list:", e);
+    }
+  }
+
+  function addUserToList(user, lastMsg = null) {
+    const onlineUsersList = document.getElementById("onlineUsersList");
+    const uid = String(user.id);
+
+    // Don't add yourself
+    if (uid === String(currentUser.id)) {
+      return;
+    }
+
+    // Check if user already exists
+    if (document.querySelector(`.user-item[data-user-id="${uid}"]`)) {
+      return;
+    }
+
+    const avatar = generateAvatar(user.username);
+    const userDiv = document.createElement("div");
+    userDiv.className = "user-item";
+    userDiv.setAttribute("data-user-id", uid);
+
+    let lastMessageHTML = "";
+    if (lastMsg && lastMsg.content) {
+      const isOwn = String(lastMsg.from_user_id) === String(currentUser.id);
+      const text =
+        lastMsg.content.length > 30
+          ? lastMsg.content.substring(0, 30) + "..."
+          : lastMsg.content;
+      lastMessageHTML = `<div class="user-last-message">${
+        isOwn ? "You: " : ""
+      }${escapeHtml(text)}</div>`;
+    }
+
+    userDiv.innerHTML = `
+      <div class="user-avatar" style="background: ${avatar.color}">
+        ${avatar.text}
+      </div>
+      <div class="user-info">
+        <div class="user-header">
+          <div class="user-name-wrapper">
+            <div class="user-status-dot offline"></div>
+            <div class="user-name">${escapeHtml(user.username)}</div>
+          </div>
+        </div>
+        ${lastMessageHTML}
+      </div>
+    `;
+
+    userDiv.addEventListener("click", () => {
+      startConversation({
+        id: uid,
+        username: user.username,
+        role: user.role || "unknown",
+      });
+    });
+
+    onlineUsersList.appendChild(userDiv);
+  }
+
+  function updateUserListPreview(conversationId) {
+    const parts = conversationId.replace("dm:", "").split(":");
+    const peerId = parts[0] === currentUser.id ? parts[1] : parts[0];
+
+    const userItem = document.querySelector(
+      `.user-item[data-user-id="${peerId}"]`
+    );
+    if (userItem) {
+      const lastMsg = lastMessageCache[conversationId];
+      if (lastMsg && lastMsg.content) {
+        let preview = userItem.querySelector(".user-last-message");
+        if (!preview) {
+          preview = document.createElement("div");
+          preview.className = "user-last-message";
+          userItem.querySelector(".user-info").appendChild(preview);
+        }
+        const isOwn = String(lastMsg.from_user_id) === String(currentUser.id);
+        const text =
+          lastMsg.content.length > 30
+            ? lastMsg.content.substring(0, 30) + "..."
+            : lastMsg.content;
+        preview.textContent = (isOwn ? "You: " : "") + text;
+      }
+    }
+  }
+
+  function updateOnlineUsers(users) {
+    const filtered = (users || []).filter(
+      (u) => String(u.user_id || u.id) !== String(currentUser.id)
+    );
+
+    onlineUsersSet.clear();
+    filtered.forEach((u) => onlineUsersSet.add(String(u.user_id || u.id)));
+
+    if (activePeer) {
+      updatePeerOnlineStatus(activePeer.id);
+    }
+
+    // Update existing users or add new ones
+    filtered.forEach((user) => {
+      const uid = String(user.user_id || user.id);
+      const conversationId = getConversationId(currentUser.id, uid);
+      const lastMsg = lastMessageCache[conversationId];
+
+      let existingUser = document.querySelector(
+        `.user-item[data-user-id="${uid}"]`
+      );
+
+      if (existingUser) {
+        // Update status dot to online
+        const statusDot = existingUser.querySelector(".user-status-dot");
+        if (statusDot) {
+          statusDot.classList.remove("offline");
+          statusDot.classList.add("online");
+        }
+      } else {
+        // Add new user
+        addUserToList(
+          {
+            id: uid,
+            username: user.username || "",
+            role: user.role || "online",
+          },
+          lastMsg
+        );
+
+        // Update the newly added user's status dot
+        const newUserItem = document.querySelector(
+          `.user-item[data-user-id="${uid}"]`
+        );
+        if (newUserItem) {
+          const statusDot = newUserItem.querySelector(".user-status-dot");
+          if (statusDot) {
+            statusDot.classList.remove("offline");
+            statusDot.classList.add("online");
+          }
+        }
+      }
+    });
+
+    // Mark users as offline
+    document.querySelectorAll(".user-item").forEach((item) => {
+      const uid = item.getAttribute("data-user-id");
+      if (!filtered.find((u) => String(u.user_id || u.id) === uid)) {
+        const statusDot = item.querySelector(".user-status-dot");
+        if (statusDot) {
+          statusDot.classList.remove("online");
+          statusDot.classList.add("offline");
+        }
+      }
+    });
+
+    console.log(`👥 Updated online users: ${filtered.length} online`);
+  }
+
+  function updatePeerOnlineStatus(peerId) {
+    const isOnlineNow = onlineUsersSet.has(String(peerId));
+    const statusEl = document.getElementById("activeChatStatus");
+    const statusDot = document.getElementById("activeChatStatusDot");
+
+    if (isOnlineNow) {
+      statusEl.textContent = "Active now";
+      statusEl.classList.add("online");
+      if (statusDot) {
+        statusDot.classList.remove("offline");
+        statusDot.classList.add("online");
+      }
+    } else {
+      statusEl.textContent = "Offline";
+      statusEl.classList.remove("online");
+      if (statusDot) {
+        statusDot.classList.remove("online");
+        statusDot.classList.add("offline");
+      }
+    }
+  }
+
+  // ============================================
+  // TYPING INDICATORS
+  // ============================================
+
+  function handleTyping() {
+    if (!activePeer || !activeConversationId || !socket || !socket.connected) {
+      return;
+    }
+
+    if (!isTyping) {
+      isTyping = true;
+      socket.emit("typing_dm", {
+        conversation_id: activeConversationId,
+        username: currentUser.username,
+      });
+    }
+
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+      isTyping = false;
+      socket.emit("stop_typing_dm", { conversation_id: activeConversationId });
+    }, 1000);
+  }
+
+  function showTypingIndicator(username) {
+    const typingIndicator = document.getElementById("typingIndicator");
+    const typingUser = typingIndicator.querySelector(".typing-user");
+    typingUser.textContent = username || "";
+    typingIndicator.style.display = "block";
+  }
+
+  function hideTypingIndicator() {
+    const typingIndicator = document.getElementById("typingIndicator");
+    if (typingIndicator) typingIndicator.style.display = "none";
+  }
+
+  // ============================================
+  // UTILITY FUNCTIONS
+  // ============================================
+
+  function getConversationId(id1, id2) {
+    const [a, b] = [String(id1), String(id2)].sort();
+    return `dm:${a}:${b}`;
+  }
+
+  function generateAvatar(username) {
+    const colors = [
+      "#667eea",
+      "#764ba2",
+      "#f093fb",
+      "#4ecdc4",
+      "#45b7d1",
+      "#96ceb4",
+      "#feca57",
+      "#ff9ff3",
+      "#54a0ff",
+      "#5f27cd",
+    ];
+    const safe = (username || "").trim();
+    const initials =
+      safe
+        .split(" ")
+        .filter(Boolean)
+        .map((n) => n[0])
+        .join("")
+        .substr(0, 2)
+        .toUpperCase() || "?";
+    const colorIndex = (safe.length || 0) % colors.length;
+    return { text: initials, color: colors[colorIndex] };
+  }
+
+  function formatTime(timestamp) {
+    try {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diff = now - date;
+
+      if (diff < 86400000 && date.getDate() === now.getDate()) {
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } else if (diff < 172800000) {
+        return "Yesterday";
+      } else if (diff < 604800000) {
+        return date.toLocaleDateString([], { weekday: "short" });
+      } else {
+        return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      }
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text == null ? "" : String(text);
+    return div.innerHTML;
+  }
+
+  function showNotification(message, type = "info") {
+    console.log(`[${type.toUpperCase()}] ${message}`);
+    // You can add a toast notification here
+  }
+
+  console.log("✅ Quizera Chat Script Loaded");
+</script>
+
+{% endblock %}

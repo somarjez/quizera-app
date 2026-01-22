@@ -1,0 +1,981 @@
+{% extends 'base.html' %} {% block title %}Terms of Service - Quizera{% endblock
+%} {% block extra_head %}
+<style>
+  :root {
+    --quizera-dark: #0a1628;
+    --quizera-accent1: #f2994a;
+    --quizera-accent2: #f2c94c;
+    --text-primary: #1a2332;
+    --text-secondary: #4a5568;
+    --border-color: #e2e8f0;
+  }
+
+  /* Hero Section */
+  .terms-hero {
+    background-color: #bc781b;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg %3E%3Cpolygon fill='%23986b2b' points='1600 160 0 460 0 350 1600 50'/%3E%3Cpolygon fill='%23755e3b' points='1600 260 0 560 0 450 1600 150'/%3E%3Cpolygon fill='%2351524a' points='1600 360 0 660 0 550 1600 250'/%3E%3Cpolygon fill='%232e455a' points='1600 460 0 760 0 650 1600 350'/%3E%3Cpolygon fill='%230A386A' points='1600 800 0 800 0 750 1600 450'/%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: 0 -150px;
+    padding: 100px 20px 80px;
+    text-align: center;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .terms-hero::before {
+    display: none;
+  }
+
+  .terms-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .terms-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+
+  .terms-hero .subtitle {
+    font-size: 1.25rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .last-updated {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 24px;
+    border-radius: 25px;
+    margin-top: 30px;
+    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Main Content Container */
+  .terms-container {
+    max-width: 1300px;
+    margin: -40px auto 0;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Table of Contents */
+  .toc-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    margin-bottom: 50px;
+    border: 1px solid var(--border-color);
+  }
+
+  .toc-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toc-title i {
+    color: var(--quizera-accent1);
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+  }
+
+  .toc-list li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    background: #f8fafc;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+  }
+
+  .toc-list li a:hover {
+    background: #fff5eb;
+    border-left-color: var(--quizera-accent1);
+    color: var(--text-primary);
+    transform: translateX(5px);
+  }
+
+  .toc-list li a i {
+    margin-right: 10px;
+    color: var(--quizera-accent1);
+    font-size: 0.9rem;
+  }
+
+  /* Content Sections */
+  .terms-content {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 50px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+  }
+
+  .section {
+    margin-bottom: 60px;
+    padding-bottom: 50px;
+    border-bottom: 2px solid #f1f5f9;
+  }
+
+  .section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .section-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(
+      135deg,
+      var(--quizera-accent1),
+      var(--quizera-accent2)
+    );
+    color: #ffffff;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .section h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 30px 0 15px;
+  }
+
+  .section p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .section ul,
+  .section ol {
+    margin: 20px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .section ul li,
+  .section ol li {
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .section ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 10px;
+    color: var(--quizera-accent1);
+    font-weight: 700;
+  }
+
+  .section ol {
+    counter-reset: item;
+  }
+
+  .section ol li {
+    counter-increment: item;
+  }
+
+  .section ol li::before {
+    content: counter(item) ".";
+    position: absolute;
+    left: 10px;
+    color: var(--quizera-accent1);
+    font-weight: 700;
+  }
+
+  /* Info Boxes */
+  .info-box {
+    background: #f0f9ff;
+    border-left: 4px solid #3b82f6;
+    padding: 25px 30px;
+    border-radius: 10px;
+    margin: 30px 0;
+  }
+
+  .info-box.warning {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+  }
+
+  .info-box.important {
+    background: #fef2f2;
+    border-left-color: #ef4444;
+  }
+
+  .info-box-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+
+  .info-box-title i {
+    color: #3b82f6;
+  }
+
+  .info-box.warning .info-box-title i {
+    color: #f59e0b;
+  }
+
+  .info-box.important .info-box-title i {
+    color: #ef4444;
+  }
+
+  .info-box p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+
+  /* Contact Section - Mountain Design */
+  .contact-section {
+    background-color: #eccda2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cpolygon fill='%23986b2b' points='957 450 539 900 1396 900'/%3E%3Cpolygon fill='%2351524a' points='957 450 872.9 900 1396 900'/%3E%3Cpolygon fill='%23755e3b' points='-60 900 398 662 816 900'/%3E%3Cpolygon fill='%232e455a' points='337 900 398 662 816 900'/%3E%3Cpolygon fill='%23755e3b' points='1203 546 1552 900 876 900'/%3E%3Cpolygon fill='%231a3a4a' points='1203 546 1552 900 1162 900'/%3E%3Cpolygon fill='%23986b2b' points='641 695 886 900 367 900'/%3E%3Cpolygon fill='%230a2540' points='587 900 641 695 886 900'/%3E%3Cpolygon fill='%232e455a' points='1710 900 1401 632 1096 900'/%3E%3Cpolygon fill='%230a386a' points='1710 900 1401 632 1365 900'/%3E%3Cpolygon fill='%23755e3b' points='1210 900 971 687 725 900'/%3E%3Cpolygon fill='%23051e3e' points='943 900 1210 900 971 687'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    border-radius: 40px;
+    padding: 100px 60px;
+    text-align: center;
+    margin-top: 100px;
+    color: #ffffff;
+    box-shadow: 0 20px 60px rgba(188, 120, 27, 0.25),
+      0 8px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: ctaGlow 4s ease-in-out infinite alternate;
+  }
+
+  .contact-section::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+    animation: ctaShimmer 6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes ctaGlow {
+    0% {
+      box-shadow: 0 20px 60px rgba(188, 120, 27, 0.25),
+        0 8px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    100% {
+      box-shadow: 0 25px 70px rgba(188, 120, 27, 0.4),
+        0 12px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  @keyframes ctaShimmer {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .contact-section h2 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 25px;
+    color: #000000;
+    text-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-section p {
+    font-size: 1.4rem;
+    margin-bottom: 45px;
+    color: #000000;
+    font-weight: 500;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  }
+
+  .contact-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: linear-gradient(135deg, var(--quizera-dark) 0%, #1a2332 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 22px 50px;
+    border-radius: 60px;
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(10, 22, 40, 0.3), 0 3px 10px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .contact-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: 60px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .contact-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(10, 22, 40, 0.4),
+      0 6px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+
+  .contact-button:hover::before {
+    opacity: 1;
+  }
+
+  .contact-button i {
+    font-size: 1.2rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .terms-hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .terms-hero .subtitle {
+      font-size: 1.1rem;
+    }
+
+    .terms-content {
+      padding: 30px 25px;
+    }
+
+    .toc-card {
+      padding: 30px 25px;
+    }
+
+    .toc-list {
+      grid-template-columns: 1fr;
+    }
+
+    .section h2 {
+      font-size: 1.6rem;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .contact-section {
+      padding: 35px 25px;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .terms-hero,
+    .toc-card,
+    .contact-section {
+      break-inside: avoid;
+    }
+
+    .section {
+      break-inside: avoid;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="terms-hero">
+  <div class="terms-hero-content">
+    <h1>Terms of Service</h1>
+    <p class="subtitle">
+      By accessing our e-learning platform, you acknowledge that you have read,
+      understood, and agree to be bound by these terms. Please review them
+      carefully before using our services.
+    </p>
+    <div class="last-updated">
+      <i class="fas fa-calendar-alt"></i> Last Updated: November 15, 2025
+    </div>
+  </div>
+</div>
+
+<div class="terms-container">
+  <!-- Table of Contents -->
+  <div class="toc-card">
+    <h2 class="toc-title">
+      <i class="fas fa-list"></i>
+      Table of Contents
+    </h2>
+    <ul class="toc-list">
+      <li>
+        <a href="#section-1"
+          ><i class="fas fa-chevron-right"></i> Definitions</a
+        >
+      </li>
+      <li>
+        <a href="#section-2"
+          ><i class="fas fa-chevron-right"></i> User Accounts</a
+        >
+      </li>
+      <li>
+        <a href="#section-3"
+          ><i class="fas fa-chevron-right"></i> Acceptable Use Policy</a
+        >
+      </li>
+      <li>
+        <a href="#section-4"
+          ><i class="fas fa-chevron-right"></i> Service Availability</a
+        >
+      </li>
+      <li>
+        <a href="#section-5"
+          ><i class="fas fa-chevron-right"></i> Intellectual Property</a
+        >
+      </li>
+      <li>
+        <a href="#section-6"
+          ><i class="fas fa-chevron-right"></i> User Contributions</a
+        >
+      </li>
+      <li>
+        <a href="#section-7"
+          ><i class="fas fa-chevron-right"></i> Account Termination</a
+        >
+      </li>
+      <li>
+        <a href="#section-8"
+          ><i class="fas fa-chevron-right"></i> Liability Limitations</a
+        >
+      </li>
+      <li>
+        <a href="#section-9"
+          ><i class="fas fa-chevron-right"></i> Policy Updates</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="terms-content">
+    <!-- Section 1: Definitions -->
+    <section id="section-1" class="section">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <h2>Definitions</h2>
+      </div>
+      <p>
+        Understanding the key terms used throughout this agreement is essential
+        to ensure clarity in our relationship with you.
+      </p>
+
+      <h3>Key Terminology</h3>
+      <ul>
+        <li>
+          <strong>"User"</strong> refers to any individual or organization
+          accessing our platform, including students, educators, and
+          administrators
+        </li>
+        <li>
+          <strong>"Service"</strong> encompasses all educational tools,
+          features, content, and functionalities offered by Quizera
+        </li>
+        <li>
+          <strong>"Content"</strong> includes all materials such as text,
+          videos, quizzes, assignments, graphics, and other resources
+        </li>
+        <li>
+          <strong>"Account"</strong> represents your personal profile and access
+          credentials on the Quizera platform
+        </li>
+        <li>
+          <strong>"Platform"</strong> refers to the Quizera website, mobile
+          applications, and all associated digital properties
+        </li>
+      </ul>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-info-circle"></i>
+          Scope of Agreement
+        </div>
+        <p>
+          These terms apply to all users of the Quizera platform. By using our
+          services, you accept and agree to be legally bound by the terms and
+          conditions outlined herein.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 2: User Accounts -->
+    <section id="section-2" class="section">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <h2>User Accounts</h2>
+      </div>
+      <p>
+        Creating and maintaining an account grants you access to our educational
+        platform and its premium features. You are responsible for all
+        activities conducted under your account.
+      </p>
+
+      <h3>Account Responsibilities</h3>
+      <ul>
+        <li>
+          You must provide accurate, complete, and current information during
+          registration
+        </li>
+        <li>
+          You are responsible for maintaining the confidentiality of your
+          password and login credentials
+        </li>
+        <li>
+          You must notify us immediately of any unauthorized access or security
+          breaches
+        </li>
+        <li>
+          You agree to take full responsibility for all activities occurring
+          under your account
+        </li>
+        <li>
+          You may not share your account with other users or allow third parties
+          to access your account
+        </li>
+      </ul>
+
+      <div class="info-box warning">
+        <div class="info-box-title">
+          <i class="fas fa-shield-alt"></i>
+          Account Security
+        </div>
+        <p>
+          Quizera is not responsible for unauthorized access due to your failure
+          to protect your password. Always use strong, unique passwords and log
+          out from shared devices.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Acceptable Use Policy -->
+    <section id="section-3" class="section">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <h2>Acceptable Use Policy</h2>
+      </div>
+      <p>
+        Our platform is designed exclusively for lawful, educational purposes.
+        You agree not to engage in any prohibited activities that could harm the
+        platform, other users, or violate applicable laws.
+      </p>
+
+      <h3>Prohibited Activities</h3>
+      <ul>
+        <li>
+          <strong>Hacking and Unauthorized Access:</strong> Attempting to gain
+          unauthorized access to systems, accounts, or data
+        </li>
+        <li>
+          <strong>Spam and Harassment:</strong> Sending unsolicited messages,
+          spam, or engaging in abusive behavior toward other users
+        </li>
+        <li>
+          <strong>Disruption of Services:</strong> Interfering with platform
+          functionality, distributing malware, or launching cyberattacks
+        </li>
+        <li>
+          <strong>Academic Dishonesty:</strong> Cheating, plagiarism,
+          impersonation, or engaging others to complete work on your behalf
+        </li>
+        <li>
+          <strong>Illegal Content:</strong> Uploading, sharing, or promoting
+          content that violates laws or infringes on intellectual property
+          rights
+        </li>
+        <li>
+          <strong>Commercial Misuse:</strong> Using the platform for
+          unauthorized commercial purposes or solicitation
+        </li>
+      </ul>
+
+      <p>
+        Violations of this policy will result in immediate account suspension
+        and possible legal action.
+      </p>
+    </section>
+
+    <!-- Section 4: Service Availability -->
+    <section id="section-4" class="section">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <h2>Service Availability</h2>
+      </div>
+      <p>
+        While we strive to maintain continuous service availability, Quizera
+        does not guarantee uninterrupted access to our platform.
+      </p>
+
+      <h3>Service Guarantees and Limitations</h3>
+      <ul>
+        <li>
+          We may perform scheduled maintenance during off-peak hours with
+          minimal notice
+        </li>
+        <li>
+          Unexpected technical issues or emergencies may cause temporary service
+          interruptions
+        </li>
+        <li>
+          We reserve the right to modify, enhance, suspend, or discontinue
+          features as needed
+        </li>
+        <li>
+          We are not liable for any damages resulting from service interruptions
+          or maintenance windows
+        </li>
+        <li>
+          Users are responsible for backing up their educational content
+          regularly
+        </li>
+      </ul>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-clock"></i>
+          Service Level
+        </div>
+        <p>
+          We aim for 99% uptime for our core services. Scheduled maintenance is
+          communicated in advance through our notification system.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: Intellectual Property -->
+    <section id="section-5" class="section">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <h2>Intellectual Property</h2>
+      </div>
+      <p>
+        All content, materials, and technologies on the Quizera platform are
+        protected under international copyright and intellectual property laws.
+      </p>
+
+      <h3>Protected Materials</h3>
+      <ul>
+        <li>
+          <strong>Platform Content:</strong> Logos, graphics, course materials,
+          software, source code, and all proprietary technology are owned by
+          Quizera
+        </li>
+        <li>
+          <strong>Copyrighted Material:</strong> All text, images, videos, and
+          multimedia content are protected under copyright law
+        </li>
+        <li>
+          <strong>Trademarks:</strong> The Quizera name, logo, and distinctive
+          branding are registered trademarks
+        </li>
+        <li>
+          <strong>Third-Party Content:</strong> Respect all third-party
+          intellectual property rights when using our platform
+        </li>
+      </ul>
+
+      <h3>Permitted Use</h3>
+      <p>
+        You may use Quizera content solely for personal, non-commercial
+        educational purposes. Unauthorized reproduction, distribution,
+        modification, or commercial use is strictly forbidden.
+      </p>
+
+      <div class="info-box important">
+        <div class="info-box-title">
+          <i class="fas fa-copyright"></i>
+          Copyright Protection
+        </div>
+        <p>
+          We actively protect our intellectual property rights and will pursue
+          legal action against unauthorized use, infringement, or violation of
+          these terms.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 6: User Contributions -->
+    <section id="section-6" class="section">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <h2>User Contributions</h2>
+      </div>
+      <p>
+        When you share content on our platform, you grant Quizera certain rights
+        while retaining ownership of your original work.
+      </p>
+
+      <h3>Content Ownership and Licensing</h3>
+      <ul>
+        <li>
+          You retain full ownership of content you create and upload to Quizera
+        </li>
+        <li>
+          By sharing content, you grant Quizera a worldwide, royalty-free,
+          perpetual license to use, display, and distribute your contributions
+        </li>
+        <li>
+          You may remove your content at any time, after which we will cease new
+          distribution (archived copies may remain)
+        </li>
+        <li>
+          You warrant that your contributions do not infringe on any third-party
+          rights
+        </li>
+        <li>
+          You are responsible for obtaining necessary permissions for shared
+          content
+        </li>
+      </ul>
+
+      <h3>Community Benefit</h3>
+      <p>
+        Your contributions help build a vibrant learning community. By sharing
+        study materials, reviews, and insights, you allow other students to
+        benefit from your knowledge and experience.
+      </p>
+    </section>
+
+    <!-- Section 7: Account Termination -->
+    <section id="section-7" class="section">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <h2>Account Termination</h2>
+      </div>
+      <p>
+        Quizera maintains the right to suspend or permanently terminate accounts
+        that violate our terms or threaten platform integrity.
+      </p>
+
+      <h3>Termination Grounds</h3>
+      <ul>
+        <li>Repeated or severe violations of these terms and conditions</li>
+        <li>Engagement in fraudulent, illegal, or threatening activities</li>
+        <li>Violations of academic integrity policies or honor codes</li>
+        <li>Harassment, abuse, or intimidation of other users or staff</li>
+        <li>Unauthorized access attempts or security breaches</li>
+        <li>Inactivity or non-compliance with platform requirements</li>
+      </ul>
+
+      <h3>Consequences of Termination</h3>
+      <ul>
+        <li>
+          Immediate loss of access to your account and all platform features
+        </li>
+        <li>Potential loss of saved data and educational progress</li>
+        <li>Possible referral to law enforcement for serious violations</li>
+        <li>
+          Prohibition from creating new accounts (with enforcement mechanisms)
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 8: Liability Limitations -->
+    <section id="section-8" class="section">
+      <div class="section-header">
+        <div class="section-number">8</div>
+        <h2>Liability Limitations</h2>
+      </div>
+      <p>
+        To the maximum extent permitted by law, Quizera is not liable for
+        certain damages or losses arising from your use of our platform.
+      </p>
+
+      <h3>Disclaimer of Warranties</h3>
+      <ul>
+        <li>
+          The platform is provided on an "as-is" basis without warranties of any
+          kind
+        </li>
+        <li>
+          We do not guarantee the accuracy, completeness, or reliability of
+          educational content
+        </li>
+        <li>
+          We are not responsible for third-party content or external services
+          linked from our platform
+        </li>
+        <li>
+          Academic results are not guaranteed and depend on individual effort
+          and circumstances
+        </li>
+      </ul>
+
+      <h3>Limitation of Liability</h3>
+      <p>
+        Quizera cannot be held liable for any direct, indirect, incidental,
+        special, consequential, or punitive damages, including but not limited
+        to:
+      </p>
+      <ul>
+        <li>Loss of data, revenue, or business opportunities</li>
+        <li>Service interruptions or technical failures</li>
+        <li>
+          Unauthorized access or security breaches (within our reasonable
+          security standards)
+        </li>
+        <li>Poor academic performance or educational outcomes</li>
+      </ul>
+
+      <div class="info-box important">
+        <div class="info-box-title">
+          <i class="fas fa-exclamation-triangle"></i>
+          Risk Acceptance
+        </div>
+        <p>
+          By using Quizera, you acknowledge and accept these limitations and
+          agree to use the platform at your own risk.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 9: Policy Updates -->
+    <section id="section-9" class="section">
+      <div class="section-header">
+        <div class="section-number">9</div>
+        <h2>Policy Updates</h2>
+      </div>
+      <p>
+        Quizera reserves the right to modify these terms at any time to reflect
+        legal requirements, regulatory changes, or service improvements.
+      </p>
+
+      <h3>How We Notify You</h3>
+      <ul>
+        <li>We will update the "Last Updated" date at the top of this page</li>
+        <li>
+          Significant changes will be communicated via email to your registered
+          address
+        </li>
+        <li>We may post notices on our website or within the platform</li>
+        <li>
+          For major policy changes, we may require explicit acceptance before
+          continued use
+        </li>
+      </ul>
+
+      <h3>Your Acceptance</h3>
+      <p>
+        Continued use of the Quizera platform following notification of changes
+        constitutes your acceptance of the modified terms. If you do not agree
+        with changes, you may discontinue using our services and request account
+        deletion.
+      </p>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-bell"></i>
+          Stay Informed
+        </div>
+        <p>
+          Check this page periodically for updates. We recommend reviewing our
+          terms at least annually to stay current with any changes.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Call to Action Footer -->
+  <div class="contact-section">
+    <h2>Have Questions?</h2>
+    <p>
+      Our support team is here to clarify any aspect of these terms and
+      conditions.
+    </p>
+    <a href="{{ url_for('contact') }}" class="contact-button">
+      <i class="fas fa-envelope"></i>
+      Contact Support
+    </a>
+  </div>
+</div>
+{% endblock %}

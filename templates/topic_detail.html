@@ -1,0 +1,1343 @@
+{% extends "base.html" %}
+
+
+{% block title %}{{ topic.title }} - Quizera{% endblock %}
+
+
+{% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    /* All your existing CSS stays the same */
+    .flashcard {
+        perspective: 1000px;
+        min-height: 320px;
+    }
+   
+    .flashcard-inner {
+        transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+   
+    .flashcard.flipped .flashcard-inner {
+        transform: rotateY(180deg);
+    }
+   
+    .flashcard-front,
+    .flashcard-back {
+        backface-visibility: hidden;
+        border-radius: 16px;
+    }
+   
+    .flashcard-back {
+        transform: rotateY(180deg);
+    }
+   
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+   
+    .glass-effect {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9);
+    }
+   
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+   
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+   
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+   
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+   
+    .sparkle::before {
+        content: '✨';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        animation: sparkle 1.5s ease-in-out infinite;
+    }
+   
+    @keyframes sparkle {
+        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+        50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+    }
+   
+    .card-shadow {
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+   
+    .progress-glow {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+   
+    /* PDF Viewer Styles */
+    .pdf-viewer-container {
+        position: relative;
+        background: #f5f5f5;
+        min-height: 700px;
+    }
+   
+    .pdf-toolbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+   
+    .pdf-viewer-container iframe,
+    .pdf-viewer-container embed {
+        border: none;
+        display: block;
+        width: 100%;
+        height: 700px;
+    }
+   
+    /* PDF fallback styles */
+    .pdf-fallback {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: #f9fafb;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+   
+    .pdf-fallback i {
+        font-size: 4rem;
+        color: #ef4444;
+        margin-bottom: 1.5rem;
+    }
+
+
+    .btn-toolbar {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+
+    .btn-toolbar:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+    }
+
+    /* Enhanced content formatting */
+    .topic-content {
+        text-align: justify;
+        text-justify: inter-word;
+        line-height: 1.8;
+        font-size: 16px;
+    }
+
+    .topic-content p {
+        margin-bottom: 1.2em;
+        text-align: justify;
+    }
+
+    .topic-content strong {
+        color: #1e40af;
+        font-weight: 600;
+    }
+
+    .topic-content h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e40af;
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+        text-align: left;
+    }
+
+    .topic-content ul {
+        margin: 1em 0;
+        padding-left: 2em;
+        text-align: left;
+    }
+
+    .topic-content li {
+        margin-bottom: 0.6em;
+        text-align: justify;
+    }
+
+    .topic-content li strong {
+        display: inline-block;
+        min-width: 200px;
+    }
+</style>
+{% endblock %}
+
+
+
+
+{% block content %}
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-6 max-w-6xl">
+    <!-- Topic Header Card -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6 card-hover">
+        <div class="flex items-start justify-between">
+            <div class="flex-1">
+                <div class="flex items-center mb-2">
+                    <!-- Completion Status for Students -->
+                    {% if session.role == 'student' %}
+                        <div class="mr-3">
+                            {% if topic.is_completed %}
+                                <i id="completionIcon" class="fas fa-check-circle text-green-500 text-xl"></i>
+                            {% else %}
+                                <i id="completionIcon" class="far fa-circle text-gray-400 text-xl"></i>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <h1 class="text-2xl font-bold text-gray-800 gradient-text">{{ topic.title }}</h1>
+                    {% if session.role == 'student' and topic.is_completed %}
+                        <span id="completedBadge" class="ml-3 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-check mr-1"></i>Completed
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="text-gray-600 mb-4 max-w-4xl">
+                    {% if topic.content_text %}
+                        {% if topic.content_text|length > 150 %}
+                            <p id="header-content-preview" class="leading-relaxed">{{ topic.content_text[:150] }}...</p>
+                            <p id="header-content-full" class="hidden leading-relaxed">{{ topic.content_text }}</p>
+                            <button id="header-toggle-btn"
+                                    class="text-blue-800 hover:text-blue-900 text-sm font-medium mt-2 transition-colors"
+                                    onclick="toggleHeaderContent()">
+                                <i class="fas fa-chevron-down mr-1"></i>See More
+                            </button>
+                        {% else %}
+                            <p class="leading-relaxed">{{ topic.content_text }}</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="leading-relaxed">Comprehensive learning material for {{ topic.title }}</p>
+                    {% endif %}
+                </div>
+                <div class="flex items-center space-x-6 text-sm text-gray-500">
+                    <span><i class="fas fa-book mr-1"></i>{{ topic.subject_name if topic.subject_name else 'Learning Material' }}</span>
+                    <span><i class="fas fa-calendar mr-1"></i>{{ topic.created_at.strftime('%B %d, %Y') }}</span>
+                    {% if topic.video_link %}
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
+                            <i class="fas fa-video mr-1"></i>Video Available
+                        </span>
+                    {% endif %}
+                    {% if topic.pdf_url %}
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
+                            <i class="fas fa-file-pdf mr-1"></i>PDF Available
+                        </span>
+                    {% endif %}
+                    {% if topic.content_text %}
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                            <i class="fas fa-file-text mr-1"></i>Text Content
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex flex-col space-y-4 ml-8 flex-shrink-0 mt-8">
+                {% if session.role == 'teacher' and topic.teacher_id == session.user_id %}
+                    <a href="{{ url_for('edit_topic', topic_id=topic.id) }}"
+                       class="bg-yellow-700 text-white px-4 py-2 rounded hover:bg-yellow-800 transition-colors btn-hover">
+                        <i class="fas fa-edit mr-1"></i>Edit Topic
+                    </a>
+                    <button class="topic-delete-btn bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors btn-hover"
+                            data-topic-id="{{ topic.id }}"
+                            data-topic-title="{{ topic.title }}">
+                        <i class="fas fa-trash mr-1"></i>Delete
+                    </button>
+                {% elif session.role == 'student' %}
+                    <div id="completionButtonsHeader">
+                        {% if topic.is_completed %}
+                            <button id="uncompleteTopicHeader"
+                                    class="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors btn-hover w-full"
+                                    data-topic-id="{{ topic.id }}"
+                                    data-topic-title="{{ topic.title }}">
+                                <i class="fas fa-times-circle mr-1"></i>Mark Incomplete
+                            </button>
+                        {% else %}
+                            <button id="completeTopicHeader"
+                                    class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition-colors btn-hover w-full"
+                                    data-topic-id="{{ topic.id }}"
+                                    data-topic-title="{{ topic.title }}">
+                                <i class="fas fa-check-circle mr-1"></i>Mark Complete
+                            </button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <a href="{{ url_for('view_subject', subject_id=topic.subject_id) }}"
+                   class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors btn-hover">
+                    <i class="fas fa-arrow-left mr-1"></i>Back to Subject
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Content Sections -->
+    <div class="space-y-8">
+        <!-- Video Content Section -->
+        {% if topic.video_link %}
+            <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-video mr-2 text-red-600"></i>Video Lesson
+                    </h2>
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <i class="fas fa-play mr-1"></i>Interactive Content
+                    </span>
+                </div>
+                <div class="relative bg-gray-100 rounded-lg overflow-hidden mx-auto" style="max-width: calc(100% - 113px); padding-bottom: calc(56.25% - 101px); height: 0;">
+                    {% if 'youtube.com' in topic.video_link or 'youtu.be' in topic.video_link %}
+                        {% set video_id = topic.video_link.split('youtu.be/')[1] if 'youtu.be' in topic.video_link else topic.video_link.split('v=')[1].split('&')[0] %}
+                        <iframe class="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/{{ video_id }}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    {% elif 'vimeo.com' in topic.video_link %}
+                        {% set video_id = topic.video_link.split('/')[-1] %}
+                        <iframe class="absolute top-0 left-0 w-full h-full"
+                                src="https://player.vimeo.com/video/{{ video_id }}"
+                                frameborder="0"
+                                allow="autoplay; fullscreen; picture-in-picture"
+                                allowfullscreen></iframe>
+                    {% else %}
+                        <video class="absolute top-0 left-0 w-full h-full" controls>
+                            <source src="{{ topic.video_link }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% endif %}
+                </div>
+                <div class="mt-4 flex items-center justify-between text-sm text-gray-500 bg-gray-50 p-3 rounded">
+                    <span><i class="fas fa-external-link-alt mr-1"></i>Source:</span>
+                    <a href="{{ topic.video_link }}" target="_blank" class="text-blue-600 hover:underline font-medium">{{ topic.video_link }}</a>
+                </div>
+            </div>
+        {% endif %}
+
+
+        <!-- PDF Document Section -->
+        {% if topic.pdf_url %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
+                <div class="flex items-center justify-between p-5 pb-3">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-file-pdf mr-2 text-red-600"></i>PDF Document
+                    </h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-file mr-1"></i>Study Material
+                        </span>
+                        <div class="flex space-x-2">
+                            <button onclick="zoomPDFOut()" class="bg-blue-700 text-white px-3 py-1 rounded text-sm hover:bg-blue-800 transition-colors" title="Zoom Out">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <span id="pdfZoomLevel" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">100%</span>
+                            <button onclick="zoomPDFIn()" class="bg-blue-700 text-white px-3 py-1 rounded text-sm hover:bg-blue-800 transition-colors" title="Zoom In">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button onclick="togglePDFFullscreen()" class="bg-gray-700 text-white px-3 py-1 rounded text-sm hover:bg-gray-800 transition-colors" title="Fullscreen">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="bg-gray-50 px-6 py-2 border-t border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">
+                            <i class="fas fa-file-pdf text-red-500 mr-1"></i>
+                            {{ topic.pdf_filename or 'Document.pdf' }}
+                        </span>
+                        <div class="flex space-x-2">
+                            <a href="{{ url_for('view_pdf', topic_id=topic.id) }}"
+                               target="_blank"
+                               class="bg-blue-700 text-white px-3 py-1 rounded text-sm hover:bg-blue-800 transition-colors">
+                                <i class="fas fa-external-link-alt mr-1"></i>Open
+                            </a>
+                            <a href="{{ topic.pdf_url }}"
+                               download="{{ topic.pdf_filename or 'document.pdf' }}"
+                               class="bg-green-700 text-white px-3 py-1 rounded text-sm hover:bg-green-800 transition-colors">
+                                <i class="fas fa-download mr-1"></i>Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- PDF Viewer Container -->
+                <div class="pdf-viewer-container border-t border-gray-200">
+                    <embed
+                        id="pdfEmbed"
+                        src="{{ url_for('view_pdf', topic_id=topic.id) }}#toolbar=1&navpanes=1&scrollbar=1&view=FitH"
+                        type="application/pdf"
+                        class="w-full"
+                        style="height: 700px; display: block;">
+                   
+                    <noembed>
+                        <div class="pdf-fallback">
+                            <i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">PDF Viewer</h3>
+                            <p class="text-gray-600 mb-6 max-w-md">
+                                Your browser doesn't support embedded PDF viewing.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                <a href="{{ url_for('view_pdf', topic_id=topic.id) }}"
+                                target="_blank"
+                                class="inline-flex items-center justify-center bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold shadow-lg btn-hover">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Open in New Tab
+                                </a>
+                                <a href="{{ topic.pdf_url }}"
+                                download="{{ topic.pdf_filename or 'document.pdf' }}"
+                                class="inline-flex items-center justify-center bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold shadow-lg btn-hover">
+                                    <i class="fas fa-download mr-2"></i>Download PDF
+                                </a>
+                            </div>
+                        </div>
+                    </noembed>
+                </div>
+            </div>
+        {% endif %}
+
+
+
+
+        <!-- Text Content Section -->
+        {% if topic.content_text %}
+            <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-file-text mr-2 text-blue-600"></i>Lesson Content
+                    </h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-book mr-1"></i>Study Material
+                        </span>
+                        <div class="flex space-x-2">
+                            <button onclick="increaseFontSize()" class="bg-gray-700 text-white px-3 py-1 rounded text-sm hover:bg-gray-800 transition-colors">
+                                <i class="fas fa-plus mr-1"></i>A+
+                            </button>
+                            <button onclick="decreaseFontSize()" class="bg-gray-700 text-white px-3 py-1 rounded text-sm hover:bg-gray-800 transition-colors">
+                                <i class="fas fa-minus mr-1"></i>A-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    {% if topic.content_text|length > 500 %}
+                        <div id="content-preview" class="topic-content prose prose-lg max-w-none text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-lg" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; max-height: 300px; overflow: hidden; position: relative;">
+                            {{ topic.content_text[:500] | replace('\n\n', '</p><p>') | replace('\n', '<br>') | safe }}...
+                            <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent"></div>
+                        </div>
+                        <div id="content-full" class="topic-content prose prose-lg max-w-none text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-lg hidden" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">
+                            {{ topic.content_text | replace('\n\n', '</p><p>') | replace('\n', '<br>') | safe }}
+                        </div>
+                        <div class="text-center mt-4">
+                            <button id="content-toggle-btn"
+                                    class="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-900 transition-colors font-medium"
+                                    onclick="toggleContent()">
+                                <i class="fas fa-chevron-down mr-2"></i>See More
+                            </button>
+                        </div>
+                    {% else %}
+                        <div id="content-text" class="topic-content prose prose-lg max-w-none text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-lg" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">
+                            {{ topic.content_text | replace('\n\n', '</p><p>') | replace('\n', '<br>') | safe }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+
+        <!-- Student Notes Section -->
+        {% if session.role == 'student' %}
+            <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-sticky-note mr-2 text-yellow-600"></i>My Study Notes
+                    </h2>
+                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <i class="fas fa-pencil-alt mr-1"></i>Personal Notes
+                    </span>
+                </div>
+                <textarea id="student-notes"
+                          class="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                          placeholder="Take notes while studying this topic..."></textarea>
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-sm text-gray-500">
+                        <i class="fas fa-info-circle mr-1"></i>Your notes are saved automatically and securely
+                    </p>
+                    <div class="flex space-x-2">
+                        <button onclick="saveNotes()" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 transition-colors btn-hover">
+                            <i class="fas fa-save mr-1"></i>Save Notes
+                        </button>
+                        <button onclick="exportNotes()" class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition-colors btn-hover">
+                            <i class="fas fa-download mr-1"></i>Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- AI Flashcards Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-brain mr-2 text-purple-600"></i>AI-Generated Flashcards
+                    </h2>
+                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <i class="fas fa-magic mr-1"></i>AI Powered
+                    </span>
+                </div>
+               
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg p-5 border border-purple-200">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full mb-3 shadow-lg">
+                            <i class="fas fa-brain text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">
+                            Smart Learning Companion
+                        </h3>
+                        <p class="text-gray-600 mb-4 max-w-xl mx-auto text-sm">
+                            Generate personalized flashcards from this topic using AI to help you study more effectively and retain information better.
+                        </p>
+                       
+                        <a href="{{ url_for('ai_flashcards', topic_id=topic.id) }}"
+                           class="inline-flex items-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all btn-hover font-medium text-sm">
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate Flashcards Now
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                       
+                        <p class="text-gray-500 text-xs mt-3">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Opens in an optimized study environment
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+
+    <!-- Topic Completion Section for Students -->
+    {% if session.role == 'student' %}
+        <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-full mb-3 shadow-lg">
+                    <i class="fas fa-graduation-cap text-white text-lg"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">Topic Progress</h3>
+               
+                {% if topic.is_completed %}
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-center mb-2">
+                            <i class="fas fa-check-circle text-green-500 text-2xl mr-2"></i>
+                            <span class="text-lg font-semibold text-green-700">Topic Completed!</span>
+                        </div>
+                        <p class="text-green-600">
+                            Congratulations! You have successfully completed this topic. Great job on your learning journey!
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-center mb-2">
+                            <i class="fas fa-clock text-blue-500 text-2xl mr-2"></i>
+                            <span class="text-lg font-semibold text-blue-700">In Progress</span>
+                        </div>
+                        <p class="text-blue-600">
+                            Mark this topic as completed once you've finished studying all the material above.
+                        </p>
+                    </div>
+                {% endif %}
+               
+                <div id="completionSection" class="flex justify-center space-x-3">
+                    {% if topic.is_completed %}
+                        <button id="uncompleteTopic"
+                                class="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition-colors btn-hover font-medium"
+                                data-topic-id="{{ topic.id }}"
+                                data-topic-title="{{ topic.title }}">
+                            <i class="fas fa-times-circle mr-2"></i>Mark as Incomplete
+                        </button>
+                    {% else %}
+                        <button id="completeTopic"
+                                class="bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800 transition-colors btn-hover font-medium"
+                                data-topic-id="{{ topic.id }}"
+                                data-topic-title="{{ topic.title }}">
+                            <i class="fas fa-check-circle mr-2"></i>Mark as Complete
+                        </button>
+                    {% endif %}
+                    <a href="{{ url_for('view_subject', subject_id=topic.subject_id) }}"
+                       class="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-900 transition-colors btn-hover font-medium">
+                        <i class="fas fa-list mr-2"></i>All Topics
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script>
+    // ✅ PDF VIEWER FUNCTIONS
+    let pdfZoom = 100;
+
+
+    function zoomPDFIn() {
+        if (pdfZoom < 200) {
+            pdfZoom += 25;
+            updatePDFZoom();
+        }
+    }
+
+
+    function zoomPDFOut() {
+        if (pdfZoom > 50) {
+            pdfZoom -= 25;
+            updatePDFZoom();
+        }
+    }
+
+
+    function updatePDFZoom() {
+        const embed = document.getElementById('pdfEmbed');
+        const zoomLabel = document.getElementById('pdfZoomLevel');
+       
+        if (embed) {
+            embed.style.transform = `scale(${pdfZoom / 100})`;
+            embed.style.transformOrigin = 'top center';
+           
+            const container = embed.parentElement;
+            container.style.height = `${700 * (pdfZoom / 100)}px`;
+        }
+       
+        if (zoomLabel) {
+            zoomLabel.textContent = pdfZoom + '%';
+        }
+    }
+
+
+    function togglePDFFullscreen() {
+        const embed = document.getElementById('pdfEmbed');
+       
+        if (embed) {
+            if (embed.requestFullscreen) {
+                embed.requestFullscreen();
+            } else if (embed.webkitRequestFullscreen) {
+                embed.webkitRequestFullscreen();
+            } else if (embed.msRequestFullscreen) {
+                embed.msRequestFullscreen();
+            }
+        }
+    }
+
+
+    // Test PDF Loading (Teacher Debug)
+    function testPDFLoad() {
+        const pdfUrl = "{{ url_for('view_pdf', topic_id=topic.id) }}";
+        console.log('Testing PDF Load...');
+        console.log('PDF URL:', pdfUrl);
+       
+        fetch(pdfUrl)
+            .then(response => {
+                console.log('Response Status:', response.status);
+                console.log('Response OK:', response.ok);
+                console.log('Content-Type:', response.headers.get('Content-Type'));
+               
+                if (response.ok) {
+                    alert('✅ PDF loads successfully!\nStatus: ' + response.status);
+                } else {
+                    alert('❌ PDF failed to load!\nStatus: ' + response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error loading PDF: ' + error.message);
+            });
+    }
+
+
+    // ✅ FIXED showPDFFallback function
+    function showPDFFallback() {
+        const container = document.querySelector('.pdf-viewer-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="pdf-fallback">
+                    <i class="fas fa-exclamation-triangle text-6xl text-yellow-500 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Unable to Display PDF</h3>
+                    <p class="text-gray-600 mb-6 max-w-md">
+                        The PDF viewer encountered an error. Please use one of the options below.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{{ url_for('view_pdf', topic_id=topic.id) }}"
+                           target="_blank"
+                           class="inline-flex items-center justify-center bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold shadow-lg">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open in New Tab
+                        </a>
+                        <a href="{{ topic.pdf_url }}"
+                           download="{{ topic.pdf_filename or 'document.pdf' }}"
+                           class="inline-flex items-center justify-center bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold shadow-lg">
+                            <i class="fas fa-download mr-2"></i>Download PDF
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+
+    // Check PDF load on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const embed = document.getElementById('pdfEmbed');
+       
+        if (embed) {
+            console.log('📄 PDF Embed Element Found');
+            console.log('Src:', embed.src);
+           
+            // Monitor load events
+            embed.addEventListener('load', function() {
+                console.log('✅ PDF loaded successfully in embed');
+            });
+           
+            embed.addEventListener('error', function() {
+                console.error('❌ PDF failed to load in embed');
+                showPDFFallback();
+            });
+           
+            // Check after 3 seconds
+            setTimeout(function() {
+                try {
+                    if (embed.contentDocument) {
+                        console.log('✅ PDF is accessible');
+                    }
+                } catch (e) {
+                    console.log('ℹ️ PDF loaded (cross-origin - this is normal)');
+                }
+            }, 3000);
+        }
+
+
+        // Setup completion buttons and flashcard generation
+        setupCompletionButtons();
+
+        // Load saved notes (for students)
+        const notesTextarea = document.getElementById('student-notes');
+        if (notesTextarea) {
+            window.topicNotes = window.topicNotes || {};
+            const savedNotes = window.topicNotes['{{ topic.id }}'];
+            if (savedNotes) {
+                notesTextarea.value = savedNotes;
+            }
+        }
+    });
+
+
+    // Font size controls
+    let currentFontSize = 16;
+   
+    function increaseFontSize() {
+        if (currentFontSize < 24) {
+            currentFontSize += 2;
+            const contentText = document.getElementById('content-text');
+            const contentFull = document.getElementById('content-full');
+            if (contentText) {
+                contentText.style.fontSize = currentFontSize + 'px';
+            }
+            if (contentFull) {
+                contentFull.style.fontSize = currentFontSize + 'px';
+            }
+        }
+    }
+   
+    function decreaseFontSize() {
+        if (currentFontSize > 12) {
+            currentFontSize -= 2;
+            const contentText = document.getElementById('content-text');
+            const contentFull = document.getElementById('content-full');
+            if (contentText) {
+                contentText.style.fontSize = currentFontSize + 'px';
+            }
+            if (contentFull) {
+                contentFull.style.fontSize = currentFontSize + 'px';
+            }
+        }
+    }
+
+
+    // Topic Completion Functionality
+    function setupCompletionButtons() {
+        const completeButtons = document.querySelectorAll('#completeTopic, #completeTopicHeader');
+        const uncompleteButtons = document.querySelectorAll('#uncompleteTopic, #uncompleteTopicHeader');
+
+
+        completeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                handleTopicCompletion(this, true);
+            });
+        });
+
+
+        uncompleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                handleTopicCompletion(this, false);
+            });
+        });
+    }
+
+
+    function handleTopicCompletion(button, markComplete) {
+        const topicId = button.dataset.topicId;
+        const topicTitle = button.dataset.topicTitle;
+       
+        const originalText = button.innerHTML;
+        button.innerHTML = markComplete ?
+            '<i class="fas fa-spinner fa-spin mr-2"></i>Marking Complete...' :
+            '<i class="fas fa-spinner fa-spin mr-2"></i>Unmarking...';
+        button.disabled = true;
+       
+        const endpoint = markComplete ?
+            `/topic/${topicId}/complete` :
+            `/topic/${topicId}/uncomplete`;
+       
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateCompletionUI(markComplete, topicId, topicTitle);
+                showFlashMessage(data.message, 'success');
+            } else {
+                showFlashMessage(data.message, 'error');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showFlashMessage('An error occurred while updating topic status.', 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
+
+
+    // Update completion UI
+    function updateCompletionUI(isCompleted, topicId, topicTitle) {
+        const headerIcon = document.getElementById('completionIcon');
+        if (headerIcon) {
+            headerIcon.className = isCompleted ?
+                'fas fa-check-circle text-green-500 text-2xl' :
+                'far fa-circle text-gray-400 text-2xl';
+        }
+       
+        const existingBadge = document.getElementById('completedBadge');
+        const h1Element = document.querySelector('h1.gradient-text');
+       
+        if (isCompleted && !existingBadge && h1Element) {
+            const badge = document.createElement('span');
+            badge.id = 'completedBadge';
+            badge.className = 'ml-3 text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full';
+            badge.innerHTML = '<i class="fas fa-check mr-1"></i>Completed';
+            h1Element.parentNode.appendChild(badge);
+        } else if (!isCompleted && existingBadge) {
+            existingBadge.remove();
+        }
+       
+        const headerButtonsContainer = document.getElementById('completionButtonsHeader');
+        if (headerButtonsContainer) {
+            if (isCompleted) {
+                headerButtonsContainer.innerHTML = `
+                    <button id="uncompleteTopicHeader"
+                            class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-all transform hover:scale-105 shadow-lg"
+                            data-topic-id="${topicId}"
+                            data-topic-title="${topicTitle}">
+                        <i class="fas fa-times-circle mr-2"></i>Mark as Incomplete
+                    </button>
+                `;
+            } else {
+                headerButtonsContainer.innerHTML = `
+                    <button id="completeTopicHeader"
+                            class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all transform hover:scale-105 shadow-lg"
+                            data-topic-id="${topicId}"
+                            data-topic-title="${topicTitle}">
+                        <i class="fas fa-check-circle mr-2"></i>Mark as Complete
+                    </button>
+                `;
+            }
+        }
+       
+        const completionSection = document.getElementById('completionSection');
+        if (!completionSection) return;
+       
+        const completionText = completionSection.parentElement.querySelector('p');
+       
+        if (isCompleted) {
+            if (completionText) {
+                completionText.innerHTML = `
+                <span class="text-green-600 font-semibold">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    You have successfully completed this topic! Great job!
+                </span>
+            `;
+            completionSection.innerHTML = `
+                <button id="uncompleteTopic"
+                        class="bg-red-500 text-white px-10 py-4 rounded-lg hover:bg-red-600 transition-all transform hover:scale-105 shadow-lg text-lg font-semibold"
+                        data-topic-id="${topicId}"
+                        data-topic-title="${topicTitle}">
+                    <i class="fas fa-times-circle mr-3"></i>Mark as Incomplete
+                </button>
+                <button onclick="window.location.href='{{ url_for('view_subject', subject_id=topic.subject_id) }}'"
+                        class="bg-blue-500 text-white px-10 py-4 rounded-lg hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg text-lg font-semibold">
+                    <i class="fas fa-list mr-3"></i>Back to Topics
+                </button>
+            `;
+            }
+        } else {
+            if (completionText) {
+                completionText.innerHTML = `
+                    <span class="text-blue-600">
+                        Mark this topic as completed once you've finished studying all the material above.
+                    </span>
+                `;
+            }
+            completionSection.innerHTML = `
+                <button id="completeTopic"
+                        class="bg-green-500 text-white px-10 py-4 rounded-lg hover:bg-green-600 transition-all transform hover:scale-105 shadow-lg text-lg font-semibold"
+                        data-topic-id="${topicId}"
+                        data-topic-title="${topicTitle}">
+                    <i class="fas fa-check-circle mr-3"></i>Mark as Complete
+                </button>
+                <button onclick="window.location.href='{{ url_for('view_subject', subject_id=topic.subject_id) }}'"
+                        class="bg-gray-500 text-white px-10 py-4 rounded-lg hover:bg-gray-600 transition-all transform hover:scale-105 shadow-lg text-lg font-semibold">
+                    <i class="fas fa-list mr-3"></i>Back to Topics
+                </button>
+            `;
+        }
+       
+        setTimeout(() => {
+            setupCompletionButtons();
+        }, 100);
+    }
+
+
+    // Flash message helper
+    function showFlashMessage(message, type) {
+        const flashContainer = document.querySelector('.container.mx-auto.px-4.py-8') || document.body;
+        const flashDiv = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-red-100 border-red-500 text-red-700';
+       
+        flashDiv.className = `flash-message ${bgColor} border-l-4 p-4 mb-4 rounded`;
+        flashDiv.innerHTML = `
+            <span>
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-2"></i>
+                ${message}
+            </span>
+            <button onclick="this.parentElement.remove()" class="float-right">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+       
+        flashContainer.insertBefore(flashDiv, flashContainer.firstChild);
+       
+        setTimeout(() => {
+            if (flashDiv.parentElement) {
+                flashDiv.remove();
+            }
+        }, 5000);
+    }
+
+
+    // AI Flashcards Functionality
+    let currentFlashcards = [];
+    let currentCardIndex = 0;
+
+
+    function setupFlashcardGeneration() {
+        const generateBtn = document.getElementById('generate-flashcards');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', generateFlashcards);
+        }
+
+
+        const prevBtn = document.getElementById('prev-card');
+        const nextBtn = document.getElementById('next-card');
+        const flashcardDisplay = document.getElementById('flashcard-display');
+
+
+        if (prevBtn) prevBtn.addEventListener('click', previousCard);
+        if (nextBtn) nextBtn.addEventListener('click', nextCard);
+        if (flashcardDisplay) {
+            flashcardDisplay.addEventListener('click', flipCard);
+        }
+    }
+
+
+    async function generateFlashcards() {
+        const count = document.getElementById('flashcard-count').value;
+        const difficulty = document.getElementById('difficulty-level').value;
+       
+        const contentText = document.getElementById('content-text');
+        if (!contentText || !contentText.textContent.trim()) {
+            showFlashMessage('No content available to generate flashcards from.', 'error');
+            return;
+        }
+
+
+        const lessonContent = contentText.textContent.trim();
+        const topicTitle = "{{ topic.title }}";
+
+
+        showFlashcardLoading(true);
+
+
+        try {
+            const flashcards = await generateFlashcardsWithAI(lessonContent, topicTitle, count, difficulty);
+           
+            if (flashcards && flashcards.length > 0) {
+                currentFlashcards = flashcards;
+                currentCardIndex = 0;
+                displayFlashcards();
+            } else {
+                showFlashcardError();
+            }
+        } catch (error) {
+            console.error('Error generating flashcards:', error);
+            showFlashcardError();
+        }
+    }
+
+
+    async function generateFlashcardsWithAI(content, title, count, difficulty) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const mockFlashcards = generateMockFlashcards(title, parseInt(count), difficulty);
+                resolve(mockFlashcards);
+            }, 2000);
+        });
+    }
+
+
+    function generateMockFlashcards(title, count, difficulty) {
+        const templates = {
+            easy: [
+                { question: `What is the main topic of "${title}"?`, answer: `The main topic is ${title}, which covers fundamental concepts and basic principles.` },
+                { question: `Why is "${title}" important to understand?`, answer: `${title} is important because it provides foundational knowledge for further learning.` },
+                { question: `What are the key components discussed in "${title}"?`, answer: `The key components include the main concepts, definitions, and practical applications.` }
+            ],
+            medium: [
+                { question: `How does "${title}" relate to other concepts in this subject?`, answer: `${title} connects to other concepts by building upon previous knowledge and introducing new principles.` },
+                { question: `What are the practical applications of "${title}"?`, answer: `The practical applications include real-world examples and use cases mentioned in the lesson.` },
+                { question: `What challenges might arise when learning about "${title}"?`, answer: `Common challenges include understanding complex terminology and connecting abstract concepts to practical examples.` }
+            ],
+            hard: [
+                { question: `Analyze the deeper implications of "${title}" in the broader context of this field.`, answer: `The deeper implications involve how ${title} influences advanced concepts and shapes future developments in the field.` },
+                { question: `Critically evaluate the methods discussed in "${title}".`, answer: `The methods can be evaluated based on their effectiveness, limitations, and potential for improvement or adaptation.` },
+                { question: `How would you apply the principles from "${title}" to solve a complex problem?`, answer: `Application would involve identifying relevant principles, adapting them to the specific context, and systematically implementing solutions.` }
+            ]
+        };
+
+
+        const selectedTemplates = templates[difficulty] || templates.medium;
+        const flashcards = [];
+
+
+        for (let i = 0; i < count; i++) {
+            const template = selectedTemplates[i % selectedTemplates.length];
+            flashcards.push({
+                id: i + 1,
+                question: template.question,
+                answer: template.answer,
+                difficulty: difficulty
+            });
+        }
+
+
+        return flashcards;
+    }
+
+
+    function showFlashcardLoading(show) {
+        const controls = document.getElementById('flashcard-controls');
+        const loading = document.getElementById('flashcard-loading');
+        const container = document.getElementById('flashcards-container');
+        const error = document.getElementById('flashcard-error');
+
+
+        if (show) {
+            controls.classList.add('hidden');
+            loading.classList.remove('hidden');
+            container.classList.add('hidden');
+            error.classList.add('hidden');
+        } else {
+            controls.classList.remove('hidden');
+            loading.classList.add('hidden');
+        }
+    }
+
+
+    function showFlashcardError() {
+        const controls = document.getElementById('flashcard-controls');
+        const loading = document.getElementById('flashcard-loading');
+        const container = document.getElementById('flashcards-container');
+        const error = document.getElementById('flashcard-error');
+
+
+        controls.classList.add('hidden');
+        loading.classList.add('hidden');
+        container.classList.add('hidden');
+        error.classList.remove('hidden');
+    }
+
+
+    function displayFlashcards() {
+        const controls = document.getElementById('flashcard-controls');
+        const loading = document.getElementById('flashcard-loading');
+        const container = document.getElementById('flashcards-container');
+        const error = document.getElementById('flashcard-error');
+
+
+        controls.classList.remove('hidden');
+        loading.classList.add('hidden');
+        container.classList.remove('hidden');
+        error.classList.add('hidden');
+
+
+        updateFlashcardDisplay();
+        updateProgress();
+    }
+
+
+    function updateFlashcardDisplay() {
+        if (!currentFlashcards.length) return;
+
+
+        const card = currentFlashcards[currentCardIndex];
+        const questionEl = document.getElementById('card-question');
+        const answerEl = document.getElementById('card-answer');
+        const counterEl = document.getElementById('card-counter');
+       
+        if (questionEl) questionEl.textContent = card.question;
+        if (answerEl) answerEl.textContent = card.answer;
+        if (counterEl) counterEl.textContent = `${currentCardIndex + 1} / ${currentFlashcards.length}`;
+
+
+        const flashcard = document.querySelector('.flashcard');
+        if (flashcard) flashcard.classList.remove('flipped');
+
+
+        const prevBtn = document.getElementById('prev-card');
+        const nextBtn = document.getElementById('next-card');
+       
+        if (prevBtn) prevBtn.disabled = currentCardIndex === 0;
+        if (nextBtn) nextBtn.disabled = currentCardIndex === currentFlashcards.length - 1;
+    }
+
+
+    function updateProgress() {
+        const progressCurrent = document.getElementById('progress-current');
+        const progressTotal = document.getElementById('progress-total');
+        const progressBar = document.getElementById('progress-bar');
+       
+        if (progressCurrent) progressCurrent.textContent = currentCardIndex + 1;
+        if (progressTotal) progressTotal.textContent = currentFlashcards.length;
+        if (progressBar) {
+            const progressPercent = ((currentCardIndex + 1) / currentFlashcards.length) * 100;
+            progressBar.style.width = progressPercent + '%';
+        }
+    }
+
+
+    function previousCard() {
+        if (currentCardIndex > 0) {
+            currentCardIndex--;
+            updateFlashcardDisplay();
+            updateProgress();
+        }
+    }
+
+
+    function nextCard() {
+        if (currentCardIndex < currentFlashcards.length - 1) {
+            currentCardIndex++;
+            updateFlashcardDisplay();
+            updateProgress();
+        }
+    }
+
+
+    function flipCard() {
+        const flashcard = document.querySelector('.flashcard');
+        flashcard.classList.toggle('flipped');
+    }
+
+
+    function exportFlashcards() {
+        if (!currentFlashcards.length) {
+            showFlashMessage('No flashcards to export.', 'error');
+            return;
+        }
+
+
+        const topicTitle = "{{ topic.title }}";
+        let exportContent = `Flashcards for: ${topicTitle}\nGenerated on: ${new Date().toLocaleDateString()}\n\n`;
+
+
+        currentFlashcards.forEach((card, index) => {
+            exportContent += `Card ${index + 1}:\nQ: ${card.question}\nA: ${card.answer}\n\n`;
+        });
+
+
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${topicTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_flashcards.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+
+    function startFlashcardQuiz() {
+        if (!currentFlashcards.length) {
+            showFlashMessage('No flashcards available for quiz.', 'error');
+            return;
+        }
+
+
+        const shuffled = [...currentFlashcards].sort(() => Math.random() - 0.5);
+        currentFlashcards = shuffled;
+        currentCardIndex = 0;
+        updateFlashcardDisplay();
+        updateProgress();
+
+
+        showFlashMessage('Flashcards shuffled! Quiz mode activated.', 'success');
+    }
+
+
+    function retryFlashcardGeneration() {
+        generateFlashcards();
+    }
+
+
+    // Student notes functionality
+    function saveNotes() {
+        const notes = document.getElementById('student-notes');
+        if (!notes) return;
+       
+        window.topicNotes = window.topicNotes || {};
+        window.topicNotes['{{ topic.id }}'] = notes.value;
+       
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check mr-1"></i>Saved!';
+        button.classList.remove('bg-blue-800', 'hover:bg-blue-900');
+        button.classList.add('bg-green-500');
+       
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('bg-green-500');
+            button.classList.add('bg-blue-800', 'hover:bg-blue-900');
+        }, 2000);
+    }
+
+
+    function exportNotes() {
+        const notesElement = document.getElementById('student-notes');
+        if (!notesElement) return;
+       
+        const notes = notesElement.value;
+        const topicTitle = "{{ topic.title }}";
+       
+        if (!notes.trim()) {
+            alert('No notes to export!');
+            return;
+        }
+       
+        const content = `Topic: ${topicTitle}\nDate: ${new Date().toLocaleDateString()}\n\nNotes:\n${notes}`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${topicTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_notes.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+
+    // Content toggle functionality
+    function toggleHeaderContent() {
+        const preview = document.getElementById('header-content-preview');
+        const full = document.getElementById('header-content-full');
+        const button = document.getElementById('header-toggle-btn');
+
+
+        if (preview && full && button) {
+            if (preview.classList.contains('hidden')) {
+                // Show preview, hide full
+                preview.classList.remove('hidden');
+                full.classList.add('hidden');
+                button.innerHTML = '<i class="fas fa-chevron-down mr-1"></i>See More';
+            } else {
+                // Show full, hide preview
+                preview.classList.add('hidden');
+                full.classList.remove('hidden');
+                button.innerHTML = '<i class="fas fa-chevron-up mr-1"></i>See Less';
+            }
+        }
+    }
+
+
+    function toggleContent() {
+        const preview = document.getElementById('content-preview');
+        const full = document.getElementById('content-full');
+        const button = document.getElementById('content-toggle-btn');
+
+
+        if (preview && full && button) {
+            if (preview.classList.contains('hidden')) {
+                // Show preview, hide full
+                preview.classList.remove('hidden');
+                full.classList.add('hidden');
+                button.innerHTML = '<i class="fas fa-chevron-down mr-2"></i>See More';
+            } else {
+                // Show full, hide preview
+                preview.classList.add('hidden');
+                full.classList.remove('hidden');
+                button.innerHTML = '<i class="fas fa-chevron-up mr-2"></i>See Less';
+               
+                // Smooth scroll to the content section
+                full.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }
+</script>
+{% endblock %}
+
+

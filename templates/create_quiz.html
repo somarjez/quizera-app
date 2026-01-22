@@ -1,0 +1,354 @@
+{% extends "base.html" %} {% block title %}Create Quiz - Quizera{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/createquiz.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+
+<style>
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  /* � Background gradient + visible waves */
+  body {
+    background: linear-gradient(180deg, #eef2ff 0%, #e0e7ff 40%, #f8fafc 100%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Make background curves more visible but still soft */
+  .bg-curves {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 65vh;
+    z-index: -5;
+    pointer-events: none;
+    overflow: visible;
+    opacity: 1.7; /* stronger visibility */
+  }
+  .bg-curves svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: saturate(1.4) brightness(1.08)
+      drop-shadow(0 6px 18px rgba(37, 70, 219, 0.08));
+  }
+  :root {
+    --accent-a: #2546db; /* brighter, more saturated blue */
+    --accent-b: #ff9f43; /* warmer accent */
+  }
+
+  /* 🪶 Quiz Card — Google Form inspired */
+  .quiz-card {
+    /* Brighter, more visible background that still maintains elegance */
+    background: rgba(255, 255, 255, 0.85);
+    /* Remove backdrop blur that caused the 'mist' effect */
+    backdrop-filter: none;
+    border-radius: 1.25rem;
+    border: none; /* remove all borders */
+    border-top: 8px solid #08196d !important; /* dark blue top border */
+    overflow: hidden; /* ensures border respects border-radius */
+    box-shadow: 0 10px 34px rgba(37, 70, 219, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.25s ease,
+      border-color 0.4s ease;
+  }
+  .quiz-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Inputs and selects get a cleaner outline look */
+  .form-input {
+    background-color: #f9fafb;
+    border: 1px solid #0e1c64;
+    transition: all 0.25s ease;
+  }
+  .form-input:focus {
+    border-color: var(--accent-a);
+    box-shadow: 0 0 0 3px rgba(37, 70, 219, 0.12);
+    background-color: #fff;
+  }
+
+  /* Header */
+  .quiz-header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #0e1c64;
+  }
+
+  .quiz-header p {
+    font-size: 1.05rem;
+    color: #0e1c64;
+    margin-top: 0.5rem;
+  }
+
+  .underline-separator {
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+    margin: 0.75rem auto 1.5rem auto;
+    border-radius: 9999px;
+  }
+
+  /* Buttons */
+  .btn-create {
+    background-color: #0e1c64; /* dark blue by default */
+    color: #fff;
+    border: 2px solid #0e1c64;
+    box-shadow: 0 8px 22px rgba(14, 28, 100, 0.16);
+  }
+  .btn-create:hover {
+    background-color: #1a2b7a; /* slightly lighter dark blue on hover */
+    border-color: #1a2b7a;
+  }
+  .btn-create:focus {
+    outline: none;
+    box-shadow: 0 8px 28px rgba(14, 28, 100, 0.22);
+  }
+
+  /* Checkbox accents */
+  input[type="checkbox"] {
+    accent-color: var(--accent-a);
+  }
+
+  /* Fade-in animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<!-- 🌊 Visible layered waves background -->
+<div class="bg-curves" aria-hidden="true">
+  <svg
+    viewBox="0 0 1440 320"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill="#2b3b8c"
+      opacity="0.45"
+      d="M0,192L48,170.7C96,149,192,107,288,101.3C384,96,480,128,576,128C672,128,768,96,864,74.7C960,53,1056,43,1152,74.7C1248,107,1344,181,1392,218.7L1440,256L1440,0L0,0Z"
+    ></path>
+    <path
+      fill="#f5a45b"
+      opacity="0.45"
+      d="M0,160L48,154.7C96,149,192,139,288,144C384,149,480,171,576,176C672,181,768,171,864,160C960,149,1056,139,1152,154.7C1248,171,1344,213,1392,234.7L1440,256L1440,0L0,0Z"
+    ></path>
+    <path
+      fill="#2b3b8c"
+      opacity="0.6"
+      d="M0,96L48,106.7C96,117,192,139,288,154.7C384,171,480,181,576,181.3C672,181,768,171,864,149.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,0L0,0Z"
+    ></path>
+  </svg>
+</div>
+
+<!-- 🧾 Main Card -->
+<div class="min-h-screen flex items-center justify-center py-16 px-6">
+  <div class="max-w-3xl w-full quiz-card p-10 fade-in">
+    <!-- Header -->
+    <div class="quiz-header text-center mb-10">
+      <h1>Create New Quiz</h1>
+      <div class="underline-separator"></div>
+      <p>Set up a new quiz for your students</p>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" class="space-y-8">
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-heading mr-2" style="color: #0e1c64"></i>Quiz Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          required
+          class="form-input w-full px-4 py-3 rounded-lg"
+          placeholder="e.g., Introduction to Variables - Quiz 1"
+        />
+      </div>
+
+      <div>
+        <label
+          for="description"
+          class="block text-sm font-medium text-gray-700 mb-2"
+        >
+          <i class="fas fa-align-left mr-2" style="color: #0e1c64"></i
+          >Description (Optional)
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          rows="3"
+          class="form-input w-full px-4 py-3 rounded-lg resize-vertical"
+          placeholder="Brief description of what this quiz covers..."
+        ></textarea>
+      </div>
+
+      <div>
+        <label
+          for="subject_id"
+          class="block text-sm font-medium text-gray-700 mb-2"
+        >
+          <i class="fas fa-book mr-2" style="color: #0e1c64"></i>Subject
+        </label>
+        <select
+          id="subject_id"
+          name="subject_id"
+          required
+          class="form-input w-full px-4 py-3 rounded-lg"
+        >
+          <option value="">Select a subject</option>
+          {% for subject in subjects %}
+          <option value="{{ subject.id }}">{{ subject.name }}</option>
+          {% endfor %}
+        </select>
+        {% if not subjects %}
+        <p class="text-sm text-red-500 mt-2">
+          <i class="fas fa-exclamation-circle mr-1"></i>
+          You need to create a subject first.
+          <a
+            href="{{ url_for('create_subject') }}"
+            class="text-blue-600 hover:underline"
+            >Create Subject</a
+          >
+        </p>
+        {% endif %}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label
+            for="time_limit"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            <i class="fas fa-clock mr-2" style="color: #0e1c64"></i>Time Limit
+            (minutes)
+          </label>
+          <input
+            type="number"
+            id="time_limit"
+            name="time_limit"
+            value="30"
+            min="1"
+            max="180"
+            required
+            class="form-input w-full px-4 py-3 rounded-lg"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Students will have this much time to complete the quiz
+          </p>
+        </div>
+
+        <div>
+          <label
+            for="passing_score"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            <i class="fas fa-percentage mr-2" style="color: #0e1c64"></i>Passing
+            Score (%)
+          </label>
+          <input
+            type="number"
+            id="passing_score"
+            name="passing_score"
+            value="70"
+            min="1"
+            max="100"
+            class="form-input w-full px-4 py-3 rounded-lg"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Minimum score required to pass
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h3
+          class="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2"
+        >
+          <i class="fas fa-cog mr-2" style="color: #0e1c64"></i>Quiz Options
+        </h3>
+        <div class="space-y-3">
+          <label class="flex items-center">
+            <input type="checkbox" name="shuffle_questions" />
+            <span class="ml-2 text-sm text-gray-700"
+              >Shuffle questions for each student</span
+            >
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" name="shuffle_answers" />
+            <span class="ml-2 text-sm text-gray-700"
+              >Shuffle answer options</span
+            >
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" name="show_results" checked />
+            <span class="ml-2 text-sm text-gray-700"
+              >Show results immediately after submission</span
+            >
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" name="allow_retakes" />
+            <span class="ml-2 text-sm text-gray-700"
+              >Allow students to retake the quiz</span
+            >
+          </label>
+        </div>
+      </div>
+
+      <div
+        class="flex items-center justify-between pt-6 border-t border-gray-200"
+      >
+        <a
+          href="{{ url_for('dashboard') }}"
+          class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <i class="fas fa-times mr-2"></i>Cancel
+        </a>
+        {% if subjects %}
+        <button
+          type="submit"
+          class="px-8 py-3 btn-create rounded-lg shadow-md transition-colors"
+        >
+          <i class="fas fa-plus mr-2"></i>Create Quiz
+        </button>
+        {% else %}
+        <button
+          type="button"
+          disabled
+          class="px-8 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+        >
+          <i class="fas fa-plus mr-2"></i>Create Quiz
+        </button>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

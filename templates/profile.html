@@ -1,0 +1,1850 @@
+{% extends 'base.html' %} {% block title %}My Profile - Quizera{% endblock %} {%
+block main_class %}container mx-auto px-4 py-8{% endblock %} {% block content %}
+<!-- Profile Header -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+  <div class="relative animated-cover h-40">
+    <!-- Decorative academic pattern -->
+    <svg
+      aria-hidden="true"
+      class="absolute inset-y-0 right-0 h-full w-1/2 opacity-20"
+      viewBox="0 0 318 110"
+      preserveAspectRatio="none"
+    >
+      <path d="M0 110L318 0v110H0z" fill="url(#grad)" />
+      <defs>
+        <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+          <stop stop-color="#93C5FD" offset="0%"></stop>
+          <stop stop-color="#C4B5FD" offset="100%"></stop>
+        </linearGradient>
+      </defs>
+    </svg>
+    <!-- Refined layered waves for smoother curvature -->
+    <svg
+      class="wave wave-1"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M0 72 C 120 60 240 48 360 54 C 480 60 600 78 720 76 C 840 74 960 56 1080 58 C 1200 60 1320 70 1440 68 L1440 120 L0 120 Z"
+      ></path>
+    </svg>
+    <svg
+      class="wave wave-2"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M0 74 C 140 50 280 46 420 60 C 560 74 700 96 840 92 C 980 88 1120 66 1260 68 C 1350 70 1395 74 1440 78 L1440 120 L0 120 Z"
+      ></path>
+    </svg>
+    <!-- Soft white crest for cleaner transition -->
+    <svg
+      class="absolute bottom-0 left-0 w-full h-16 text-white pointer-events-none"
+      style="bottom: -1px"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      shape-rendering="geometricPrecision"
+    >
+      <path
+        fill="currentColor"
+        d="M0 102 C 320 86 640 78 960 86 C 1200 92 1320 98 1440 104 L1440 120 L0 120 Z"
+      ></path>
+    </svg>
+  </div>
+  <div class="px-8 pb-8">
+    <!-- Avatar -->
+    <div class="flex items-start -mt-16 mb-6">
+      <div class="relative">
+        <!-- Soft curved glow behind avatar -->
+        <div
+          class="pointer-events-none absolute -inset-4 -z-10 rounded-full blur-2xl opacity-40 bg-gradient-to-tr from-indigo-200 to-purple-200"
+        ></div>
+        <div
+          class="rounded-full shadow-lg cursor-pointer"
+          onclick="showAvatarSelector()"
+        >
+          <div
+            id="currentAvatar"
+            class="w-32 h-32 rounded-full flex items-center justify-center border border-indigo-600/20"
+          >
+            {% if user and user.avatar_type == 'animal' and user.avatar_id %}
+            <div
+              class="w-full h-full rounded-full bg-gray-50 flex items-center justify-center text-6xl animal-avatar"
+            >
+              {{ user.avatar_id | get_animal_emoji }}
+            </div>
+            {% else %}
+            <div
+              class="w-full h-full rounded-full bg-{{ user.avatar_id if user and user.avatar_id and user.avatar_type == 'initial' else 'blue' }}-500 flex items-center justify-center text-white font-bold text-4xl initial-avatar"
+            >
+              {{ (user.username[0] if user and user.username else 'U') | upper
+              }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Role Badge -->
+        <div class="absolute -bottom-2 -right-2">
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-sm ring-1 ring-inset {% if user.role == 'teacher' %}bg-blue-50 text-blue-800 ring-blue-200{% else %}bg-green-50 text-green-800 ring-green-200{% endif %}"
+          >
+            {% if user.role == 'teacher' %}
+            <svg
+              class="w-3.5 h-3.5 mr-1.5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6L23 9l-11-6z" />
+            </svg>
+            Teacher {% else %}
+            <svg
+              class="w-3.5 h-3.5 mr-1.5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M12 14l9-5-9-5-9 5 9 5z" />
+              <path
+                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+              />
+            </svg>
+            Student {% endif %}
+          </span>
+        </div>
+
+        <!-- Edit Button Overlay -->
+        <button
+          onclick="showAvatarSelector()"
+          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full w-8 h-8 flex items-center justify-center hover:bg-white transition-colors shadow-md"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ml-8 mt-16 flex-1 flex items-start justify-between">
+        <div>
+          <h1 class="text-3xl font-extrabold text-gray-900 mb-1 tracking-tight">
+            {{ user.full_name if user.full_name else user.username }}
+          </h1>
+          <p class="text-base text-gray-600 mb-3">@{{ user.username }}</p>
+          {% if user.institution %}
+          <div class="flex items-center text-gray-500 mb-4">
+            <svg
+              class="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+            <span class="text-sm">{{ user.institution }}</span>
+          </div>
+          {% endif %} {% if user.bio %}
+          <p class="text-gray-700 max-w-2xl leading-relaxed">{{ user.bio }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Edit Profile Button -->
+        <button
+          onclick="switchTab('settings')"
+          class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm whitespace-nowrap"
+        >
+          Edit Profile
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Avatar Selector Modal -->
+<div
+  id="avatarModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center"
+>
+  <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-gray-900">Choose Your Avatar</h3>
+      <button
+        onclick="hideAvatarSelector()"
+        class="text-gray-500 hover:text-gray-700"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Avatar Options -->
+    <div class="space-y-4">
+      <!-- Initial Avatar -->
+      <div>
+        <h4 class="text-sm font-semibold text-gray-700 mb-3">Initial Avatar</h4>
+        <div class="flex flex-wrap gap-2">
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:ring-4 hover:ring-blue-200 transition-all"
+            onclick="selectAvatar('initial', 'blue')"
+            data-type="initial"
+            data-id="blue"
+          >
+            {{ user.username[0]|upper if user.username else 'U' }}
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-green-500 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:ring-4 hover:ring-green-200 transition-all"
+            onclick="selectAvatar('initial', 'green')"
+            data-type="initial"
+            data-id="green"
+          >
+            {{ user.username[0]|upper if user.username else 'U' }}
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-purple-500 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:ring-4 hover:ring-purple-200 transition-all"
+            onclick="selectAvatar('initial', 'purple')"
+            data-type="initial"
+            data-id="purple"
+          >
+            {{ user.username[0]|upper if user.username else 'U' }}
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-red-500 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:ring-4 hover:ring-red-200 transition-all"
+            onclick="selectAvatar('initial', 'red')"
+            data-type="initial"
+            data-id="red"
+          >
+            {{ user.username[0]|upper if user.username else 'U' }}
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:ring-4 hover:ring-orange-200 transition-all"
+            onclick="selectAvatar('initial', 'orange')"
+            data-type="initial"
+            data-id="orange"
+          >
+            {{ user.username[0]|upper if user.username else 'U' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Animal Avatars -->
+      <div>
+        <h4 class="text-sm font-semibold text-gray-700 mb-3">Animal Avatars</h4>
+        <div class="grid grid-cols-6 gap-2">
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'cat')"
+            data-type="animal"
+            data-id="cat"
+          >
+            🐱
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'dog')"
+            data-type="animal"
+            data-id="dog"
+          >
+            🐶
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'fox')"
+            data-type="animal"
+            data-id="fox"
+          >
+            🦊
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'bear')"
+            data-type="animal"
+            data-id="bear"
+          >
+            🐻
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'panda')"
+            data-type="animal"
+            data-id="panda"
+          >
+            🐼
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'koala')"
+            data-type="animal"
+            data-id="koala"
+          >
+            🐨
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'lion')"
+            data-type="animal"
+            data-id="lion"
+          >
+            🦁
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'tiger')"
+            data-type="animal"
+            data-id="tiger"
+          >
+            🐯
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'wolf')"
+            data-type="animal"
+            data-id="wolf"
+          >
+            🐺
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'rabbit')"
+            data-type="animal"
+            data-id="rabbit"
+          >
+            🐰
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'monkey')"
+            data-type="animal"
+            data-id="monkey"
+          >
+            🐵
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'elephant')"
+            data-type="animal"
+            data-id="elephant"
+          >
+            🐘
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'penguin')"
+            data-type="animal"
+            data-id="penguin"
+          >
+            🐧
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'owl')"
+            data-type="animal"
+            data-id="owl"
+          >
+            🦉
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'turtle')"
+            data-type="animal"
+            data-id="turtle"
+          >
+            🐢
+          </div>
+          <div
+            class="avatar-option w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-3xl cursor-pointer hover:ring-4 hover:ring-indigo-200 transition-all"
+            onclick="selectAvatar('animal', 'unicorn')"
+            data-type="animal"
+            data-id="unicorn"
+          >
+            🦄
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end mt-6 space-x-3">
+      <button
+        onclick="hideAvatarSelector()"
+        class="px-5 py-2 text-gray-600 hover:text-gray-800 font-medium"
+      >
+        Cancel
+      </button>
+      <button
+        onclick="saveAvatar()"
+        class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Main Content -->
+  <div class="lg:col-span-2 space-y-8">
+    <!-- Tab Navigation -->
+    <div class="bg-white rounded-xl shadow-md border border-gray-100">
+      <div class="border-b border-gray-200">
+        <nav class="flex space-x-8 px-6">
+          <button
+            onclick="switchTab('overview')"
+            class="tab-button active py-4 border-b-2 border-indigo-600 text-indigo-600 font-semibold"
+          >
+            Overview
+          </button>
+          <button
+            onclick="switchTab('settings')"
+            class="tab-button py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium"
+          >
+            Settings
+          </button>
+          <button
+            onclick="switchTab('activity')"
+            class="tab-button py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium"
+          >
+            Analytics
+          </button>
+          {% if user.role == 'teacher' %}
+          <button
+            onclick="switchTab('stats')"
+            class="tab-button py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium"
+          >
+            Statistics
+          </button>
+          {% endif %}
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="p-6">
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-content">
+          <div
+            class="flex items-center justify-between pb-3 mb-6 border-b border-gray-200"
+          >
+            <h2 class="text-xl font-bold text-gray-900 flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 text-indigo-600"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 13h2v8H3v-8zm4-6h2v14H7V7zm4 3h2v11h-2V10zm4-8h2v19h-2V2zm4 12h2v7h-2v-7z"
+                />
+              </svg>
+              {% if user.role == 'teacher' %}Teaching Overview{% else %}Learning
+              Overview{% endif %}
+            </h2>
+          </div>
+
+          {% if user.role == 'teacher' %}
+          <!-- Teacher Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div
+              class="group text-center p-4 bg-blue-50 rounded-lg border border-blue-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-blue-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2l9 4-9 4-9-4 9-4zm0 6l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"
+                  />
+                </svg>
+                <div class="text-2xl font-extrabold text-blue-700">
+                  {{ stats.subjects_count or 0 }}
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-blue-800/80">
+                Subject{{ 's' if stats.subjects_count != 1 }}
+              </div>
+            </div>
+            <div
+              class="group text-center p-4 bg-green-50 rounded-lg border border-green-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-green-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z" />
+                </svg>
+                <div class="text-2xl font-extrabold text-green-700">
+                  {{ stats.quizzes_count or 0 }}
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-green-800/80">
+                Quiz{{ 'zes' if stats.quizzes_count != 1 else '' }}
+              </div>
+            </div>
+            <div
+              class="group text-center p-4 bg-purple-50 rounded-lg border border-purple-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-purple-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M16 11c1.66 0 2.99-1.34 2.99-3A3 3 0 0016 5a3 3 0 000 6zm-8 0c1.66 0 2.99-1.34 2.99-3A3 3 0 008 5a3 3 0 000 6zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+                  />
+                </svg>
+                <div class="text-2xl font-extrabold text-purple-700">
+                  {{ stats.total_students or 0 }}
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-purple-800/80">
+                Student{{ 's' if stats.total_students != 1 }}
+              </div>
+            </div>
+            <div
+              class="group text-center p-4 bg-yellow-50 rounded-lg border border-yellow-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-yellow-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                </svg>
+                <div class="text-2xl font-extrabold text-yellow-700">
+                  {{ stats.avg_score or 0 }}%
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-yellow-800/80">
+                Avg Score
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <!-- Student Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div
+              class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-blue-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z" />
+                </svg>
+                <div class="text-2xl font-extrabold text-blue-700">
+                  {{ stats.quizzes_taken or 0 }}
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-blue-800/80">
+                Quiz{{ 'zes' if stats.quizzes_taken != 1 else '' }} Taken
+              </div>
+            </div>
+            <div
+              class="text-center p-4 bg-green-50 rounded-lg border border-green-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-green-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                </svg>
+                <div class="text-2xl font-extrabold text-green-700">
+                  {{ stats.average_score or 0 }}%
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-green-800/80">
+                Avg Score
+              </div>
+            </div>
+            <div
+              class="text-center p-4 bg-purple-50 rounded-lg border border-purple-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-purple-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2l9 4-9 4-9-4 9-4zM3 14h18v2H3v-2z" />
+                </svg>
+                <div class="text-2xl font-extrabold text-purple-700">
+                  {{ stats.subjects_enrolled or 0 }}
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-purple-800/80">
+                Subject{{ 's' if stats.subjects_enrolled != 1 }}
+              </div>
+            </div>
+            <div
+              class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-100"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <svg
+                  class="w-5 h-5 text-yellow-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M13 2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2V10" />
+                </svg>
+                <div class="text-2xl font-extrabold text-yellow-700">
+                  {{ stats.study_hours or 0 }}
+                </div>
+              </div>
+              <div class="text-xs tracking-wide text-yellow-800/80">
+                Study Hours
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <hr class="my-6" />
+
+          <!-- Personal Information -->
+          <div>
+            <h3
+              class="text-lg font-semibold mb-4 flex items-center text-gray-900"
+            >
+              <svg
+                class="w-5 h-5 mr-2 text-indigo-600"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
+              </svg>
+              Personal Information
+            </h3>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 rounded-lg p-4"
+            >
+              <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1"
+                  >Full Name</label
+                >
+                <p class="text-gray-900 font-medium">
+                  {{ user.full_name if user.full_name else 'Not provided' }}
+                </p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1"
+                  >Email</label
+                >
+                <p class="text-gray-900 font-medium">
+                  {{ user.email if user.email else 'Not provided' }}
+                </p>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-600 mb-1"
+                  >Bio</label
+                >
+                <p class="text-gray-900">
+                  {{ user.bio if user.bio else 'No bio provided' }}
+                </p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1"
+                  >Institution</label
+                >
+                <p class="text-gray-900 font-medium">
+                  {{ user.institution if user.institution else 'Not provided' }}
+                </p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1"
+                  >Member Since</label
+                >
+                <p class="text-gray-900 font-medium">
+                  {{ user.created_at.strftime('%B %Y') if user.created_at else
+                  'Unknown' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content hidden">
+          <h2
+            class="text-xl font-bold text-gray-900 pb-3 mb-6 border-b border-gray-200"
+          >
+            Account Settings
+          </h2>
+          <form method="POST">
+            <div class="space-y-6">
+              <!-- Profile Information -->
+              <div>
+                <h3
+                  class="text-lg font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-indigo-600"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                    />
+                  </svg>
+                  Profile Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Username</label
+                    >
+                    <input
+                      type="text"
+                      name="username"
+                      value="{{ user.username if user.username else '' }}"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Full Name</label
+                    >
+                    <input
+                      type="text"
+                      name="full_name"
+                      value="{{ user.full_name if user.full_name else '' }}"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Email</label
+                    >
+                    <input
+                      type="email"
+                      name="email"
+                      value="{{ user.email if user.email else '' }}"
+                      class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed"
+                      readonly
+                      disabled
+                    />
+                    <p class="text-xs text-gray-500 mt-1.5">
+                      Email cannot be changed. Contact support if needed.
+                    </p>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Bio</label
+                    >
+                    <textarea
+                      name="bio"
+                      rows="3"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    >
+{{ user.bio if user.bio else '' }}</textarea
+                    >
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Institution</label
+                    >
+                    <input
+                      type="text"
+                      name="institution"
+                      value="{{ user.institution if user.institution else '' }}"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <hr class="border-gray-200" />
+
+              <!-- Avatar Selection -->
+              <div>
+                <h3
+                  class="text-lg font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-indigo-600"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Avatar
+                </h3>
+                <div class="flex items-center space-x-4">
+                  <div
+                    id="settingsAvatar"
+                    class="w-20 h-20 rounded-full flex items-center justify-center ring-2 ring-gray-200"
+                  >
+                    <!-- Current avatar preview -->
+                  </div>
+                  <button
+                    type="button"
+                    onclick="showAvatarSelector()"
+                    class="bg-indigo-50 text-indigo-700 px-5 py-2.5 rounded-lg hover:bg-indigo-100 transition-colors font-medium"
+                  >
+                    Change Avatar
+                  </button>
+                </div>
+                <input
+                  type="hidden"
+                  name="avatar_type"
+                  id="avatarType"
+                  value="{{ user.avatar_type or 'initial' }}"
+                />
+                <input
+                  type="hidden"
+                  name="avatar_id"
+                  id="avatarId"
+                  value="{{ user.avatar_id or 'blue' }}"
+                />
+              </div>
+
+              <hr class="border-gray-200" />
+
+              <!-- Change Password -->
+              <div>
+                <h3
+                  class="text-lg font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-indigo-600"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  Change Password
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Current Password</label
+                    >
+                    <input
+                      type="password"
+                      name="current_password"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >New Password</label
+                    >
+                    <input
+                      type="password"
+                      name="new_password"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Confirm New Password</label
+                    >
+                    <input
+                      type="password"
+                      name="confirm_new_password"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Save Button -->
+              <div class="flex justify-end pt-4">
+                <button
+                  type="submit"
+                  class="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="activity-tab" class="tab-content hidden">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-gray-900 flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 text-indigo-600"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              Analytics Dashboard
+            </h2>
+          </div>
+
+          <!-- Charts Container -->
+          <div class="space-y-8">
+            {% if user.role == 'teacher' %}
+            <!-- Teacher Analytics -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="rounded-lg p-4 ring-1 ring-gray-100">
+                <h4
+                  class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <span
+                    class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2"
+                  ></span>
+                  Content Overview
+                </h4>
+                <canvas
+                  id="teacherOverviewChart"
+                  width="400"
+                  height="200"
+                ></canvas>
+                <button
+                  onclick="downloadChart('teacherOverviewChart')"
+                  class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+                  </svg>
+                  Download Chart
+                </button>
+              </div>
+              <div class="rounded-lg p-4 ring-1 ring-gray-100">
+                <h4
+                  class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <span
+                    class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"
+                  ></span>
+                  Student Engagement
+                </h4>
+                <canvas id="engagementChart" width="400" height="200"></canvas>
+                <button
+                  onclick="downloadChart('engagementChart')"
+                  class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+                  </svg>
+                  Download Chart
+                </button>
+              </div>
+            </div>
+            <div class="rounded-lg p-4 ring-1 ring-gray-100">
+              <h4
+                class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+              >
+                <span
+                  class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"
+                ></span>
+                Quiz Performance Trends
+              </h4>
+              <canvas
+                id="performanceTrendChart"
+                width="800"
+                height="300"
+              ></canvas>
+              <button
+                onclick="downloadChart('performanceTrendChart')"
+                class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+              >
+                <svg
+                  class="w-4 h-4 mr-1"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+                </svg>
+                Download Chart
+              </button>
+            </div>
+            {% else %}
+            <!-- Student Analytics -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="rounded-lg p-4 ring-1 ring-gray-100">
+                <h4
+                  class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <span
+                    class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2"
+                  ></span>
+                  Study Overview
+                </h4>
+                <canvas
+                  id="studentOverviewChart"
+                  width="400"
+                  height="200"
+                ></canvas>
+                <button
+                  onclick="downloadChart('studentOverviewChart')"
+                  class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+                  </svg>
+                  Download Chart
+                </button>
+              </div>
+              <div class="rounded-lg p-4 ring-1 ring-gray-100">
+                <h4
+                  class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+                >
+                  <span
+                    class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"
+                  ></span>
+                  Score Distribution
+                </h4>
+                <canvas id="scoreChart" width="400" height="200"></canvas>
+                <button
+                  onclick="downloadChart('scoreChart')"
+                  class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+                  </svg>
+                  Download Chart
+                </button>
+              </div>
+            </div>
+            <div class="rounded-lg p-4 ring-1 ring-gray-100">
+              <h4
+                class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+              >
+                <span
+                  class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"
+                ></span>
+                Study Progress Over Time
+              </h4>
+              <canvas id="progressChart" width="800" height="300"></canvas>
+              <button
+                onclick="downloadChart('progressChart')"
+                class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+              >
+                <svg
+                  class="w-4 h-4 mr-1"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+                </svg>
+                Download Chart
+              </button>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Statistics Tab (for teachers only) -->
+        {% if user.role == 'teacher' %}
+        <div id="stats-tab" class="tab-content hidden">
+          <h2
+            class="text-xl font-bold text-gray-900 pb-3 mb-6 border-b border-gray-200 flex items-center"
+          >
+            <svg
+              class="w-5 h-5 mr-2 text-indigo-600"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            Detailed Statistics
+          </h2>
+
+          <!-- Overview Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div
+              class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-md"
+            >
+              <h4 class="text-3xl font-bold mb-1">
+                {{ stats.subjects_count or 0 }}
+              </h4>
+              <p class="text-blue-100 text-sm">Subjects Created</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md"
+            >
+              <h4 class="text-3xl font-bold mb-1">
+                {{ stats.quizzes_count or 0 }}
+              </h4>
+              <p class="text-green-100 text-sm">Quizzes Created</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-md"
+            >
+              <h4 class="text-3xl font-bold mb-1">
+                {{ stats.topics_count or 0 }}
+              </h4>
+              <p class="text-purple-100 text-sm">Topics Created</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-md"
+            >
+              <h4 class="text-3xl font-bold mb-1">
+                {{ stats.total_students or 0 }}
+              </h4>
+              <p class="text-orange-100 text-sm">Students Reached</p>
+            </div>
+          </div>
+
+          <!-- Additional Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <h4
+                class="text-lg font-semibold mb-4 flex items-center text-gray-900"
+              >
+                <span
+                  class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"
+                ></span>
+                Quiz Performance
+              </h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Average Completion Rate:</span>
+                  <span class="font-semibold text-gray-900"
+                    >{{ stats.avg_completion_rate or 0 }}%</span
+                  >
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Total Quiz Attempts:</span>
+                  <span class="font-semibold text-gray-900"
+                    >{{ stats.total_attempts or 0 }}</span
+                  >
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Average Score:</span>
+                  <span class="font-semibold text-gray-900"
+                    >{{ stats.avg_score or 0 }}%</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <h4
+                class="text-lg font-semibold mb-4 flex items-center text-gray-900"
+              >
+                <span
+                  class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"
+                ></span>
+                Engagement
+              </h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Active Students:</span>
+                  <span class="font-semibold text-gray-900"
+                    >{{ stats.active_students or 0 }}</span
+                  >
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">This Month's Quiz Views:</span>
+                  <span class="font-semibold text-gray-900"
+                    >{{ stats.monthly_views or 0 }}</span
+                  >
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Total Teaching Hours:</span>
+                  <span class="font-semibold text-gray-900"
+                    >{{ stats.teaching_hours or 0 }}h</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="space-y-8 lg:sticky lg:top-24 h-fit">
+    <!-- Quick Info -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <h3
+        class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200 flex items-center"
+      >
+        <svg
+          class="w-5 h-5 mr-2 text-indigo-600"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+          />
+        </svg>
+        Profile Info
+      </h3>
+
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Role</span>
+          <span class="font-medium capitalize">{{ user.role }}</span>
+        </div>
+
+        {% if user.created_at %}
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Joined</span>
+          <span class="font-medium">
+            {{ user.created_at.strftime('%B %Y') if user.created_at.strftime
+            else 'Recently' }}
+          </span>
+        </div>
+        {% endif %} {% if user.role == 'teacher' %}
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Students Taught</span>
+          <span class="font-medium">{{ stats.total_students or 0 }}</span>
+        </div>
+        {% else %}
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Learning Level</span>
+          <span class="font-medium">
+            {% if stats.average_score >= 90 %}Expert {% elif stats.average_score
+            >= 80 %}Advanced {% elif stats.average_score >= 70 %}Intermediate {%
+            elif stats.average_score >= 60 %}Beginner {% else %}Getting Started
+            {% endif %}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Global chart style tweaks for a modern academic look
+  Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"';
+  Chart.defaults.color = '#374151';
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+  Chart.defaults.elements.line.tension = 0.35;
+  Chart.defaults.borderColor = '#E5E7EB';
+
+  // Avatar system variables
+  let selectedAvatarType = '{{ user.avatar_type or "initial" }}';
+  let selectedAvatarId = '{{ user.avatar_id or "blue" }}';
+  const username = '{{ user.username or "U" }}';
+
+  // Chart instances
+  let charts = {};
+
+  // Stats data from backend
+  const statsData = (function(){
+      const o = { role: '{{ user.role }}' };
+      {%- if user.role == 'teacher' -%}
+      o.subjects = {{ stats.subjects_count or 0 }};
+      o.quizzes = {{ stats.quizzes_count or 0 }};
+      o.topics = {{ stats.topics_count or 0 }};
+      o.students = {{ stats.total_students or 0 }};
+      o.activeStudents = {{ stats.active_students or 0 }};
+      o.monthlyViews = {{ stats.monthly_views or 0 }};
+      o.avgScore = {{ stats.avg_score or 0 }};
+      o.avgCompletion = {{ stats.avg_completion_rate or 0 }};
+      {%- else -%}
+      o.quizzesTaken = {{ stats.quizzes_taken or 0 }};
+      o.averageScore = {{ stats.average_score or 0 }};
+      o.subjectsEnrolled = {{ stats.subjects_enrolled or 0 }};
+      o.studyHours = {{ stats.study_hours or 0 }};
+      {%- endif -%}
+      return o;
+  })();
+  // Animal emoji mapping
+  const animalEmojis = {
+      'cat': '🐱', 'dog': '🐶', 'fox': '🦊', 'bear': '🐻', 'panda': '🐼', 'koala': '🐨',
+      'lion': '🦁', 'tiger': '🐯', 'wolf': '🐺', 'rabbit': '🐰', 'monkey': '🐵', 'elephant': '🐘',
+      'penguin': '🐧', 'owl': '🦉', 'turtle': '🐢', 'unicorn': '🦄'
+  };
+
+  // Color mapping for initial avatars
+  const colorClasses = {
+      'blue': 'bg-blue-500',
+      'green': 'bg-green-500',
+      'purple': 'bg-purple-500',
+      'red': 'bg-red-500',
+      'orange': 'bg-orange-500'
+  };
+
+  // Chart initialization
+  function initCharts() {
+      if (statsData.role === 'teacher') {
+          initTeacherCharts();
+      } else {
+          initStudentCharts();
+      }
+  }
+
+  function initTeacherCharts() {
+      // Teacher Overview Chart (Doughnut)
+      const overviewCtx = document.getElementById('teacherOverviewChart').getContext('2d');
+      charts.teacherOverview = new Chart(overviewCtx, {
+          type: 'doughnut',
+          data: {
+              labels: ['Subjects', 'Quizzes', 'Topics'],
+              datasets: [{
+                  data: [statsData.subjects, statsData.quizzes, statsData.topics],
+                  backgroundColor: ['#3B82F6', '#10B981', '#8B5CF6'],
+                  borderWidth: 2,
+                  borderColor: '#fff'
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'bottom'
+                  },
+                  tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#F9FAFB',
+                      bodyColor: '#E5E7EB',
+                      borderColor: '#374151',
+                      borderWidth: 1
+                  }
+              }
+          }
+      });
+
+      // Engagement Chart (Bar)
+      const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+      charts.engagement = new Chart(engagementCtx, {
+          type: 'bar',
+          data: {
+              labels: ['Total Students', 'Active Students', 'Monthly Views'],
+              datasets: [{
+                  label: 'Count',
+                  data: [statsData.students, statsData.activeStudents, statsData.monthlyViews],
+                  backgroundColor: ['#F59E0B', '#EF4444', '#06B6D4'],
+                  borderWidth: 0,
+                  borderRadius: 4
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      display: false
+                  },
+                  tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#F9FAFB',
+                      bodyColor: '#E5E7EB',
+                      borderColor: '#374151',
+                      borderWidth: 1
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      grid: { color: '#F3F4F6' }
+                  },
+                  x: {
+                      grid: { display: false }
+                  }
+              }
+          }
+      });
+
+      // Performance Trend Chart (Line)
+      const trendCtx = document.getElementById('performanceTrendChart').getContext('2d');
+      charts.performanceTrend = new Chart(trendCtx, {
+          type: 'line',
+          data: {
+              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+              datasets: [{
+                  label: 'Average Score %',
+                  data: [65, 72, 68, 75, 82, statsData.avgScore],
+                  borderColor: '#3B82F6',
+                  backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                  tension: 0.4,
+                  fill: true
+              }, {
+                  label: 'Completion Rate %',
+                  data: [78, 85, 82, 88, 91, statsData.avgCompletion],
+                  borderColor: '#10B981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                  tension: 0.4,
+                  fill: true
+              }]
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      max: 100,
+                      grid: { color: '#F3F4F6' }
+                  },
+                  x: {
+                      grid: { display: false }
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#F9FAFB',
+                      bodyColor: '#E5E7EB',
+                      borderColor: '#374151',
+                      borderWidth: 1
+                  }
+              }
+          }
+      });
+  }
+
+  function initStudentCharts() {
+      // Student Overview Chart (Polar Area)
+      const overviewCtx = document.getElementById('studentOverviewChart').getContext('2d');
+      charts.studentOverview = new Chart(overviewCtx, {
+          type: 'polarArea',
+          data: {
+              labels: ['Quizzes Taken', 'Subjects Enrolled', 'Study Hours'],
+              datasets: [{
+                  data: [statsData.quizzesTaken, statsData.subjectsEnrolled, statsData.studyHours],
+                  backgroundColor: ['#3B82F6', '#8B5CF6', '#F59E0B'],
+                  borderWidth: 2,
+                  borderColor: '#fff'
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'bottom'
+                  },
+                  tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#F9FAFB',
+                      bodyColor: '#E5E7EB',
+                      borderColor: '#374151',
+                      borderWidth: 1
+                  }
+              }
+          }
+      });
+
+      // Score Chart (Gauge-style doughnut)
+      const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+      charts.score = new Chart(scoreCtx, {
+          type: 'doughnut',
+          data: {
+              labels: ['Score', 'Remaining'],
+              datasets: [{
+                  data: [statsData.averageScore, 100 - statsData.averageScore],
+                  backgroundColor: [
+                      statsData.averageScore >= 80 ? '#10B981' :
+                      statsData.averageScore >= 60 ? '#F59E0B' : '#EF4444',
+                      '#E5E7EB'
+                  ],
+                  borderWidth: 0
+              }]
+          },
+          options: {
+              responsive: true,
+              cutout: '70%',
+              plugins: {
+                  legend: {
+                      display: false
+                  },
+                  tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#F9FAFB',
+                      bodyColor: '#E5E7EB',
+                      borderColor: '#374151',
+                      borderWidth: 1
+                  }
+              }
+          }
+      });
+
+      // Progress Chart (Line)
+      const progressCtx = document.getElementById('progressChart').getContext('2d');
+      charts.progress = new Chart(progressCtx, {
+          type: 'line',
+          data: {
+              labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+              datasets: [{
+                  label: 'Quizzes Completed',
+                  data: [2, 5, 8, 12, 15, statsData.quizzesTaken],
+                  borderColor: '#3B82F6',
+                  backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                  tension: 0.4,
+                  fill: true
+              }, {
+                  label: 'Average Score',
+                  data: [45, 52, 61, 68, 75, statsData.averageScore],
+                  borderColor: '#10B981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                  tension: 0.4,
+                  fill: true,
+                  yAxisID: 'y1'
+              }]
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  y: {
+                      type: 'linear',
+                      display: true,
+                      position: 'left',
+                      beginAtZero: true,
+                      grid: { color: '#F3F4F6' }
+                  },
+                  y1: {
+                      type: 'linear',
+                      display: true,
+                      position: 'right',
+                      beginAtZero: true,
+                      max: 100,
+                      grid: {
+                          drawOnChartArea: false,
+                      },
+                  },
+                  x: {
+                      grid: { display: false }
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#F9FAFB',
+                      bodyColor: '#E5E7EB',
+                      borderColor: '#374151',
+                      borderWidth: 1
+                  }
+              }
+          }
+      });
+  }
+
+  // Download chart function
+  function downloadChart(chartId) {
+      const canvas = document.getElementById(chartId);
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${chartId}_${new Date().toISOString().slice(0, 10)}.png`;
+      a.click();
+  }
+
+  // Tab switching functionality
+  function switchTab(tabName) {
+      // Hide all tab contents
+      const tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(content => content.classList.add('hidden'));
+
+      // Remove active class from all tab buttons
+      const tabButtons = document.querySelectorAll('.tab-button');
+      tabButtons.forEach(button => {
+          button.classList.remove('active', 'border-indigo-600', 'text-indigo-600');
+          button.classList.add('border-transparent', 'text-gray-500');
+      });
+
+      // Show selected tab content
+      document.getElementById(tabName + '-tab').classList.remove('hidden');
+
+      // Add active class to selected tab button
+      event.target.classList.add('active', 'border-indigo-600', 'text-indigo-600');
+      event.target.classList.remove('border-transparent', 'text-gray-500');
+
+      // Initialize charts when activity tab is opened
+      if (tabName === 'activity' && Object.keys(charts).length === 0) {
+          setTimeout(initCharts, 100);
+      }
+  }
+
+  // Avatar selector functions
+  function showAvatarSelector() {
+      document.getElementById('avatarModal').classList.remove('hidden');
+      updateAvatarSelection();
+  }
+
+  function hideAvatarSelector() {
+      document.getElementById('avatarModal').classList.add('hidden');
+  }
+
+  function selectAvatar(type, id) {
+      selectedAvatarType = type;
+      selectedAvatarId = id;
+
+      // Remove selection from all avatar options
+      document.querySelectorAll('.avatar-option').forEach(option => {
+          option.classList.remove('ring-4', 'ring-indigo-500');
+      });
+
+      // Add selection to clicked avatar
+      event.target.classList.add('ring-4', 'ring-indigo-500');
+  }
+
+  function updateAvatarSelection() {
+      // Remove all selections first
+      document.querySelectorAll('.avatar-option').forEach(option => {
+          option.classList.remove('ring-4', 'ring-indigo-500');
+      });
+
+      // Find and select current avatar
+      const currentOption = document.querySelector(`[data-type="${selectedAvatarType}"][data-id="${selectedAvatarId}"]`);
+      if (currentOption) {
+          currentOption.classList.add('ring-4', 'ring-indigo-500');
+      }
+  }
+
+  function saveAvatar() {
+      // Update hidden form fields
+      document.getElementById('avatarType').value = selectedAvatarType;
+      document.getElementById('avatarId').value = selectedAvatarId;
+
+      // Save avatar to backend immediately
+      fetch('/update-avatar', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              avatar_type: selectedAvatarType,
+              avatar_id: selectedAvatarId
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // Update current avatar display
+              updateAvatarDisplay(document.getElementById('currentAvatar'), selectedAvatarType, selectedAvatarId);
+
+              // Update settings avatar preview
+              const settingsAvatar = document.getElementById('settingsAvatar');
+              if (settingsAvatar) {
+                  updateAvatarDisplay(settingsAvatar, selectedAvatarType, selectedAvatarId, true);
+              }
+
+              // Show success message
+              showNotification('Avatar updated successfully!', 'success');
+          } else {
+              showNotification('Error updating avatar: ' + data.message, 'error');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          showNotification('Error updating avatar', 'error');
+      });
+
+      hideAvatarSelector();
+  }
+
+  // Add notification function
+  function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+          type === 'success' ? 'bg-green-500 text-white' :
+          type === 'error' ? 'bg-red-500 text-white' :
+          'bg-blue-500 text-white'
+      }`;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+          notification.remove();
+      }, 3000);
+  }
+
+  function updateAvatarDisplay(element, avatarType, avatarId, isSmall = false) {
+      const sizeClasses = isSmall ? 'w-20 h-20' : 'w-32 h-32';
+      const textSize = isSmall ? 'text-3xl' : 'text-6xl';
+
+      if (avatarType === 'animal' && animalEmojis[avatarId]) {
+          element.innerHTML = `
+              <div class="${sizeClasses} rounded-full bg-gray-50 flex items-center justify-center ${textSize} animal-avatar border border-indigo-600/20" data-animal="${avatarId}">
+                  ${animalEmojis[avatarId]}
+              </div>
+          `;
+      } else {
+          const colorClass = colorClasses[avatarId] || 'bg-blue-500';
+          element.innerHTML = `
+              <div class="${sizeClasses} rounded-full ${colorClass} flex items-center justify-center text-white ${isSmall ? 'text-2xl' : 'text-4xl'} font-bold border border-indigo-600/20 initial-avatar">
+                  ${username[0].toUpperCase()}
+              </div>
+          `;
+      }
+  }
+
+  // Initialize avatars on page load
+  document.addEventListener('DOMContentLoaded', function() {
+      // Update current avatar display
+      const currentAvatar = document.getElementById('currentAvatar');
+      if (currentAvatar) {
+          updateAvatarDisplay(currentAvatar, selectedAvatarType, selectedAvatarId);
+      }
+
+      // Update settings avatar preview
+      const settingsAvatar = document.getElementById('settingsAvatar');
+      if (settingsAvatar) {
+          updateAvatarDisplay(settingsAvatar, selectedAvatarType, selectedAvatarId, true);
+      }
+  });
+</script>
+
+<style>
+  /* Minimal page-specific polish without altering global styles */
+  .animal-avatar,
+  .initial-avatar {
+    box-shadow: 0 10px 20px -10px rgba(79, 70, 229, 0.35);
+  }
+
+  button:focus {
+    outline: none;
+  }
+
+  button:focus-visible {
+    outline: 2px solid rgba(79, 70, 229, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* Animated gradient cover photo for the profile header */
+  .animated-cover {
+    background: linear-gradient(-45deg, #ff9966, #ff5e62, #6a82fb, #56ccf2);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Layered wave motion */
+  .animated-cover .wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 220%;
+    height: 5rem;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .animated-cover .wave-1 {
+    color: rgba(255, 255, 255, 0.24);
+    transform: translateX(0) translateY(2px);
+    animation: waveSlide 22s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite
+      alternate;
+  }
+
+  .animated-cover .wave-2 {
+    color: rgba(255, 255, 255, 0.14);
+    transform: translateX(-8%) translateY(8px);
+    animation: waveSlideReverse 28s cubic-bezier(0.45, 0.05, 0.55, 0.95)
+      infinite alternate;
+  }
+
+  @keyframes waveSlide {
+    0% {
+      transform: translateX(0) translateY(4px);
+    }
+    100% {
+      transform: translateX(-18%) translateY(8px);
+    }
+  }
+
+  @keyframes waveSlideReverse {
+    0% {
+      transform: translateX(-8%) translateY(10px);
+    }
+    100% {
+      transform: translateX(2%) translateY(6px);
+    }
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .animated-cover {
+      animation: none;
+    }
+    .animated-cover .wave-1,
+    .animated-cover .wave-2 {
+      animation: none;
+    }
+  }
+</style>
+
+{% endblock %}

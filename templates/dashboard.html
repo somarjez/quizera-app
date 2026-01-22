@@ -1,0 +1,1372 @@
+{% extends "base.html" %} {% block title %}Dashboard - Quizera{% endblock %} {%
+block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- Add jsPDF library for PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  * {
+    font-family: "Poppins", sans-serif;
+  }
+
+  body {
+    background: #f8f9fc;
+  }
+
+  .modern-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+  }
+
+  .modern-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .gradient-header {
+    background: linear-gradient(135deg, #af3805 0%, #ffbd65 100%);
+    border-radius: 20px;
+    padding: 32px 40px;
+    min-height: 350px;
+    color: white;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Animated floating elements in header */
+  .gradient-header::before {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    top: -50px;
+    right: 10%;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .gradient-header::after {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    bottom: -30px;
+    left: 15%;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    25% {
+      transform: translateY(-20px) translateX(10px);
+    }
+    50% {
+      transform: translateY(-10px) translateX(20px);
+    }
+    75% {
+      transform: translateY(-30px) translateX(5px);
+    }
+  }
+
+  /* Animated particles */
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    animation: rise 10s infinite ease-in;
+  }
+
+  .particle:nth-child(1) {
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 8s;
+  }
+
+  .particle:nth-child(2) {
+    left: 25%;
+    animation-delay: 2s;
+    animation-duration: 10s;
+  }
+
+  .particle:nth-child(3) {
+    left: 40%;
+    animation-delay: 1s;
+    animation-duration: 9s;
+  }
+
+  .particle:nth-child(4) {
+    left: 60%;
+    animation-delay: 3s;
+    animation-duration: 11s;
+  }
+
+  .particle:nth-child(5) {
+    left: 75%;
+    animation-delay: 1.5s;
+    animation-duration: 8.5s;
+  }
+
+  .particle:nth-child(6) {
+    left: 90%;
+    animation-delay: 2.5s;
+    animation-duration: 9.5s;
+  }
+
+  @keyframes rise {
+    0% {
+      bottom: -10px;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      bottom: 100%;
+      opacity: 0;
+    }
+  }
+
+  /* Pulsing icon effect */
+  .header-icon {
+    font-size: 3rem;
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  /* Header content positioning */
+
+  /* Header content positioning */
+  /* Centralized Header Text Styles */
+  .header-content .quizera-brand {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: #f6f1d8;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1.2px solid #ffbd65;
+    display: inline-block;
+  }
+
+  .header-content h1 {
+    font-size: 70px;
+    font-family: "Paytone One", sans-serif;
+    line-height: 1.2;
+    font-weight: 900;
+    color: #f8c2a5;
+    margin-bottom: 0.2rem;
+  }
+
+  .header-content p {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-top: 8px;
+    color: #f6f1d8;
+  }
+
+  .btn-modern {
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-modern:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .search-input {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 12px 16px 12px 40px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #181e57;
+    box-shadow: 2 2 2 1px rgba(40, 45, 142, 0.1);
+  }
+
+  .subject-card,
+  .quiz-card {
+    background: linear-gradient(135deg, #351402 0%, #d55023 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  .subject-card:hover,
+  .quiz-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .badge-modern {
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .progress-bar-modern {
+    height: 6px;
+    border-radius: 10px;
+    background: #e2e8f0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #f1a933 0%, #6c0b05 100%);
+    transition: width 0.5s ease;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #94a3b8;
+  }
+
+  .empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  select {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .announcement-card {
+    background: linear-gradient(135deg, #351402 0%, #d55023 100%);
+    border-radius: 16px;
+    padding: 32px;
+    color: white;
+    text-align: center;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 4px solid #05124c;
+  }
+
+  /* ========== HEADER NAVIGATION BUTTONS ========== */
+
+  /* Shared button styles */
+  .header-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75em 1.8em;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+
+  /* Home button style */
+  .btn-home {
+    background: #351402;
+    color: white;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  }
+
+  .btn-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  }
+
+  .btn-home:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  }
+
+  /* Messages button style */
+  .btn-messages {
+    background: white;
+    color: #d48432;
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
+    border: 2px solid transparent;
+    position: relative;
+  }
+
+  .btn-messages:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
+    background: #fef3f2;
+  }
+
+  .btn-messages:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+  }
+
+  /* Icon styling */
+  .header-nav-btn i {
+    font-size: 18px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-home i {
+    font-size: 20px;
+  }
+
+  .btn-messages i {
+    font-size: 20px;
+  }
+
+  /* Hover icon animation */
+  .btn-home:hover i {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  .btn-messages:hover i {
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  /* Arrow icon for messages */
+  .btn-messages .arrow-icon {
+    margin-left: 4px;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  .btn-messages:hover .arrow-icon {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+
+  /* Play button text styling */
+  .btn-play-text,
+  .btn-dashboard-text {
+    letter-spacing: 0.5px;
+  }
+
+  /* Badge positioning for unread count */
+  .header-nav-btn .unread-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .header-nav-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+      gap: 6px;
+    }
+
+    .header-nav-btn i {
+      font-size: 16px;
+    }
+
+    .btn-home i,
+    .btn-messages i {
+      font-size: 16px;
+    }
+
+    .header-nav-btn .hidden.md\:inline {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-nav-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .header-nav-btn i {
+      font-size: 14px;
+    }
+  }
+
+  /* Animation keyframes */
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Dark mode support (optional) */
+  @media (prefers-color-scheme: dark) {
+    .btn-messages {
+      background: white;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
+    }
+
+    .btn-messages:hover {
+      background: #fff5f0;
+    }
+  }
+</style>
+
+{% endblock %} {% block content %}
+<!-- Main Dashboard Content -->
+<div class="container mx-auto px-4 py-6">
+  {% if role == 'teacher' %}
+  <!-- Teacher Dashboard -->
+  <div class="gradient-header">
+    <!-- Animated particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <!-- Wave effect -->
+    <div class="wave-container">
+      <div class="wave"></div>
+      <div class="wave"></div>
+    </div>
+
+    <div class="header-content">
+      <div class="w-full">
+        <div>
+          <div class="quizera-brand">QUIZERA ONLINE COURSE</div>
+          <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-bold">Hello, {{ username }}!</h1>
+          </div>
+          <p class="text-purple-100 text-lg mb-4">
+            Explore your enrolled subjects and take quizzes
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="{{ url_for('home') }}"
+            class="header-nav-btn btn-home"
+            title="Home"
+          >
+            <i class="fas fa-home"></i>
+            <span class="hidden md:inline">Home</span>
+          </a>
+          <a
+            href="{{ url_for('chat') }}"
+            class="header-nav-btn btn-messages relative"
+            title="Messages"
+          >
+            <i class="fas fa-comments"></i>
+            <span class="hidden md:inline">Messages</span>
+            <i class="fas fa-arrow-right arrow-icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- CLOSE THE GRADIENT HEADER HERE -->
+
+  <!-- Updated grid to accommodate three sections -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Manage Subjects -->
+    <div class="modern-card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="section-title">
+          <div class="icon-wrapper bg-red-100 text-red-600">
+            <i class="fas fa-book"></i>
+          </div>
+          My Subjects
+        </h2>
+        <a
+          href="{{ url_for('create_subject') }}"
+          class="btn-modern bg-[#351402] text-white hover:bg-[#2b1002] rounded-full"
+        >
+          <i class="fas fa-plus"></i>
+          Add
+        </a>
+      </div>
+
+      <!-- Subject Search -->
+      <div class="mb-4 relative">
+        <input
+          type="text"
+          id="subject-search"
+          placeholder="Search subjects..."
+          class="w-full search-input"
+        />
+        <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+      </div>
+
+      <div class="space-y-3 max-h-96 overflow-y-auto" id="subjects-container">
+        {% if subjects %} {% for subject in subjects %}
+        <div
+          class="subject-card"
+          data-subject-name="{{ subject.name|lower }}"
+          data-subject-description="{{ subject.description|lower }}"
+        >
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h3 class="font-semibold text-lg text-white mb-1">
+                {{ subject.name }}
+              </h3>
+              <p class="text-purple-100 text-sm mb-2">
+                {{ subject.description }}
+              </p>
+              <span class="badge-modern bg-[#fla933] text-gray-300">
+                <i class="fas fa-list-ul"></i> {{ subject.topic_count|default(0)
+                }} Topics
+              </span>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <!-- VIEW BUTTON -->
+            <a
+              href="{{ url_for('view_subject', subject_id=subject.id) }}"
+              class="btn-modern bg-white text-[#FF9A56] hover:bg-gray-50 text-sm flex-1 justify-center"
+            >
+              <i class="fas fa-eye text-[#FF9A56]"></i> View
+            </a>
+
+            <!-- EDIT BUTTON -->
+            <button
+              class="subject-edit-btn btn-modern bg-[#351402] text-white hover:bg-[#351402] text-sm flex-1 justify-center"
+              data-subject-id="{{ subject.id }}"
+              data-subject-name="{{ subject.name }}"
+              data-subject-description="{{ subject.description }}"
+            >
+              <i class="fas fa-edit text-white"></i> Edit
+            </button>
+
+            <!-- DELETE BUTTON (unchanged) -->
+            <button
+              class="subject-delete-btn btn-modern bg-red-500 text-white hover:bg-red-600 text-sm"
+              data-subject-id="{{ subject.id }}"
+              data-subject-name="{{ subject.name }}"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <i class="fas fa-book"></i>
+          <p class="font-medium text-gray-600">No subjects created yet.</p>
+          <p class="text-sm">Create your first subject to get started!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- My Quizzes -->
+    <div class="modern-card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="section-title">
+          <div class="icon-wrapper bg-yellow-100 text-yellow-600">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          My Quizzes
+        </h2>
+        <a
+          href="{{ url_for('create_quiz') }}"
+          class="btn-modern bg-[#351402] text-white hover:bg-[#2b1002] rounded-full"
+        >
+          <i class="fas fa-plus"></i>
+          Create
+        </a>
+      </div>
+
+      <!-- Quiz Search -->
+      <div class="mb-4 relative">
+        <input
+          type="text"
+          id="quiz-search"
+          placeholder="Search quizzes..."
+          class="w-full search-input"
+        />
+        <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+      </div>
+
+      <!-- Subject Filter for Quizzes -->
+      <div class="mb-4">
+        <select id="subject-filter" class="w-full text-sm">
+          <option value="">All Subjects</option>
+          {% for subject in subjects %}
+          <option value="{{ subject.name|lower }}">{{ subject.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="space-y-4 max-h-96 overflow-y-auto" id="quizzes-container">
+        {% if quizzes %} {% set quizzes_by_subject = {} %} {% for quiz in
+        quizzes %} {% set subject_name = quiz.subject_name %} {% if subject_name
+        not in quizzes_by_subject %} {% set _ =
+        quizzes_by_subject.update({subject_name: []}) %} {% endif %} {% set _ =
+        quizzes_by_subject[subject_name].append(quiz) %} {% endfor %} {% for
+        subject_name, subject_quizzes in quizzes_by_subject.items() %}
+        <div class="subject-group mb-6" data-subject="{{ subject_name|lower }}">
+          <h4 class="text-sm font-semibold text-gray-500 mb-3 px-2">
+            {{ subject_name }}
+            <span class="text-gray-400">({{ subject_quizzes|length }})</span>
+          </h4>
+          <div class="space-y-3">
+            {% for quiz in subject_quizzes %}
+            <div
+              class="quiz-card"
+              data-quiz-title="{{ quiz.title|lower }}"
+              data-subject="{{ subject_name|lower }}"
+            >
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex-1">
+                  <h3 class="font-semibold text-white mb-2">
+                    {{ quiz.title }}
+                  </h3>
+                  <div class="flex flex-wrap gap-2 text-xs text-purple-100">
+                    <span class="badge-modern bg-[#d55023] bg-opacity-20">
+                      <i class="fas fa-question"></i> {{
+                      quiz.question_count|default(0) }}
+                    </span>
+                    <span class="badge-modern bg-[#E21C34] text-white">
+                      <i class="fas fa-clock"></i> {{
+                      quiz.time_limit|default(30) }} min
+                    </span>
+                    {% if quiz.is_published %}
+                    <span class="badge-modern bg-green-600">
+                      <i class="fas fa-check"></i> Published
+                    </span>
+                    {% else %}
+                    <span class="badge-modern bg-orange-500">
+                      <i class="fas fa-draft2digital"></i> Draft
+                    </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <a
+                  href="{{ url_for('manage_quiz', quiz_id=quiz.id) }}"
+                  class="btn-modern bg-white text-[#351402] hover:bg-gray-50 text-sm flex-1 justify-center"
+                >
+                  <i class="fas fa-cog"></i> Manage
+                </a>
+                <button
+                  class="quiz-preview-btn btn-modern bg-blue-400 text-white hover:bg-blue-600 text-sm"
+                  data-quiz-id="{{ quiz.id }}"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button
+                  class="quiz-delete-btn btn-modern bg-red-500 text-white hover:bg-red-600 text-sm"
+                  data-quiz-id="{{ quiz.id }}"
+                  data-quiz-title="{{ quiz.title }}"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <i class="fas fa-question-circle"></i>
+          <p class="font-medium text-gray-600">No quizzes created yet.</p>
+          <p class="text-sm">Create your first quiz to get started!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- NEW: Announcements Section -->
+    <div class="modern-card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="section-title">
+          <div class="icon-wrapper bg-orange-100 text-orange-600">
+            <i class="fas fa-bullhorn"></i>
+          </div>
+          Announcements
+        </h2>
+      </div>
+
+      <div class="announcement-card">
+        <i class="fas fa-megaphone text-5xl mb-4 opacity-90"></i>
+        <h3 class="text-lg font-semibold mb-2">Communication Hub</h3>
+        <p class="text-sm text-orange-50 mb-6">
+          Share important updates with your students
+        </p>
+
+        <div class="space-y-3">
+          <a
+            href="{{ url_for('view_announcements') }}"
+            class="btn-modern bg-white text-orange-600 hover:bg-orange-50 w-full justify-center"
+          >
+            <i class="fas fa-eye"></i> View All
+          </a>
+          <a
+            href="{{ url_for('post_announcement') }}"
+            class="btn-modern border-2 border-white text-white hover:bg-white hover:bg-opacity-10 w-full justify-center"
+          >
+            <i class="fas fa-plus"></i> Create New
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% elif role == 'student' %}
+  <!-- Student Dashboard -->
+  <div class="gradient-header">
+    <!-- Animated particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <!-- Wave effect -->
+    <div class="wave-container">
+      <div class="wave"></div>
+      <div class="wave"></div>
+    </div>
+
+    <div class="header-content">
+      <div class="w-full">
+        <div>
+          <div class="quizera-brand">QUIZERA ONLINE COURSE</div>
+          <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-bold">Hello, {{ username }}!</h1>
+          </div>
+          <p class="text-purple-100 text-lg mb-4">
+            Explore your enrolled subjects and take quizzes
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="{{ url_for('dashboard') }}"
+            class="header-nav-btn btn-home"
+            title="Home"
+          >
+            <i class="fas fa-home"></i>
+            <span class="hidden md:inline">Home</span>
+          </a>
+          <a
+            href="{{ url_for('chat') }}"
+            class="header-nav-btn btn-messages relative"
+            title="Messages"
+          >
+            <i class="fas fa-comments"></i>
+            <span class="hidden md:inline">Messages</span>
+            <i class="fas fa-arrow-right arrow-icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- CLOSE THE GRADIENT HEADER HERE -->
+
+  <!-- Updated grid to accommodate three sections for students -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Enrolled Subjects with Progress -->
+    <div class="modern-card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="section-title">
+          <div class="icon-wrapper bg-red-100 text-red-600">
+            <i class="fas fa-bookmark"></i>
+          </div>
+          My Subjects
+        </h2>
+      </div>
+
+      <!-- Subject Search for Students -->
+      <div class="mb-4 relative">
+        <input
+          type="text"
+          id="enrolled-subject-search"
+          placeholder="Search enrolled subjects..."
+          class="w-full search-input"
+        />
+        <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+      </div>
+
+      <div
+        class="space-y-3 max-h-96 overflow-y-auto"
+        id="enrolled-subjects-container"
+      >
+        {% if enrolled_subjects %} {% for subject in enrolled_subjects %} {% set
+        quiz_progress = subject_progress.get(subject.id, {}) %} {% set
+        total_quizzes = quiz_progress.get('total_quizzes', 0) %} {% set
+        passed_quizzes = quiz_progress.get('passed_quizzes', 0) %} {% set
+        completion_percentage = (passed_quizzes / total_quizzes * 100) if
+        total_quizzes > 0 else 0 %} {% set all_passed = passed_quizzes ==
+        total_quizzes and total_quizzes > 0 %}
+
+        <div
+          class="subject-card"
+          data-subject-name="{{ subject.name|lower }}"
+          data-subject-description="{{ subject.description|lower }}"
+          data-teacher-name="{{ subject.teacher_name|lower }}"
+        >
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="font-semibold text-white">{{ subject.name }}</h3>
+                {% if all_passed %}
+                <span class="badge-modern bg-green-500 text-white">
+                  <i class="fas fa-trophy"></i> Complete
+                </span>
+                {% endif %}
+              </div>
+              <p class="text-purple-100 text-sm mb-2">
+                {{ subject.description }}
+              </p>
+              <div class="flex gap-3 text-xs text-purple-100">
+                <span
+                  ><i class="fas fa-user"></i> {{ subject.teacher_name }}</span
+                >
+                <span
+                  ><i class="fas fa-list-ul"></i> {{ subject.topic_count or 0 }}
+                  Topics</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          {% if total_quizzes > 0 %}
+          <div class="mb-3">
+            <div class="flex justify-between text-xs text-purple-100 mb-2">
+              <span>Progress</span>
+              <span>{{ passed_quizzes }}/{{ total_quizzes }}</span>
+            </div>
+            <div class="progress-bar-modern">
+              <div
+                class="progress-fill"
+                style="width: {{ completion_percentage }}%"
+              ></div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="flex gap-2">
+            <a
+              href="{{ url_for('view_subject', subject_id=subject.id) }}"
+              class="btn-modern bg-[#351402] text-white hover:bg-[#351402] text-sm flex-1 justify-center"
+            >
+              <i class="fas fa-book-open"></i> Study
+            </a>
+            {% if all_passed %}
+            <button
+              class="download-certificate-btn btn-modern text-sm"
+              data-subject-id="{{ subject.id }}"
+              data-subject-name="{{ subject.name }}"
+              style="
+                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                color: white;
+              "
+            >
+              <i class="fas fa-download"></i>
+            </button>
+            {% endif %}
+            <button
+              class="btn-modern bg-red-100 text-red-600 hover:bg-red-200 text-sm"
+              onclick="unenrollFromSubject('{{ subject.id }}', '{{ subject.name }}')"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <i class="fas fa-bookmark"></i>
+          <p class="font-medium text-gray-600">No enrolled subjects yet.</p>
+          <p class="text-sm mb-4">Discover and enroll in subjects!</p>
+          <div class="text-xs text-gray-500 text-left inline-block">
+            <p class="mb-2 font-medium">You can find subjects by:</p>
+            <ul class="space-y-1">
+              <li>• Using the Subjects section</li>
+              <li>• Asking for enrollment codes</li>
+              <li>• Browsing the catalog</li>
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Available Quizzes with Status -->
+    <div class="modern-card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="section-title">
+          <div class="icon-wrapper bg-yellow-100 text-yellow-600">
+            <i class="fas fa-tasks"></i>
+          </div>
+          Quizzes
+        </h2>
+      </div>
+
+      <!-- Quiz Search for Students -->
+      <div class="mb-4 relative">
+        <input
+          type="text"
+          id="student-quiz-search"
+          placeholder="Search quizzes..."
+          class="w-full search-input"
+        />
+        <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+      </div>
+
+      <!-- Subject Filter for Student Quizzes -->
+      <div class="mb-4">
+        <select id="student-subject-filter" class="w-full">
+          <option value="" class="all-subject-option">All Subjects</option>
+          {% for subject in enrolled_subjects %}
+          <option value="{{ subject.name|lower }}">{{ subject.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div
+        class="space-y-4 max-h-96 overflow-y-auto"
+        id="student-quizzes-container"
+      >
+        {% if quizzes %} {% set student_quizzes_by_subject = {} %} {% for quiz
+        in quizzes %} {% if quiz.is_published %} {% set subject_name =
+        quiz.subject_name %} {% if subject_name not in
+        student_quizzes_by_subject %} {% set _ =
+        student_quizzes_by_subject.update({subject_name: []}) %} {% endif %} {%
+        set _ = student_quizzes_by_subject[subject_name].append(quiz) %} {%
+        endif %} {% endfor %} {% for subject_name, subject_quizzes in
+        student_quizzes_by_subject.items() %}
+        <div class="subject-group mb-6" data-subject="{{ subject_name|lower }}">
+          <h4 class="text-sm font-semibold text-gray-500 mb-3 px-2">
+            {{ subject_name }}
+            <span class="text-gray-400">({{ subject_quizzes|length }})</span>
+          </h4>
+          <div class="space-y-3">
+            {% for quiz in subject_quizzes %} {% set quiz_status =
+            quiz_progress_data.get(quiz.id, {}) %} {% set best_score =
+            quiz_status.get('best_score', 0) %} {% set is_passed =
+            quiz_status.get('is_passed', False) %} {% set attempts_count =
+            quiz_status.get('attempts_count', 0) %}
+
+            <div
+              class="quiz-card"
+              data-quiz-title="{{ quiz.title|lower }}"
+              data-subject="{{ subject_name|lower }}"
+            >
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <h3 class="font-semibold text-white">{{ quiz.title }}</h3>
+                    {% if is_passed %}
+                    <span class="badge-modern bg-green-600 text-white">
+                      <i class="fas fa-check"></i> Passed
+                    </span>
+                    {% elif attempts_count > 0 %}
+                    <span class="badge-modern bg-red-500 text-white">
+                      <i class="fas fa-redo"></i> Retake
+                    </span>
+                    {% endif %}
+                  </div>
+                  <div class="flex flex-wrap gap-2 text-xs text-purple-100">
+                    <span class="badge-modern bg-[#d55023] bg-opacity-20">
+                      <i class="fas fa-question"></i> {{
+                      quiz.question_count|default(0) }}
+                    </span>
+                    <span class="badge-modern bg-[#E21C34] text-white">
+                      <i class="fas fa-clock"></i> {{
+                      quiz.time_limit|default(30) }} min
+                    </span>
+                    {% if attempts_count > 0 %}
+                    <span class="badge-modern bg-green-500 bg-opacity-20">
+                      <i class="fas fa-star"></i> {{ "%.0f"|format(best_score)
+                      }}%
+                    </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex gap-2">
+                <button
+                  class="quiz-take-btn btn-modern bg-white text-[#351402] hover:bg-gray-50 text-sm flex-1 justify-center"
+                  data-quiz-id="{{ quiz.id }}"
+                >
+                  <i class="fas fa-play"></i>
+                  {% if attempts_count > 0 %}Retake{% else %}Take{% endif %}
+                </button>
+                {% if attempts_count > 0 %}
+                <button
+                  class="quiz-results-btn btn-modern bg-yellow-400 text-white hover:bg-yellow-300 text-sm"
+                  data-quiz-id="{{ quiz.id }}"
+                >
+                  <i class="fas fa-chart-bar"></i>
+                </button>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <i class="fas fa-tasks"></i>
+          <p class="font-medium text-gray-600">No quizzes available yet.</p>
+          <p class="text-sm">Enroll in subjects to access quizzes!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- NEW: Student Announcements Section -->
+    <div class="modern-card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="section-title">
+          <div class="icon-wrapper bg-orange-100 text-orange-600">
+            <i class="fas fa-bullhorn"></i>
+          </div>
+          Announcements
+        </h2>
+      </div>
+
+      <div class="text-center py-6">
+        <i class="fas fa-bell text-orange-400 text-5xl mb-4 opacity-70"></i>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Stay Updated</h3>
+        <p class="text-sm text-gray-500 mb-6">
+          Check important updates from your teachers
+        </p>
+
+        <div class="space-y-3">
+          <a
+            href="{{ url_for('view_announcements') }}"
+            class="btn-modern bg-gradient-to-r from-red-900 to-orange-600 text-white w-full justify-center hover:from-orange-600 hover:to-red-700"
+          >
+            <i class="fas fa-eye"></i> View All
+          </a>
+
+          {% if enrolled_subjects %}
+          <div class="mt-4">
+            <p class="text-xs text-gray-600 mb-2 font-medium">
+              View by Subject:
+            </p>
+            <div class="space-y-2 max-h-32 overflow-y-auto">
+              {% for subject in enrolled_subjects %}
+              <a
+                href="{{ url_for('subject_announcement', subject_id=subject.id) }}"
+                class="block border border-red-200 text-orange-900 px-4 py-2 rounded-lg hover:bg-red-50 transition-all text-sm"
+                title="View {{ subject.name }} announcements"
+              >
+                <i class="fas fa-bullhorn"></i> {{ subject.name }}
+                <span class="text-xs text-gray-500 block truncate"
+                  >{{ subject.teacher_name }}</span
+                >
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Formal Landscape Certificate Modal -->
+<div
+  id="certificateModal"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden"
+>
+  <div
+    class="relative top-5 mx-auto p-5 border w-11/12 max-w-6xl shadow-lg rounded-md bg-white"
+  >
+    <div class="mt-3">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">
+          Certificate of Completion
+        </h3>
+        <button
+          onclick="closeCertificateModal()"
+          class="text-gray-400 hover:text-gray-600"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Formal Landscape Certificate Preview -->
+      <div
+        id="certificatePreview"
+        class="certificate-container mx-auto scale-50 origin-top"
+        style="transform-origin: top center"
+      >
+        <div class="certificate-border">
+          <div class="certificate-inner-border">
+            <!-- Decorative corners -->
+            <div class="certificate-decorations">
+              <div class="decoration-corner top-left"></div>
+              <div class="decoration-corner top-right"></div>
+              <div class="decoration-corner bottom-left"></div>
+              <div class="decoration-corner bottom-right"></div>
+            </div>
+
+            <!-- Certificate Header -->
+            <div class="certificate-header">
+              <div class="certificate-logo">QUIZERA</div>
+              <div class="certificate-subtitle">
+                Professional E-Learning Platform
+              </div>
+              <div class="certificate-institution">
+                Computer Science Education Institute
+              </div>
+            </div>
+
+            <!-- Certificate Body -->
+            <div class="certificate-body">
+              <h1 class="certificate-title">Certificate of Completion</h1>
+
+              <p class="certificate-text">This is to certify that</p>
+
+              <div class="certificate-name" id="studentName">
+                {{ username }}
+              </div>
+
+              <p class="certificate-text">
+                has successfully completed the comprehensive course requirements
+                and demonstrated proficiency in all assessments for the subject
+              </p>
+
+              <div class="certificate-subject" id="subjectName">
+                Subject Name
+              </div>
+
+              <p class="certificate-achievement">
+                This achievement represents dedication to academic excellence
+                and mastery of the subject matter as validated through rigorous
+                assessment and evaluation.
+              </p>
+
+              <div style="margin-top: 25px">
+                <p
+                  class="certificate-text"
+                  style="font-size: 12px; color: #6b7280"
+                >
+                  Conferred on this <span id="completionDate"></span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Certificate Footer with Signatures -->
+            <div class="certificate-footer">
+              <div class="certificate-signatures">
+                <div class="signature-section">
+                  <div class="signature-line"></div>
+                  <div class="signature-label">Student</div>
+                  <div class="signature-title">Recipient</div>
+                </div>
+
+                <div class="signature-section">
+                  <div class="signature-line"></div>
+                  <div class="signature-label">Dr. Academic Director</div>
+                  <div class="signature-title">QUIZERA Institute</div>
+                </div>
+
+                <div class="signature-section">
+                  <div class="signature-line"></div>
+                  <div class="signature-label">Registrar</div>
+                  <div class="signature-title">Academic Registry</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Official Seal -->
+            <div class="certificate-seal">
+              <div class="seal-text">
+                <div style="font-size: 10px; font-weight: bold">OFFICIAL</div>
+                <div style="font-size: 8px">SEAL</div>
+                <div style="font-size: 6px; margin-top: 3px">QUIZERA</div>
+                <div style="font-size: 5px">INSTITUTE</div>
+              </div>
+            </div>
+
+            <!-- Date Section -->
+            <div class="certificate-date-section">
+              <div class="certificate-date">
+                Certificate ID: QZ-<span id="certificateId"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center space-x-4 mt-6">
+        <button
+          onclick="downloadCertificateAsPDF()"
+          class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          <i class="fas fa-download mr-2"></i>Download PDF
+        </button>
+        <button
+          onclick="printCertificate()"
+          class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
+        >
+          <i class="fas fa-print mr-2"></i>Print
+        </button>
+        <button
+          onclick="closeCertificateModal()"
+          class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+        >
+          <i class="fas fa-times mr-2"></i>Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handle subject-specific announcement links
+    const subjectAnnouncementLinks = document.querySelectorAll(
+      'a[href*="view_announcements"]'
+    );
+
+    subjectAnnouncementLinks.forEach((link) => {
+      link.addEventListener("click", function (e) {
+        // Add a subtle loading indicator
+        const icon = this.querySelector("i");
+        if (icon) {
+          icon.classList.remove("fa-eye", "fa-book");
+          icon.classList.add("fa-spinner", "fa-spin");
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} {% block footer %}
+<div class="text-center">
+  <p>&copy; 2024 Quizera. All rights reserved.</p>
+  <p class="text-gray-400 text-sm mt-2">
+    E-Learning Platform for Computer Science Students
+  </p>
+</div>
+
+{% endblock %}

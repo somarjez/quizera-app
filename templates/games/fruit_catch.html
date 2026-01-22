@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Code Catch</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Fira Code", "Courier New", monospace;
+        background: linear-gradient(
+          135deg,
+          #1a1a3e 0%,
+          #2d1b4e 50%,
+          #1e3a5f 100%
+        );
+        min-height: 100vh;
+        color: #e0e0e0;
+        overflow-x: hidden;
+      }
+
+      .game-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0.5rem;
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 100;
+        padding: 0.5rem;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(45deg, #ff6b9d, #c44569, #ffa502, #ff6348);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient 3s ease infinite;
+        margin-bottom: 0.3rem;
+      }
+
+      .header p {
+        font-size: 0.9rem;
+        color: #a0aec0;
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .top-panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 100;
+        padding: 0 0.5rem;
+      }
+
+      .stats-grid {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        flex: 1;
+      }
+
+      .stat-badge {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.6rem 1rem;
+        border-radius: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 100px;
+      }
+
+      .stat-badge:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .stat-badge i {
+        font-size: 1rem;
+        color: #ffa502;
+      }
+
+      .stat-value {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #4ecdc4;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: #a0aec0;
+        margin-left: 0.2rem;
+      }
+
+      .game-area {
+        position: relative;
+        flex: 1;
+        min-height: 300px;
+        max-height: 500px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+      }
+
+      .basket {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px 10px 50% 50%;
+        border: 3px solid #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: left 0.1s ease;
+        z-index: 50;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .basket::before {
+        content: "🐍";
+        font-size: 2rem;
+      }
+
+      .falling-code {
+        position: absolute;
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        cursor: default;
+        transition: transform 0.1s ease;
+        animation: fall linear;
+        z-index: 10;
+      }
+
+      .falling-code.correct {
+        background: linear-gradient(
+          135deg,
+          rgba(78, 205, 196, 0.95),
+          rgba(68, 160, 141, 0.95)
+        );
+      }
+
+      .falling-code.incorrect {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 107, 107, 0.95),
+          rgba(255, 71, 87, 0.95)
+        );
+      }
+
+      @keyframes fall {
+        from {
+          top: -100px;
+        }
+        to {
+          top: calc(100% + 100px);
+        }
+      }
+
+      .falling-code.caught {
+        animation: catchAnimation 0.5s ease forwards;
+      }
+
+      @keyframes catchAnimation {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.3);
+        }
+        100% {
+          transform: scale(0);
+          opacity: 0;
+        }
+      }
+
+      .falling-code.missed {
+        animation: missAnimation 0.5s ease forwards;
+      }
+
+      @keyframes missAnimation {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.5);
+          opacity: 0;
+          filter: brightness(0.3);
+        }
+      }
+
+      .question-area {
+        position: relative;
+        z-index: 100;
+        padding: 0 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .question-box {
+        width: 100%;
+        background: rgba(13, 17, 23, 0.9);
+        backdrop-filter: blur(10px);
+        border: 3px solid #30363d;
+        border-radius: 15px;
+        padding: 1rem;
+        color: #e0e0e0;
+        font-size: 1.1rem;
+        font-family: inherit;
+        text-align: center;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .question-text {
+        font-weight: bold;
+        color: #4ecdc4;
+      }
+
+      .controls {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        padding: 0 0.5rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 100;
+      }
+
+      .btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+      }
+
+      .btn-start {
+        background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        color: white;
+      }
+
+      .btn-pause {
+        background: linear-gradient(135deg, #ffa502, #ff6348);
+        color: white;
+      }
+
+      .btn:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .lives-container {
+        display: flex;
+        gap: 0.3rem;
+      }
+
+      .heart {
+        font-size: 1.2rem;
+        color: #ff6b6b;
+        animation: heartbeat 1.5s ease infinite;
+      }
+
+      .heart.lost {
+        color: #444;
+        animation: none;
+      }
+
+      @keyframes heartbeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .game-over-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 1rem;
+      }
+
+      .game-over-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 30px;
+        text-align: center;
+        color: white;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .game-over-title {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .final-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .final-stat {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        border-radius: 15px;
+      }
+
+      .final-stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .final-stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .particle {
+        position: absolute;
+        font-size: 2rem;
+        animation: float linear infinite;
+        opacity: 0.3;
+      }
+
+      @keyframes float {
+        from {
+          transform: translateY(100vh) rotate(0deg);
+        }
+        to {
+          transform: translateY(-100px) rotate(360deg);
+        }
+      }
+
+      .combo-display {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        font-weight: bold;
+        color: #ffa502;
+        text-shadow: 0 0 20px rgba(255, 165, 2, 0.8);
+        pointer-events: none;
+        animation: comboPopup 0.5s ease;
+        z-index: 200;
+      }
+
+      @keyframes comboPopup {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .difficulty-selector {
+        display: flex;
+        gap: 0.3rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.4rem;
+        border-radius: 15px;
+      }
+
+      .difficulty-btn {
+        padding: 0.5rem 0.8rem;
+        background: transparent;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        color: #e0e0e0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        font-weight: bold;
+        font-size: 0.85rem;
+      }
+
+      .difficulty-btn.active {
+        background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        border-color: #4ecdc4;
+      }
+
+      .difficulty-btn:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .difficulty-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Mobile Responsive Styles */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        .header p {
+          font-size: 0.8rem;
+        }
+
+        .top-panel {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .stats-grid {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .stat-badge {
+          padding: 0.5rem 0.8rem;
+          min-width: auto;
+        }
+
+        .stat-badge i {
+          font-size: 0.9rem;
+        }
+
+        .stat-value {
+          font-size: 1rem;
+        }
+
+        .stat-label {
+          font-size: 0.7rem;
+        }
+
+        .difficulty-selector {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .game-area {
+          max-height: 350px;
+          min-height: 250px;
+        }
+
+        .basket {
+          width: 120px;
+          height: 60px;
+        }
+
+        .basket::before {
+          font-size: 1.5rem;
+        }
+
+        .falling-code {
+          font-size: 0.85rem;
+          padding: 0.6rem 1rem;
+        }
+
+        .question-box {
+          font-size: 0.95rem;
+          padding: 0.8rem;
+          min-height: 70px;
+        }
+
+        .controls {
+          flex-wrap: wrap;
+        }
+
+        .btn {
+          padding: 0.7rem 1.2rem;
+          font-size: 0.9rem;
+          flex: 1;
+          min-width: 120px;
+          justify-content: center;
+        }
+
+        .combo-display {
+          font-size: 2rem;
+        }
+
+        .game-over-content {
+          padding: 1.5rem;
+        }
+
+        .game-over-title {
+          font-size: 2rem;
+        }
+
+        .final-stats {
+          gap: 0.8rem;
+        }
+
+        .final-stat {
+          padding: 0.8rem;
+        }
+
+        .final-stat-value {
+          font-size: 1.5rem;
+        }
+
+        .final-stat-label {
+          font-size: 0.8rem;
+        }
+
+        .heart {
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .game-container {
+          padding: 0.3rem;
+        }
+
+        .header h1 {
+          font-size: 1.5rem;
+        }
+
+        .header p {
+          font-size: 0.75rem;
+        }
+
+        .stat-badge {
+          padding: 0.4rem 0.6rem;
+          gap: 0.3rem;
+        }
+
+        .difficulty-btn {
+          padding: 0.4rem 0.6rem;
+          font-size: 0.75rem;
+        }
+
+        .game-area {
+          max-height: 300px;
+          min-height: 200px;
+        }
+
+        .basket {
+          width: 100px;
+          height: 50px;
+        }
+
+        .falling-code {
+          font-size: 0.75rem;
+          padding: 0.5rem 0.8rem;
+        }
+
+        .question-box {
+          font-size: 0.85rem;
+          padding: 0.7rem;
+          min-height: 60px;
+        }
+
+        .btn {
+          padding: 0.6rem 1rem;
+          font-size: 0.85rem;
+        }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .game-area {
+          max-height: 450px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="particles" id="particles"></div>
+
+    <div class="game-container">
+      <div class="header">
+        <h1><i class="fas fa-code"></i> Python Code Catch</h1>
+        <p>Catch only the CORRECT Python code snippets!</p>
+      </div>
+
+      <div class="top-panel">
+        <div class="stats-grid">
+          <div class="stat-badge">
+            <i class="fas fa-trophy"></i>
+            <span class="stat-value" id="score">0</span>
+            <span class="stat-label">Score</span>
+          </div>
+          <div class="stat-badge">
+            <i class="fas fa-fire"></i>
+            <span class="stat-value" id="combo">0</span>
+            <span class="stat-label">Combo</span>
+          </div>
+          <div class="stat-badge">
+            <i class="fas fa-check-circle"></i>
+            <span class="stat-value" id="accuracy">100</span>
+            <span class="stat-label">% Accuracy</span>
+          </div>
+          <div class="stat-badge">
+            <i class="fas fa-heart"></i>
+            <div class="lives-container" id="lives">
+              <span class="heart">♥</span>
+              <span class="heart">♥</span>
+              <span class="heart">♥</span>
+              <span class="heart">♥</span>
+              <span class="heart">♥</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="difficulty-selector">
+          <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+          <button class="difficulty-btn active" data-difficulty="medium">
+            Medium
+          </button>
+          <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+        </div>
+      </div>
+
+      <div class="question-area">
+        <div class="question-box">
+          <div class="question-text" id="questionText">
+            Click "Start Game" to begin!
+          </div>
+        </div>
+      </div>
+
+      <div class="game-area" id="gameArea">
+        <div class="basket" id="basket"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-start" id="startBtn">
+          <i class="fas fa-play"></i> Start Game
+        </button>
+        <button class="btn btn-pause" id="pauseBtn" style="display: none">
+          <i class="fas fa-pause"></i> Pause
+        </button>
+      </div>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+      <div class="game-over-content">
+        <div class="game-over-title">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h2 id="gameOverText">Game Over!</h2>
+        <div class="final-stats">
+          <div class="final-stat">
+            <div class="final-stat-value" id="finalScore">0</div>
+            <div class="final-stat-label">Final Score</div>
+          </div>
+          <div class="final-stat">
+            <div class="final-stat-value" id="finalCombo">0</div>
+            <div class="final-stat-label">Best Combo</div>
+          </div>
+          <div class="final-stat">
+            <div class="final-stat-value" id="finalCaught">0</div>
+            <div class="final-stat-label">Correct Caught</div>
+          </div>
+          <div class="final-stat">
+            <div class="final-stat-value" id="finalAccuracy">0</div>
+            <div class="final-stat-label">Accuracy</div>
+          </div>
+        </div>
+        <button class="btn btn-start" onclick="restartGame()">
+          <i class="fas fa-redo"></i> Play Again
+        </button>
+      </div>
+    </div>
+
+    <script>
+      class CodeFruitCatch {
+        constructor() {
+          this.score = 0;
+          this.combo = 0;
+          this.maxCombo = 0;
+          this.lives = 5;
+          this.isPlaying = false;
+          this.isPaused = false;
+          this.difficulty = "medium";
+          this.fallingCodes = [];
+          this.currentQuestion = null;
+          this.correctAnswer = null;
+          this.codesCaught = 0;
+          this.totalCatches = 0;
+          this.correctCatches = 0;
+          this.spawnInterval = null;
+          this.gameLoopInterval = null;
+
+          this.questions = {
+            easy: [
+              {
+                question: "Which assigns 10 to variable x?",
+                correct: "x = 10",
+                incorrect: ["x == 10", "x := 10", "var x = 10"],
+              },
+              {
+                question: "How to print 'Hello'?",
+                correct: "print('Hello')",
+                incorrect: [
+                  "echo 'Hello'",
+                  "console.log('Hello')",
+                  "printf('Hello')",
+                ],
+              },
+              {
+                question: "How to create a list?",
+                correct: "list = []",
+                incorrect: ["list = {}", "list = ()", "array = []"],
+              },
+              {
+                question: "How to check if x equals 5?",
+                correct: "if x == 5:",
+                incorrect: ["if x = 5:", "if (x === 5)", "if x is 5:"],
+              },
+              {
+                question: "How to define a function?",
+                correct: "def func():",
+                incorrect: [
+                  "function func():",
+                  "func = function()",
+                  "def func[]",
+                ],
+              },
+            ],
+            medium: [
+              {
+                question: "How to create a for loop from 0 to 9?",
+                correct: "for i in range(10):",
+                incorrect: [
+                  "for i in 10:",
+                  "for(i=0;i<10;i++)",
+                  "foreach i in 10:",
+                ],
+              },
+              {
+                question: "How to create a list comprehension?",
+                correct: "[x*2 for x in lst]",
+                incorrect: [
+                  "(x*2 for x in lst)",
+                  "{x*2 for x in lst}",
+                  "map(x*2, lst)",
+                ],
+              },
+              {
+                question: "How to define a lambda function?",
+                correct: "lambda x: x**2",
+                incorrect: [
+                  "def lambda x: x**2",
+                  "x => x**2",
+                  "function(x){x**2}",
+                ],
+              },
+              {
+                question: "How to import numpy as np?",
+                correct: "import numpy as np",
+                incorrect: [
+                  "from numpy import *",
+                  "require numpy as np",
+                  "using numpy as np",
+                ],
+              },
+              {
+                question: "How to handle exceptions?",
+                correct: "try: pass",
+                incorrect: ["catch: pass", "try: catch:", "handle: pass"],
+              },
+            ],
+            hard: [
+              {
+                question: "How to create a decorator?",
+                correct: "@decorator",
+                incorrect: ["#decorator", "decorator()", "[decorator]"],
+              },
+              {
+                question: "How to create a generator?",
+                correct: "yield value",
+                incorrect: ["return value", "generate value", "emit value"],
+              },
+              {
+                question: "How to define an async function?",
+                correct: "async def fetch():",
+                incorrect: [
+                  "def async fetch():",
+                  "async function fetch():",
+                  "asyncio def fetch():",
+                ],
+              },
+              {
+                question: "How to use await?",
+                correct: "await asyncio.sleep(1)",
+                incorrect: [
+                  "wait asyncio.sleep(1)",
+                  "async.sleep(1)",
+                  "yield asyncio.sleep(1)",
+                ],
+              },
+              {
+                question: "How to create a metaclass?",
+                correct: "class Meta(type):",
+                incorrect: [
+                  "metaclass Meta:",
+                  "class Meta extends type:",
+                  "@metaclass Meta:",
+                ],
+              },
+            ],
+          };
+
+          this.initializeElements();
+          this.bindEvents();
+          this.createParticles();
+        }
+
+        initializeElements() {
+          this.gameArea = document.getElementById("gameArea");
+          this.basket = document.getElementById("basket");
+          this.questionText = document.getElementById("questionText");
+          this.startBtn = document.getElementById("startBtn");
+          this.pauseBtn = document.getElementById("pauseBtn");
+          this.scoreElement = document.getElementById("score");
+          this.comboElement = document.getElementById("combo");
+          this.accuracyElement = document.getElementById("accuracy");
+          this.livesContainer = document.getElementById("lives");
+          this.gameOverModal = document.getElementById("gameOverModal");
+          this.difficultyButtons = document.querySelectorAll(".difficulty-btn");
+        }
+
+        bindEvents() {
+          this.startBtn.addEventListener("click", () => this.startGame());
+          this.pauseBtn.addEventListener("click", () => this.togglePause());
+
+          this.difficultyButtons.forEach((btn) => {
+            btn.addEventListener("click", (e) => this.changeDifficulty(e));
+          });
+
+          document.addEventListener("mousemove", (e) => this.moveBasket(e));
+          document.addEventListener("touchmove", (e) => this.moveBasket(e));
+        }
+
+        changeDifficulty(e) {
+          if (this.isPlaying) return;
+
+          this.difficultyButtons.forEach((btn) =>
+            btn.classList.remove("active")
+          );
+          e.target.classList.add("active");
+          this.difficulty = e.target.dataset.difficulty;
+        }
+
+        createParticles() {
+          const particles = document.getElementById("particles");
+          const symbols = [
+            "def",
+            "for",
+            "if",
+            "[]",
+            "()",
+            "{}",
+            "==",
+            "+=",
+            "->",
+            ":",
+          ];
+
+          for (let i = 0; i < 15; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.textContent =
+              symbols[Math.floor(Math.random() * symbols.length)];
+            particle.style.left = Math.random() * 100 + "%";
+            particle.style.animationDuration = Math.random() * 10 + 10 + "s";
+            particle.style.animationDelay = Math.random() * 5 + "s";
+            particles.appendChild(particle);
+          }
+        }
+
+        startGame() {
+          this.score = 0;
+          this.combo = 0;
+          this.maxCombo = 0;
+          this.lives = 5;
+          this.codesCaught = 0;
+          this.totalCatches = 0;
+          this.correctCatches = 0;
+          this.isPlaying = true;
+          this.isPaused = false;
+          this.fallingCodes = [];
+
+          // Clear any existing codes
+          this.gameArea
+            .querySelectorAll(".falling-code")
+            .forEach((el) => el.remove());
+
+          this.updateLives();
+          this.updateStats();
+          this.loadNewQuestion();
+
+          this.startBtn.style.display = "none";
+          this.pauseBtn.style.display = "flex";
+
+          this.difficultyButtons.forEach((btn) => (btn.disabled = true));
+
+          this.startSpawning();
+          this.startGameLoop();
+        }
+
+        loadNewQuestion() {
+          const questionPool = this.questions[this.difficulty];
+          this.currentQuestion =
+            questionPool[Math.floor(Math.random() * questionPool.length)];
+          this.correctAnswer = this.currentQuestion.correct;
+          this.questionText.textContent = this.currentQuestion.question;
+        }
+
+        startSpawning() {
+          const spawnRate = {
+            easy: 2000,
+            medium: 1500,
+            hard: 1200,
+          };
+
+          this.spawnInterval = setInterval(() => {
+            if (!this.isPaused) {
+              this.spawnCode();
+            }
+          }, spawnRate[this.difficulty]);
+        }
+
+        spawnCode() {
+          const isCorrect = Math.random() > 0.5;
+          let code;
+
+          if (isCorrect) {
+            code = this.correctAnswer;
+          } else {
+            const incorrectOptions = this.currentQuestion.incorrect;
+            code =
+              incorrectOptions[
+                Math.floor(Math.random() * incorrectOptions.length)
+              ];
+          }
+
+          const codeElement = document.createElement("div");
+          codeElement.className = `falling-code ${
+            isCorrect ? "correct" : "incorrect"
+          }`;
+          codeElement.textContent = code;
+          codeElement.dataset.code = code;
+          codeElement.dataset.isCorrect = isCorrect;
+
+          const gameAreaWidth = this.gameArea.offsetWidth;
+          const maxLeft = gameAreaWidth - 200;
+          codeElement.style.left = Math.random() * maxLeft + 50 + "px";
+
+          const duration = {
+            easy: 8,
+            medium: 6,
+            hard: 5,
+          };
+
+          codeElement.style.animationDuration = duration[this.difficulty] + "s";
+
+          this.gameArea.appendChild(codeElement);
+          this.fallingCodes.push({
+            element: codeElement,
+            code: code,
+            isCorrect: isCorrect,
+          });
+        }
+
+        startGameLoop() {
+          this.gameLoopInterval = setInterval(() => {
+            if (!this.isPaused) {
+              this.checkCollisions();
+              this.updateStats();
+            }
+          }, 50);
+        }
+
+        checkCollisions() {
+          const basketRect = this.basket.getBoundingClientRect();
+          const gameAreaRect = this.gameArea.getBoundingClientRect();
+
+          this.fallingCodes = this.fallingCodes.filter((codeObj) => {
+            const codeRect = codeObj.element.getBoundingClientRect();
+
+            // Check if code hit the bottom (missed)
+            if (codeRect.bottom > gameAreaRect.bottom) {
+              // Only lose life if it was the correct answer
+              if (codeObj.isCorrect) {
+                this.missCorrectCode(codeObj);
+              } else {
+                codeObj.element.remove();
+              }
+              return false;
+            }
+
+            // Check collision with basket
+            if (
+              codeRect.bottom >= basketRect.top &&
+              codeRect.top <= basketRect.bottom &&
+              codeRect.right >= basketRect.left &&
+              codeRect.left <= basketRect.right
+            ) {
+              this.catchCode(codeObj);
+              return false;
+            }
+
+            return true;
+          });
+        }
+
+        catchCode(codeObj) {
+          this.totalCatches++;
+
+          if (codeObj.isCorrect) {
+            // Caught correct code - Good!
+            this.correctCatches++;
+            this.codesCaught++;
+            this.combo++;
+            this.maxCombo = Math.max(this.maxCombo, this.combo);
+
+            const basePoints = {
+              easy: 10,
+              medium: 20,
+              hard: 30,
+            };
+
+            const points = basePoints[this.difficulty] * this.combo;
+            this.score += points;
+
+            codeObj.element.classList.add("caught");
+
+            if (this.combo >= 5) {
+              this.showComboDisplay();
+            }
+
+            // Load new question
+            this.loadNewQuestion();
+          } else {
+            // Caught incorrect code - Bad!
+            this.combo = 0;
+            this.lives--;
+            codeObj.element.classList.add("missed");
+
+            this.updateLives();
+
+            if (this.lives <= 0) {
+              this.endGame();
+            }
+          }
+
+          setTimeout(() => {
+            codeObj.element.remove();
+          }, 500);
+
+          this.updateStats();
+        }
+
+        missCorrectCode(codeObj) {
+          this.combo = 0;
+          this.lives--;
+          this.totalCatches++;
+
+          codeObj.element.classList.add("missed");
+
+          setTimeout(() => {
+            codeObj.element.remove();
+          }, 500);
+
+          this.updateLives();
+
+          if (this.lives <= 0) {
+            this.endGame();
+          }
+        }
+
+        showComboDisplay() {
+          const comboDiv = document.createElement("div");
+          comboDiv.className = "combo-display";
+          comboDiv.textContent = `${this.combo}x COMBO!`;
+          this.gameArea.appendChild(comboDiv);
+
+          setTimeout(() => {
+            comboDiv.remove();
+          }, 1000);
+        }
+
+        moveBasket(e) {
+          if (!this.isPlaying) return;
+
+          const gameAreaRect = this.gameArea.getBoundingClientRect();
+          let clientX;
+
+          if (e.type === "touchmove") {
+            e.preventDefault();
+            clientX = e.touches[0].clientX;
+          } else {
+            clientX = e.clientX;
+          }
+
+          const relativeX = clientX - gameAreaRect.left;
+          const basketWidth = this.basket.offsetWidth;
+
+          let newLeft = relativeX - basketWidth / 2;
+          newLeft = Math.max(
+            0,
+            Math.min(newLeft, gameAreaRect.width - basketWidth)
+          );
+
+          this.basket.style.left = newLeft + "px";
+          this.basket.style.transform = "translateX(0)";
+        }
+
+        updateStats() {
+          this.scoreElement.textContent = this.score;
+          this.comboElement.textContent = this.combo;
+
+          const accuracy =
+            this.totalCatches > 0
+              ? Math.round((this.correctCatches / this.totalCatches) * 100)
+              : 100;
+          this.accuracyElement.textContent = accuracy;
+        }
+
+        updateLives() {
+          const hearts = this.livesContainer.querySelectorAll(".heart");
+          hearts.forEach((heart, index) => {
+            if (index < this.lives) {
+              heart.classList.remove("lost");
+            } else {
+              heart.classList.add("lost");
+            }
+          });
+        }
+
+        togglePause() {
+          this.isPaused = !this.isPaused;
+
+          if (this.isPaused) {
+            this.pauseBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+
+            this.fallingCodes.forEach((codeObj) => {
+              codeObj.element.style.animationPlayState = "paused";
+            });
+          } else {
+            this.pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+
+            this.fallingCodes.forEach((codeObj) => {
+              codeObj.element.style.animationPlayState = "running";
+            });
+          }
+        }
+
+        endGame() {
+          this.isPlaying = false;
+          clearInterval(this.spawnInterval);
+          clearInterval(this.gameLoopInterval);
+
+          this.startBtn.style.display = "flex";
+          this.pauseBtn.style.display = "none";
+
+          this.difficultyButtons.forEach((btn) => (btn.disabled = false));
+
+          this.fallingCodes.forEach((codeObj) => {
+            codeObj.element.remove();
+          });
+          this.fallingCodes = [];
+
+          this.showGameOver();
+        }
+
+        showGameOver() {
+          const accuracy =
+            this.totalCatches > 0
+              ? Math.round((this.correctCatches / this.totalCatches) * 100)
+              : 100;
+
+          document.getElementById("finalScore").textContent = this.score;
+          document.getElementById("finalCombo").textContent =
+            this.maxCombo + "x";
+          document.getElementById("finalCaught").textContent = this.codesCaught;
+          document.getElementById("finalAccuracy").textContent = accuracy + "%";
+
+          const gameOverText = document.getElementById("gameOverText");
+          if (this.score > 500) {
+            gameOverText.textContent = "🎉 Python Master!";
+          } else if (this.score > 300) {
+            gameOverText.textContent = "⭐ Great Pythonista!";
+          } else if (this.score > 150) {
+            gameOverText.textContent = "👍 Good Effort!";
+          } else {
+            gameOverText.textContent = "Game Over!";
+          }
+
+          this.gameOverModal.style.display = "flex";
+          this.questionText.textContent = "Click 'Start Game' to begin!";
+        }
+      }
+
+      let game;
+
+      function restartGame() {
+        document.getElementById("gameOverModal").style.display = "none";
+        game.startGame();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        game = new CodeFruitCatch();
+      });
+    </script>
+  </body>
+</html>

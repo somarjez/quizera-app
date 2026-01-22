@@ -1,0 +1,195 @@
+{% extends "base.html" %} {% block title %}{{ exercise.title }} - Quizera{%
+endblock %} {% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Left Panel: Instructions -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h1 class="text-2xl font-bold mb-4">{{ exercise.title }}</h1>
+
+      <div class="mb-4">
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+          {{ exercise.language|capitalize }}
+        </span>
+        <span
+          class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm ml-2"
+        >
+          {{ exercise.difficulty|capitalize }}
+        </span>
+      </div>
+
+      <div class="prose max-w-none mb-6">
+        <p class="text-gray-700">{{ exercise.description }}</p>
+      </div>
+
+      {% if exercise.hints %}
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">💡 Hints:</h3>
+        <ul class="list-disc pl-5 space-y-1">
+          {% for hint in exercise.hints %}
+          <li class="text-gray-600">{{ hint }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %} {% if attempts %}
+      <div class="mt-6">
+        <h3 class="font-semibold mb-3">Your Previous Attempts:</h3>
+        <div class="space-y-2">
+          {% for attempt in attempts[:5] %}
+          <div class="p-3 bg-gray-50 rounded border">
+            <div class="flex justify-between items-center">
+              <span class="text-sm">
+                Score: <strong>{{ attempt.score }}%</strong>
+                ({{ attempt.passed_tests }}/{{ attempt.total_tests }} tests)
+              </span>
+              <span class="text-xs text-gray-500">
+                {{ attempt.submitted_at.strftime('%b %d, %I:%M %p') if
+                attempt.submitted_at else 'Just now' }}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Panel: Code Editor -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Code Editor</h2>
+        <div class="flex gap-2">
+          <button
+            id="runBtn"
+            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            ▶ Run
+          </button>
+          <button
+            id="submitBtn"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+
+      <textarea
+        id="codeEditor"
+        class="w-full h-96 p-4 border rounded-lg font-mono text-sm"
+      >
+{{ exercise.starter_code }}</textarea
+      >
+
+      <div class="mt-4">
+        <h3 class="font-semibold mb-2">Output:</h3>
+        <pre
+          id="output"
+          class="p-4 bg-gray-900 text-green-400 rounded-lg min-h-[100px] font-mono text-sm overflow-auto"
+        ></pre>
+      </div>
+
+      <div id="testResults" class="mt-4 hidden">
+        <h3 class="font-semibold mb-2">Test Results:</h3>
+        <div id="testResultsContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const exerciseId = "{{ exercise.id }}";
+  const language = "{{ exercise.language }}";
+
+  document.getElementById("runBtn").addEventListener("click", async () => {
+    const code = document.getElementById("codeEditor").value;
+    const output = document.getElementById("output");
+
+    output.textContent = "Running...";
+
+    try {
+      const response = await fetch("/api/run-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, language }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        output.textContent = result.output || "(no output)";
+        if (result.error) {
+          output.textContent += "\n\nError: " + result.error;
+          output.classList.add("text-red-400");
+        } else {
+          output.classList.remove("text-red-400");
+        }
+      } else {
+        output.textContent = "Error: " + result.error;
+        output.classList.add("text-red-400");
+      }
+    } catch (error) {
+      output.textContent = "Error: " + error.message;
+      output.classList.add("text-red-400");
+    }
+  });
+
+  document.getElementById("submitBtn").addEventListener("click", async () => {
+    const code = document.getElementById("codeEditor").value;
+    const output = document.getElementById("output");
+
+    output.textContent = "Submitting and testing...";
+
+    try {
+      const response = await fetch("/api/submit-coding-exercise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ exercise_id: exerciseId, code }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        output.textContent = `Score: ${result.score}%\nPassed ${result.passed_tests}/${result.total_tests} tests`;
+
+        // Show detailed test results
+        const testResultsDiv = document.getElementById("testResults");
+        const testResultsContent =
+          document.getElementById("testResultsContent");
+
+        testResultsDiv.classList.remove("hidden");
+        testResultsContent.innerHTML = result.test_results
+          .map(
+            (test) => `
+                <div class="p-3 rounded mb-2 ${
+                  test.passed
+                    ? "bg-green-50 border-green-200"
+                    : "bg-red-50 border-red-200"
+                } border">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span>${test.passed ? "✓" : "✗"}</span>
+                        <strong>Test ${
+                          test.passed ? "Passed" : "Failed"
+                        }</strong>
+                    </div>
+                    <div class="text-sm">
+                        <div>Input: <code>${test.input}</code></div>
+                        <div>Expected: <code>${test.expected}</code></div>
+                        <div>Got: <code>${test.actual}</code></div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        if (result.score === 100) {
+          alert("🎉 Congratulations! You passed all tests!");
+        }
+      } else {
+        output.textContent = "Error: " + result.error;
+      }
+    } catch (error) {
+      output.textContent = "Error: " + error.message;
+    }
+  });
+</script>
+{% endblock %}

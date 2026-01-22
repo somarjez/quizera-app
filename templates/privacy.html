@@ -1,0 +1,1284 @@
+{% extends 'base.html' %} {% block title %}Privacy Policy - Quizera{% endblock
+%} {% block extra_head %}
+<style>
+  :root {
+    --quizera-dark: #0a1628;
+    --quizera-accent1: #f2994a;
+    --quizera-accent2: #f2c94c;
+    --text-primary: #1a2332;
+    --text-secondary: #4a5568;
+    --border-color: #e2e8f0;
+  }
+
+  /* Hero Section */
+  .privacy-hero {
+    background-color: #000022;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2000' height='2000' viewBox='0 0 800 800'%3E%3Cg fill='none' %3E%3Cg stroke='%23026' stroke-width='17'%3E%3Cline x1='-8' y1='-8' x2='808' y2='808'/%3E%3Cline x1='-8' y1='792' x2='808' y2='1608'/%3E%3Cline x1='-8' y1='-808' x2='808' y2='8'/%3E%3C/g%3E%3Cg stroke='%23002163' stroke-width='16'%3E%3Cline x1='-8' y1='767' x2='808' y2='1583'/%3E%3Cline x1='-8' y1='17' x2='808' y2='833'/%3E%3Cline x1='-8' y1='-33' x2='808' y2='783'/%3E%3Cline x1='-8' y1='-783' x2='808' y2='33'/%3E%3C/g%3E%3Cg stroke='%23002060' stroke-width='15'%3E%3Cline x1='-8' y1='742' x2='808' y2='1558'/%3E%3Cline x1='-8' y1='42' x2='808' y2='858'/%3E%3Cline x1='-8' y1='-58' x2='808' y2='758'/%3E%3Cline x1='-8' y1='-758' x2='808' y2='58'/%3E%3C/g%3E%3Cg stroke='%23001f5c' stroke-width='14'%3E%3Cline x1='-8' y1='67' x2='808' y2='883'/%3E%3Cline x1='-8' y1='717' x2='808' y2='1533'/%3E%3Cline x1='-8' y1='-733' x2='808' y2='83'/%3E%3Cline x1='-8' y1='-83' x2='808' y2='733'/%3E%3C/g%3E%3Cg stroke='%23001e59' stroke-width='13'%3E%3Cline x1='-8' y1='92' x2='808' y2='908'/%3E%3Cline x1='-8' y1='692' x2='808' y2='1508'/%3E%3Cline x1='-8' y1='-108' x2='808' y2='708'/%3E%3Cline x1='-8' y1='-708' x2='808' y2='108'/%3E%3C/g%3E%3Cg stroke='%23001d56' stroke-width='12'%3E%3Cline x1='-8' y1='667' x2='808' y2='1483'/%3E%3Cline x1='-8' y1='117' x2='808' y2='933'/%3E%3Cline x1='-8' y1='-133' x2='808' y2='683'/%3E%3Cline x1='-8' y1='-683' x2='808' y2='133'/%3E%3C/g%3E%3Cg stroke='%23001c53' stroke-width='11'%3E%3Cline x1='-8' y1='642' x2='808' y2='1458'/%3E%3Cline x1='-8' y1='142' x2='808' y2='958'/%3E%3Cline x1='-8' y1='-158' x2='808' y2='658'/%3E%3Cline x1='-8' y1='-658' x2='808' y2='158'/%3E%3C/g%3E%3Cg stroke='%23001b4f' stroke-width='10'%3E%3Cline x1='-8' y1='167' x2='808' y2='983'/%3E%3Cline x1='-8' y1='617' x2='808' y2='1433'/%3E%3Cline x1='-8' y1='-633' x2='808' y2='183'/%3E%3Cline x1='-8' y1='-183' x2='808' y2='633'/%3E%3C/g%3E%3Cg stroke='%23001a4c' stroke-width='9'%3E%3Cline x1='-8' y1='592' x2='808' y2='1408'/%3E%3Cline x1='-8' y1='192' x2='808' y2='1008'/%3E%3Cline x1='-8' y1='-608' x2='808' y2='208'/%3E%3Cline x1='-8' y1='-208' x2='808' y2='608'/%3E%3C/g%3E%3Cg stroke='%23001949' stroke-width='8'%3E%3Cline x1='-8' y1='567' x2='808' y2='1383'/%3E%3Cline x1='-8' y1='217' x2='808' y2='1033'/%3E%3Cline x1='-8' y1='-233' x2='808' y2='583'/%3E%3Cline x1='-8' y1='-583' x2='808' y2='233'/%3E%3C/g%3E%3Cg stroke='%23001846' stroke-width='7'%3E%3Cline x1='-8' y1='242' x2='808' y2='1058'/%3E%3Cline x1='-8' y1='542' x2='808' y2='1358'/%3E%3Cline x1='-8' y1='-558' x2='808' y2='258'/%3E%3Cline x1='-8' y1='-258' x2='808' y2='558'/%3E%3C/g%3E%3Cg stroke='%23001743' stroke-width='6'%3E%3Cline x1='-8' y1='267' x2='808' y2='1083'/%3E%3Cline x1='-8' y1='517' x2='808' y2='1333'/%3E%3Cline x1='-8' y1='-533' x2='808' y2='283'/%3E%3Cline x1='-8' y1='-283' x2='808' y2='533'/%3E%3C/g%3E%3Cg stroke='%2300163f' stroke-width='5'%3E%3Cline x1='-8' y1='292' x2='808' y2='1108'/%3E%3Cline x1='-8' y1='492' x2='808' y2='1308'/%3E%3Cline x1='-8' y1='-308' x2='808' y2='508'/%3E%3Cline x1='-8' y1='-508' x2='808' y2='308'/%3E%3C/g%3E%3Cg stroke='%2300153c' stroke-width='4'%3E%3Cline x1='-8' y1='467' x2='808' y2='1283'/%3E%3Cline x1='-8' y1='317' x2='808' y2='1133'/%3E%3Cline x1='-8' y1='-333' x2='808' y2='483'/%3E%3Cline x1='-8' y1='-483' x2='808' y2='333'/%3E%3C/g%3E%3Cg stroke='%23001439' stroke-width='3'%3E%3Cline x1='-8' y1='342' x2='808' y2='1158'/%3E%3Cline x1='-8' y1='442' x2='808' y2='1258'/%3E%3Cline x1='-8' y1='-458' x2='808' y2='358'/%3E%3Cline x1='-8' y1='-358' x2='808' y2='458'/%3E%3C/g%3E%3Cg stroke='%23001336' stroke-width='2'%3E%3Cline x1='-8' y1='367' x2='808' y2='1183'/%3E%3Cline x1='-8' y1='417' x2='808' y2='1233'/%3E%3Cline x1='-8' y1='-433' x2='808' y2='383'/%3E%3Cline x1='-8' y1='-383' x2='808' y2='433'/%3E%3C/g%3E%3Cg stroke='%23013' stroke-width='1'%3E%3Cline x1='-8' y1='392' x2='808' y2='1208'/%3E%3Cline x1='-8' y1='-408' x2='808' y2='408'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
+    padding: 100px 20px 80px;
+    text-align: center;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .privacy-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  .privacy-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .privacy-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+
+  .privacy-hero .subtitle {
+    font-size: 1.25rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .last-updated {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 24px;
+    border-radius: 25px;
+    margin-top: 30px;
+    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Main Content Container */
+  .privacy-container {
+    max-width: 1300px;
+    margin: -40px auto 0;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Table of Contents */
+  .toc-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    margin-bottom: 50px;
+    border: 1px solid var(--border-color);
+  }
+
+  .toc-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toc-title i {
+    color: var(--quizera-accent1);
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+  }
+
+  .toc-list li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    background: #f8fafc;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+  }
+
+  .toc-list li a:hover {
+    background: #fff5eb;
+    border-left-color: var(--quizera-accent1);
+    color: var(--text-primary);
+    transform: translateX(5px);
+  }
+
+  .toc-list li a i {
+    margin-right: 10px;
+    color: var(--quizera-accent1);
+    font-size: 0.9rem;
+  }
+
+  /* Content Sections */
+  .privacy-content {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 50px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+  }
+
+  .section {
+    margin-bottom: 60px;
+    padding-bottom: 50px;
+    border-bottom: 2px solid #f1f5f9;
+  }
+
+  .section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .section-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(
+      135deg,
+      var(--quizera-accent1),
+      var(--quizera-accent2)
+    );
+    color: #ffffff;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .section h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 30px 0 15px;
+  }
+
+  .section p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .section ul,
+  .section ol {
+    margin: 20px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .section ul li,
+  .section ol li {
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .section ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 10px;
+    color: var(--quizera-accent1);
+    font-weight: 700;
+  }
+
+  .section ol {
+    counter-reset: item;
+  }
+
+  .section ol li {
+    counter-increment: item;
+  }
+
+  .section ol li::before {
+    content: counter(item) ".";
+    position: absolute;
+    left: 10px;
+    color: var(--quizera-accent1);
+    font-weight: 700;
+  }
+
+  /* Info Boxes */
+  .info-box {
+    background: #f0f9ff;
+    border-left: 4px solid #3b82f6;
+    padding: 25px 30px;
+    border-radius: 10px;
+    margin: 30px 0;
+  }
+
+  .info-box.warning {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+  }
+
+  .info-box.important {
+    background: #fef2f2;
+    border-left-color: #ef4444;
+  }
+
+  .info-box-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+
+  .info-box-title i {
+    color: #3b82f6;
+  }
+
+  .info-box.warning .info-box-title i {
+    color: #86b9d3;
+  }
+
+  .info-box.important .info-box-title i {
+    color: #a5abf6;
+  }
+
+  .info-box p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+
+  /* Contact Section - Mountain Design */
+  .contact-section {
+    background-color: #cfd2f0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cpolygon fill='%23cc0000' points='957 450 539 900 1396 900'/%3E%3Cpolygon fill='%2324107a' points='957 450 872.9 900 1396 900'/%3E%3Cpolygon fill='%23d6002b' points='-60 900 398 662 816 900'/%3E%3Cpolygon fill='%233e0e7e' points='337 900 398 662 816 900'/%3E%3Cpolygon fill='%23d9004b' points='1203 546 1552 900 876 900'/%3E%3Cpolygon fill='%23530b81' points='1203 546 1552 900 1162 900'/%3E%3Cpolygon fill='%23d3006c' points='641 695 886 900 367 900'/%3E%3Cpolygon fill='%23650784' points='587 900 641 695 886 900'/%3E%3Cpolygon fill='%23c4008c' points='1710 900 1401 632 1096 900'/%3E%3Cpolygon fill='%23770386' points='1710 900 1401 632 1365 900'/%3E%3Cpolygon fill='%23aa00aa' points='1210 900 971 687 725 900'/%3E%3Cpolygon fill='%23880088' points='943 900 1210 900 971 687'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    border-radius: 40px;
+    padding: 100px 60px;
+    text-align: center;
+    margin-top: 100px;
+    color: #ffffff;
+    box-shadow: 0 20px 60px rgba(207, 210, 240, 0.25),
+      0 8px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: ctaGlow 4s ease-in-out infinite alternate;
+  }
+
+  .contact-section::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+    animation: ctaShimmer 6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes ctaGlow {
+    0% {
+      box-shadow: 0 20px 60px rgba(207, 210, 240, 0.25),
+        0 8px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    100% {
+      box-shadow: 0 25px 70px rgba(207, 210, 240, 0.4),
+        0 12px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  @keyframes ctaShimmer {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .contact-section h2 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 25px;
+    color: #000000;
+    text-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-section p {
+    font-size: 1.4rem;
+    margin-bottom: 45px;
+    color: #000000;
+    font-weight: 500;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  }
+
+  .contact-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: linear-gradient(135deg, var(--quizera-dark) 0%, #1a2332 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 22px 50px;
+    border-radius: 60px;
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(10, 22, 40, 0.3), 0 3px 10px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .contact-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: 60px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .contact-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(10, 22, 40, 0.4),
+      0 6px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+
+  .contact-button:hover::before {
+    opacity: 1;
+  }
+
+  .contact-button i {
+    font-size: 1.2rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .privacy-hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .privacy-hero .subtitle {
+      font-size: 1.1rem;
+    }
+
+    .privacy-content {
+      padding: 30px 25px;
+    }
+
+    .toc-card {
+      padding: 30px 25px;
+    }
+
+    .toc-list {
+      grid-template-columns: 1fr;
+    }
+
+    .section h2 {
+      font-size: 1.6rem;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .contact-section {
+      padding: 35px 25px;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .privacy-hero,
+    .toc-card,
+    .contact-section {
+      break-inside: avoid;
+    }
+
+    .section {
+      break-inside: avoid;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="privacy-hero">
+  <div class="privacy-hero-content">
+    <h1>Privacy Policy</h1>
+    <p class="subtitle">
+      Quizera is committed to protecting your privacy and ensuring the security
+      of your personal information. This policy outlines how we collect, use,
+      and safeguard your data.
+    </p>
+    <div class="last-updated">
+      <i class="fas fa-calendar-alt"></i> Last Updated: November 15, 2025
+    </div>
+  </div>
+</div>
+
+<div class="privacy-container">
+  <!-- Table of Contents -->
+  <div class="toc-card">
+    <h2 class="toc-title">
+      <i class="fas fa-list"></i>
+      Table of Contents
+    </h2>
+    <ul class="toc-list">
+      <li>
+        <a href="#section-1"
+          ><i class="fas fa-chevron-right"></i> Introduction</a
+        >
+      </li>
+      <li>
+        <a href="#section-2"
+          ><i class="fas fa-chevron-right"></i> Information We Collect</a
+        >
+      </li>
+      <li>
+        <a href="#section-3"
+          ><i class="fas fa-chevron-right"></i> How We Use Your Information</a
+        >
+      </li>
+      <li>
+        <a href="#section-4"
+          ><i class="fas fa-chevron-right"></i> Data Sharing and Disclosure</a
+        >
+      </li>
+      <li>
+        <a href="#section-5"
+          ><i class="fas fa-chevron-right"></i> Data Security</a
+        >
+      </li>
+      <li>
+        <a href="#section-6"
+          ><i class="fas fa-chevron-right"></i> Your Rights and Choices</a
+        >
+      </li>
+      <li>
+        <a href="#section-7"
+          ><i class="fas fa-chevron-right"></i> Children's Privacy</a
+        >
+      </li>
+      <li>
+        <a href="#section-8"
+          ><i class="fas fa-chevron-right"></i> Cookies and Tracking</a
+        >
+      </li>
+      <li>
+        <a href="#section-9"
+          ><i class="fas fa-chevron-right"></i> Third-Party Services</a
+        >
+      </li>
+      <li>
+        <a href="#section-10"
+          ><i class="fas fa-chevron-right"></i> Data Retention</a
+        >
+      </li>
+      <li>
+        <a href="#section-11"
+          ><i class="fas fa-chevron-right"></i> International Data Transfers</a
+        >
+      </li>
+      <li>
+        <a href="#section-12"
+          ><i class="fas fa-chevron-right"></i> Changes to This Policy</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="privacy-content">
+    <!-- Section 1: Introduction -->
+    <section id="section-1" class="section">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <h2>Introduction</h2>
+      </div>
+      <p>
+        Welcome to Quizera's Privacy Policy. This document establishes the
+        framework for how Quizera ("we," "us," or "our") collects, processes,
+        stores, and protects personal information from users ("you" or "your")
+        of our educational assessment platform and related services
+        (collectively, the "Services").
+      </p>
+      <p>
+        By accessing or using Quizera, you acknowledge that you have read,
+        understood, and agree to be bound by the terms of this Privacy Policy.
+        If you do not agree with any provision of this policy, you should
+        discontinue use of our Services immediately.
+      </p>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-info-circle"></i>
+          Scope of Policy
+        </div>
+        <p>
+          This Privacy Policy applies to all users of the Quizera platform,
+          including students, educators, administrators, and institutional
+          partners. It covers all data collection activities conducted through
+          our website, mobile applications, and associated services.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 2: Information We Collect -->
+    <section id="section-2" class="section">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <h2>Information We Collect</h2>
+      </div>
+
+      <h3>2.1 Information You Provide Directly</h3>
+      <p>
+        We collect information that you voluntarily provide when registering for
+        an account, using our Services, or communicating with us:
+      </p>
+      <ul>
+        <li>
+          <strong>Account Registration Data:</strong> Full name, email address,
+          username, password, institutional affiliation, role
+          (student/educator), and grade level or subject area
+        </li>
+        <li>
+          <strong>Profile Information:</strong> Optional biographical
+          information, profile photographs, educational background, and academic
+          interests
+        </li>
+        <li>
+          <strong>Educational Content:</strong> Quiz responses, assignments,
+          test submissions, programming code, essays, and other academic work
+          products
+        </li>
+        <li>
+          <strong>Communication Data:</strong> Messages sent through our
+          platform, support inquiries, feedback submissions, and correspondence
+          with our team
+        </li>
+        <li>
+          <strong>Payment Information:</strong> For premium subscriptions, we
+          collect billing details (processed securely through third-party
+          payment processors)
+        </li>
+      </ul>
+
+      <h3>2.2 Information Collected Automatically</h3>
+      <p>
+        When you access our Services, we automatically collect certain technical
+        and usage information:
+      </p>
+      <ul>
+        <li>
+          <strong>Device Information:</strong> IP address, browser type and
+          version, operating system, device identifiers, and hardware
+          specifications
+        </li>
+        <li>
+          <strong>Usage Analytics:</strong> Pages viewed, features accessed,
+          time spent on platform, navigation patterns, quiz completion rates,
+          and performance metrics
+        </li>
+        <li>
+          <strong>Location Data:</strong> General geographic location derived
+          from IP address (city and country level only)
+        </li>
+        <li>
+          <strong>Cookies and Similar Technologies:</strong> Session
+          identifiers, preference settings, and authentication tokens
+        </li>
+      </ul>
+
+      <h3>2.3 Information from Educational Institutions</h3>
+      <p>
+        If you access Quizera through an educational institution, we may
+        receive:
+      </p>
+      <ul>
+        <li>
+          Student roster information (names, student IDs, email addresses, class
+          enrollments)
+        </li>
+        <li>Integration data from learning management systems (LMS)</li>
+        <li>Administrative records as authorized by the institution</li>
+      </ul>
+
+      <div class="info-box important">
+        <div class="info-box-title">
+          <i class="fas fa-exclamation-triangle"></i>
+          Special Category Data
+        </div>
+        <p>
+          We do not intentionally collect sensitive personal information such as
+          racial or ethnic origin, religious beliefs, health data, or biometric
+          information unless explicitly required for accessibility purposes and
+          with your informed consent.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: How We Use Your Information -->
+    <section id="section-3" class="section">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <h2>How We Use Your Information</h2>
+      </div>
+      <p>
+        Quizera processes your personal information for the following legitimate
+        purposes:
+      </p>
+
+      <h3>3.1 Educational Service Delivery</h3>
+      <ul>
+        <li>
+          Providing access to quiz creation, administration, and grading
+          functionalities
+        </li>
+        <li>
+          Generating personalized learning recommendations and adaptive content
+        </li>
+        <li>Tracking academic progress and performance analytics</li>
+        <li>Facilitating communication between students and educators</li>
+        <li>Enabling collaborative learning features and peer interactions</li>
+      </ul>
+
+      <h3>3.2 Platform Improvement and Research</h3>
+      <ul>
+        <li>
+          Analyzing usage patterns to enhance user experience and interface
+          design
+        </li>
+        <li>
+          Conducting educational research and developing pedagogical insights
+          (using aggregated, de-identified data)
+        </li>
+        <li>Testing new features and assessing platform performance</li>
+        <li>Identifying and resolving technical issues</li>
+      </ul>
+
+      <h3>3.3 Security and Compliance</h3>
+      <ul>
+        <li>
+          Detecting and preventing fraud, unauthorized access, and security
+          breaches
+        </li>
+        <li>Enforcing our Terms of Service and academic integrity policies</li>
+        <li>
+          Complying with legal obligations and responding to lawful requests
+          from authorities
+        </li>
+        <li>
+          Protecting the rights, property, and safety of Quizera, our users, and
+          the public
+        </li>
+      </ul>
+
+      <h3>3.4 Communication and Support</h3>
+      <ul>
+        <li>Responding to inquiries and providing customer support</li>
+        <li>
+          Sending service-related notifications, updates, and security alerts
+        </li>
+        <li>
+          Delivering educational content, newsletters, and announcements (with
+          your consent)
+        </li>
+        <li>Administering surveys and soliciting feedback</li>
+      </ul>
+    </section>
+
+    <!-- Section 4: Data Sharing and Disclosure -->
+    <section id="section-4" class="section">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <h2>Data Sharing and Disclosure</h2>
+      </div>
+      <p>
+        Quizera does not sell, rent, or trade your personal information. We may
+        share your data only in the following circumstances:
+      </p>
+
+      <h3>4.1 Educational Institutions</h3>
+      <p>
+        When you access Quizera through a school, college, or university, we
+        share relevant academic data (grades, progress reports, engagement
+        metrics) with authorized institutional personnel, including educators,
+        administrators, and academic advisors, in accordance with institutional
+        data sharing agreements.
+      </p>
+
+      <h3>4.2 Service Providers</h3>
+      <p>
+        We engage trusted third-party service providers to support our
+        operations, including:
+      </p>
+      <ul>
+        <li>Cloud infrastructure and hosting services</li>
+        <li>Payment processing and billing services</li>
+        <li>Email delivery and communication platforms</li>
+        <li>Analytics and performance monitoring tools</li>
+        <li>Customer support and helpdesk solutions</li>
+      </ul>
+      <p>
+        These providers are contractually obligated to protect your data and may
+        only use it to perform services on our behalf.
+      </p>
+
+      <h3>4.3 Legal Requirements</h3>
+      <p>
+        We may disclose your information when required by law or when we believe
+        in good faith that such disclosure is necessary to:
+      </p>
+      <ul>
+        <li>
+          Comply with legal processes, court orders, or government requests
+        </li>
+        <li>Enforce our Terms of Service and other agreements</li>
+        <li>
+          Investigate potential violations of our policies or applicable laws
+        </li>
+        <li>
+          Protect against imminent harm to the rights, property, or safety of
+          Quizera, our users, or the public
+        </li>
+      </ul>
+
+      <h3>4.4 Business Transfers</h3>
+      <p>
+        In the event of a merger, acquisition, reorganization, or sale of
+        assets, your information may be transferred to the successor entity. We
+        will notify you of any such change and provide options regarding your
+        data.
+      </p>
+
+      <div class="info-box warning">
+        <div class="info-box-title">
+          <i class="fas fa-shield-alt"></i>
+          Data Protection Commitment
+        </div>
+        <p>
+          All third parties with whom we share data are required to maintain
+          appropriate security measures and comply with applicable privacy laws.
+          We conduct regular audits of our service providers to ensure ongoing
+          compliance.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: Data Security -->
+    <section id="section-5" class="section">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <h2>Data Security</h2>
+      </div>
+      <p>
+        Quizera employs industry-standard technical, administrative, and
+        physical safeguards to protect your personal information from
+        unauthorized access, disclosure, alteration, and destruction:
+      </p>
+
+      <h3>Security Measures</h3>
+      <ul>
+        <li>
+          <strong>Encryption:</strong> All data transmitted between your device
+          and our servers is encrypted using TLS 1.2 or higher protocols.
+          Sensitive data at rest is encrypted using AES-256 encryption
+          standards.
+        </li>
+        <li>
+          <strong>Access Controls:</strong> We implement role-based access
+          controls, multi-factor authentication for administrative accounts, and
+          the principle of least privilege to limit data access to authorized
+          personnel only.
+        </li>
+        <li>
+          <strong>Infrastructure Security:</strong> Our systems are hosted on
+          secure, SOC 2 Type II certified cloud infrastructure with redundant
+          backups, firewalls, and intrusion detection systems.
+        </li>
+        <li>
+          <strong>Regular Audits:</strong> We conduct periodic security
+          assessments, vulnerability scans, and penetration testing to identify
+          and remediate potential weaknesses.
+        </li>
+        <li>
+          <strong>Employee Training:</strong> All personnel with access to
+          personal data receive mandatory privacy and security training and are
+          bound by confidentiality obligations.
+        </li>
+        <li>
+          <strong>Incident Response:</strong> We maintain a documented incident
+          response plan to promptly address any data breaches or security
+          incidents.
+        </li>
+      </ul>
+
+      <div class="info-box important">
+        <div class="info-box-title">
+          <i class="fas fa-lock"></i>
+          Your Responsibility
+        </div>
+        <p>
+          While we implement robust security measures, you are responsible for
+          maintaining the confidentiality of your account credentials. Never
+          share your password with others, and notify us immediately if you
+          suspect unauthorized access to your account.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 6: Your Rights and Choices -->
+    <section id="section-6" class="section">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <h2>Your Rights and Choices</h2>
+      </div>
+      <p>
+        Depending on your location and applicable laws, you may have the
+        following rights regarding your personal information:
+      </p>
+
+      <h3>6.1 Access and Portability</h3>
+      <p>
+        You have the right to request a copy of the personal information we hold
+        about you. We will provide this information in a structured, commonly
+        used, and machine-readable format within 30 days of your request.
+      </p>
+
+      <h3>6.2 Correction and Update</h3>
+      <p>
+        You may update or correct inaccurate personal information through your
+        account settings or by contacting our support team. We will promptly
+        make the requested changes unless we are required to retain the original
+        data for legal or compliance purposes.
+      </p>
+
+      <h3>6.3 Deletion</h3>
+      <p>
+        You may request deletion of your personal information, subject to
+        certain exceptions. We will honor deletion requests unless we are
+        legally required to retain the data or it is necessary for:
+      </p>
+      <ul>
+        <li>Completing transactions or providing requested services</li>
+        <li>
+          Detecting and preventing security incidents or fraudulent activity
+        </li>
+        <li>Complying with legal obligations</li>
+        <li>
+          Exercising free speech or ensuring the right of another user to
+          exercise free speech
+        </li>
+      </ul>
+
+      <h3>6.4 Opt-Out of Communications</h3>
+      <p>
+        You may opt out of receiving promotional emails by clicking the
+        "unsubscribe" link in any marketing message or adjusting your
+        communication preferences in your account settings. Note that you cannot
+        opt out of essential service-related communications.
+      </p>
+
+      <h3>6.5 Do Not Track Signals</h3>
+      <p>
+        Our platform currently does not respond to "Do Not Track" browser
+        signals. You may control cookies through your browser settings or
+        third-party tools.
+      </p>
+
+      <h3>6.6 Exercising Your Rights</h3>
+      <p>
+        To exercise any of these rights, please submit a request through our
+        Privacy Request Portal or contact our Data Protection Officer at
+        privacy@quizera.edu. We will verify your identity before processing
+        requests and respond within the timeframe required by applicable law.
+      </p>
+    </section>
+
+    <!-- Section 7: Children's Privacy -->
+    <section id="section-7" class="section">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <h2>Children's Privacy</h2>
+      </div>
+      <p>
+        Quizera is committed to complying with the Children's Online Privacy
+        Protection Act (COPPA) and other applicable laws protecting minors'
+        privacy.
+      </p>
+
+      <h3>7.1 Use by Minors Under 13</h3>
+      <p>
+        Our Services are not directed to children under the age of 13, except
+        when used in an educational setting with verifiable parental or school
+        consent. When a school provides consent on behalf of students under 13,
+        the school assumes responsibility for complying with COPPA requirements.
+      </p>
+
+      <h3>7.2 Educational Institution Consent</h3>
+      <p>
+        When educational institutions authorize student use of Quizera, they
+        represent that they have obtained necessary parental consent or are
+        acting as the parent's agent under COPPA. Institutions must provide
+        parents with notice of our data practices and obtain consent where
+        required by law.
+      </p>
+
+      <h3>7.3 Limited Data Collection</h3>
+      <p>
+        For users under 13, we collect only the minimum information necessary to
+        provide educational services, including:
+      </p>
+      <ul>
+        <li>Student first name and last initial (or anonymous student ID)</li>
+        <li>Class or grade level</li>
+        <li>Quiz responses and academic performance data</li>
+        <li>School-provided email address (if applicable)</li>
+      </ul>
+
+      <h3>7.4 Parental Rights</h3>
+      <p>Parents of children under 13 have the right to:</p>
+      <ul>
+        <li>Review their child's personal information</li>
+        <li>Request deletion of their child's information</li>
+        <li>Refuse further collection or use of their child's information</li>
+        <li>Receive notification of our information practices</li>
+      </ul>
+      <p>
+        Parents may exercise these rights by contacting their child's school or
+        our support team at privacy@quizera.edu.
+      </p>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-user-shield"></i>
+          Enhanced Protections for Students
+        </div>
+        <p>
+          We do not use student data for targeted advertising, build personal
+          profiles for non-educational purposes, or sell student information to
+          third parties. All student data is used solely for educational
+          purposes as authorized by the school.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 8: Cookies and Tracking Technologies -->
+    <section id="section-8" class="section">
+      <div class="section-header">
+        <div class="section-number">8</div>
+        <h2>Cookies and Tracking Technologies</h2>
+      </div>
+      <p>
+        Quizera uses cookies and similar tracking technologies to enhance user
+        experience, analyze usage patterns, and maintain platform functionality.
+      </p>
+
+      <h3>8.1 Types of Cookies We Use</h3>
+      <ul>
+        <li>
+          <strong>Essential Cookies:</strong> Required for basic platform
+          functionality, including authentication, security, and session
+          management. These cannot be disabled without affecting site
+          performance.
+        </li>
+        <li>
+          <strong>Functional Cookies:</strong> Remember your preferences,
+          settings, and previous actions to provide a personalized experience.
+        </li>
+        <li>
+          <strong>Analytics Cookies:</strong> Help us understand how users
+          interact with our platform, identify popular features, and detect
+          technical issues.
+        </li>
+        <li>
+          <strong>Performance Cookies:</strong> Monitor platform speed,
+          responsiveness, and overall performance to optimize user experience.
+        </li>
+      </ul>
+
+      <h3>8.2 Third-Party Cookies</h3>
+      <p>
+        We may use third-party analytics services (such as Google Analytics)
+        that set cookies to collect usage data. These providers have their own
+        privacy policies governing their use of data.
+      </p>
+
+      <h3>8.3 Cookie Management</h3>
+      <p>
+        You can control cookies through your browser settings. Most browsers
+        allow you to refuse cookies or delete existing cookies. However,
+        disabling essential cookies may impair platform functionality. For more
+        information, visit your browser's help documentation.
+      </p>
+
+      <h3>8.4 Other Tracking Technologies</h3>
+      <p>
+        In addition to cookies, we may use web beacons, pixel tags, and similar
+        technologies to collect information about your use of our Services and
+        to deliver relevant content and advertisements.
+      </p>
+    </section>
+
+    <!-- Section 9: Third-Party Services -->
+    <section id="section-9" class="section">
+      <div class="section-header">
+        <div class="section-number">9</div>
+        <h2>Third-Party Services</h2>
+      </div>
+      <p>
+        Our platform may integrate with or link to third-party services,
+        applications, and websites. This Privacy Policy does not apply to these
+        external services, which have their own privacy policies and terms of
+        use.
+      </p>
+
+      <h3>9.1 Educational Technology Integrations</h3>
+      <p>
+        We may integrate with Learning Management Systems (LMS), student
+        information systems, and other educational technology platforms to
+        enhance functionality. When you use these integrations, data may be
+        shared according to the terms of your institution's agreements with
+        those providers.
+      </p>
+
+      <h3>9.2 Social Media and Authentication Services</h3>
+      <p>
+        If you choose to connect your Quizera account with social media
+        platforms or use third-party authentication services, we may receive
+        limited profile information as authorized by you and permitted by those
+        platforms' privacy settings.
+      </p>
+
+      <h3>9.3 Third-Party Responsibility</h3>
+      <p>
+        We are not responsible for the privacy practices or content of
+        third-party services. We encourage you to review the privacy policies of
+        any external services you access through our platform.
+      </p>
+    </section>
+
+    <!-- Section 10: Data Retention -->
+    <section id="section-10" class="section">
+      <div class="section-header">
+        <div class="section-number">10</div>
+        <h2>Data Retention</h2>
+      </div>
+      <p>
+        We retain personal information for as long as necessary to fulfill the
+        purposes for which it was collected, comply with legal obligations,
+        resolve disputes, and enforce our agreements.
+      </p>
+
+      <h3>10.1 Account Data</h3>
+      <p>
+        Active account information is retained for the duration of your
+        account's existence. Following account deletion, we may retain certain
+        data for up to 90 days to allow for account recovery, after which it is
+        permanently deleted.
+      </p>
+
+      <h3>10.2 Educational Records</h3>
+      <p>
+        Academic data, quiz results, and educational content may be retained
+        longer to support institutional requirements, academic transcript
+        services, and compliance with educational record-keeping obligations.
+      </p>
+
+      <h3>10.3 Legal and Compliance Data</h3>
+      <p>
+        We may retain certain information longer when required by law,
+        regulation, or litigation holds. This includes data necessary for tax,
+        audit, and regulatory compliance purposes.
+      </p>
+
+      <h3>10.4 Aggregated and Anonymized Data</h3>
+      <p>
+        We may retain aggregated, anonymized, or de-identified data indefinitely
+        for research, analytics, and platform improvement purposes, as this data
+        cannot be used to identify individual users.
+      </p>
+    </section>
+
+    <!-- Section 11: International Data Transfers -->
+    <section id="section-11" class="section">
+      <div class="section-header">
+        <div class="section-number">11</div>
+        <h2>International Data Transfers</h2>
+      </div>
+      <p>
+        Quizera operates globally and may transfer personal information to
+        countries other than your country of residence. We ensure appropriate
+        safeguards are in place for international data transfers.
+      </p>
+
+      <h3>11.1 Transfer Mechanisms</h3>
+      <p>
+        When transferring personal data internationally, we use approved
+        transfer mechanisms such as:
+      </p>
+      <ul>
+        <li>
+          Standard Contractual Clauses (SCCs) approved by relevant data
+          protection authorities
+        </li>
+        <li>
+          Adequacy decisions recognizing equivalent levels of data protection
+        </li>
+        <li>Binding Corporate Rules for intra-group transfers</li>
+        <li>Certification schemes and codes of conduct where applicable</li>
+      </ul>
+
+      <h3>11.2 Data Processing Locations</h3>
+      <p>
+        Your data may be processed in the United States, European Union, and
+        other countries where we or our service providers maintain facilities.
+        We maintain the same level of protection regardless of processing
+        location.
+      </p>
+
+      <h3>11.3 Regional Compliance</h3>
+      <p>
+        We comply with applicable regional privacy laws, including the European
+        General Data Protection Regulation (GDPR), California Consumer Privacy
+        Act (CCPA), and other jurisdiction-specific requirements.
+      </p>
+    </section>
+
+    <!-- Section 12: Changes to This Policy -->
+    <section id="section-12" class="section">
+      <div class="section-header">
+        <div class="section-number">12</div>
+        <h2>Changes to This Policy</h2>
+      </div>
+      <p>
+        We may update this Privacy Policy periodically to reflect changes in our
+        practices, technology, legal requirements, or other factors.
+      </p>
+
+      <h3>12.1 Notification of Changes</h3>
+      <p>
+        We will notify you of material changes to this Privacy Policy through:
+      </p>
+      <ul>
+        <li>Prominent notice on our website or platform</li>
+        <li>Email notification to registered users</li>
+        <li>In-platform notifications or announcements</li>
+        <li>Updates to mobile applications</li>
+      </ul>
+
+      <h3>12.2 Effective Date</h3>
+      <p>
+        Changes become effective 30 days after notification, unless a shorter
+        period is required by law or the changes are not material. Your
+        continued use of our Services after the effective date constitutes
+        acceptance of the updated policy.
+      </p>
+
+      <h3>12.3 Previous Versions</h3>
+      <p>
+        Previous versions of this Privacy Policy are archived and available upon
+        request. We maintain a change log documenting material modifications and
+        their effective dates.
+      </p>
+
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-bell"></i>
+          Stay Informed
+        </div>
+        <p>
+          We encourage you to review this Privacy Policy regularly to stay
+          informed about how we protect your information. You can find the most
+          current version at quizera.edu/privacy.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <h2>Questions About Your Privacy?</h2>
+    <p>
+      If you have questions, concerns, or requests regarding this Privacy Policy
+      or our data practices, our dedicated privacy team is here to help. We're
+      committed to transparency and responsive communication.
+    </p>
+    <a href="/contact" class="contact-button">
+      <i class="fas fa-envelope"></i>
+      Contact Privacy Team
+    </a>
+  </div>
+</div>
+{% endblock %}

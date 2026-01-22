@@ -1,0 +1,1230 @@
+{% extends 'base.html' %} {% block title %}{{ viewed_user.full_name or
+viewed_user.username }} - Profile{% endblock %} {% block main_class %}container
+mx-auto px-4 py-8{% endblock %} {% block content %}
+<!-- Profile Header -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+  <div class="relative animated-cover h-40">
+    <!-- Decorative academic pattern -->
+    <svg
+      aria-hidden="true"
+      class="absolute inset-y-0 right-0 h-full w-1/2 opacity-20"
+      viewBox="0 0 318 110"
+      preserveAspectRatio="none"
+    >
+      <path d="M0 110L318 0v110H0z" fill="url(#grad)" />
+      <defs>
+        <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+          <stop stop-color="#93C5FD" offset="0%"></stop>
+          <stop stop-color="#C4B5FD" offset="100%"></stop>
+        </linearGradient>
+      </defs>
+    </svg>
+    <!-- Refined layered waves for smoother curvature -->
+    <svg
+      class="wave wave-1"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M0 72 C 120 60 240 48 360 54 C 480 60 600 78 720 76 C 840 74 960 56 1080 58 C 1200 60 1320 70 1440 68 L1440 120 L0 120 Z"
+      ></path>
+    </svg>
+    <svg
+      class="wave wave-2"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M0 74 C 140 50 280 46 420 60 C 560 74 700 96 840 92 C 980 88 1120 66 1260 68 C 1350 70 1395 74 1440 78 L1440 120 L0 120 Z"
+      ></path>
+    </svg>
+    <!-- Soft white crest for cleaner transition (opaque, no seam) -->
+    <svg
+      class="absolute bottom-0 left-0 w-full h-16 text-white pointer-events-none"
+      style="bottom: -1px"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      shape-rendering="geometricPrecision"
+    >
+      <path
+        fill="currentColor"
+        d="M0 102 C 320 86 640 78 960 86 C 1200 92 1320 98 1440 104 L1440 120 L0 120 Z"
+      ></path>
+    </svg>
+  </div>
+  <div class="px-8 pb-8">
+    <!-- Avatar -->
+    <div class="flex items-start -mt-16 mb-6">
+      <div class="relative">
+        <!-- Soft curved glow behind avatar -->
+        <div
+          class="pointer-events-none absolute -inset-4 -z-10 rounded-full blur-2xl opacity-40 bg-gradient-to-tr from-indigo-200 to-purple-200"
+        ></div>
+        <div class="rounded-full shadow-lg">
+          {% if viewed_user.avatar_type == 'animal' and viewed_user.avatar_id %}
+          <div
+            class="w-32 h-32 rounded-full bg-gray-50 flex items-center justify-center text-6xl animal-avatar border border-indigo-600/20"
+          >
+            {{ viewed_user.avatar_id | get_animal_emoji }}
+          </div>
+          {% else %}
+          <div
+            class="w-32 h-32 rounded-full bg-{{ viewed_user.avatar_id if viewed_user and viewed_user.avatar_id and viewed_user.avatar_type == 'initial' else 'blue' }}-500 flex items-center justify-center text-white font-bold text-4xl border border-indigo-600/20 initial-avatar"
+          >
+            {{ (viewed_user.full_name[0] if viewed_user.full_name else
+            viewed_user.username[0] if viewed_user.username else 'U') | upper }}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Role Badge -->
+        <div class="absolute -bottom-2 -right-2">
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-sm ring-1 ring-inset {% if viewed_user.role == 'teacher' %}bg-blue-50 text-blue-800 ring-blue-200{% else %}bg-green-50 text-green-800 ring-green-200{% endif %}"
+          >
+            {% if viewed_user.role == 'teacher' %}
+            <svg
+              class="w-3.5 h-3.5 mr-1.5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6L23 9l-11-6z" />
+            </svg>
+            Teachers {% else %}
+            <svg
+              class="w-3.5 h-3.5 mr-1.5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M12 14l9-5-9-5-9 5 9 5z" />
+              <path
+                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+              />
+            </svg>
+            Student {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <div class="ml-8 mt-16">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-1 tracking-tight">
+          {{ viewed_user.full_name or viewed_user.username }}
+        </h1>
+        <p class="text-base text-gray-600 mb-3">@{{ viewed_user.username }}</p>
+        {% if viewed_user.institution %}
+        <div class="flex items-center text-gray-500 mb-4">
+          <svg
+            class="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            />
+          </svg>
+          <span class="text-sm">{{ viewed_user.institution }}</span>
+        </div>
+        {% endif %} {% if viewed_user.bio %}
+        <p class="text-gray-700 max-w-2xl leading-relaxed">
+          {{ viewed_user.bio }}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Main Content -->
+  <div class="lg:col-span-2 space-y-8">
+    <!-- Overview: combine Statistics and Analytics into one card -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div
+        class="flex items-center justify-between pb-3 mb-6 border-b border-gray-200"
+      >
+        <h2 class="text-xl font-bold text-gray-900 flex items-center">
+          <svg
+            class="w-5 h-5 mr-2 text-indigo-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 13h2v8H3v-8zm4-6h2v14H7V7zm4 3h2v11h-2V10zm4-8h2v19h-2V2zm4 12h2v7h-2v-7z"
+            />
+          </svg>
+          {% if viewed_user.role == 'teacher' %}Teaching Overview{% else
+          %}Learning Overview{% endif %}
+        </h2>
+      </div>
+
+      {% if viewed_user.role == 'teacher' %}
+      <!-- Stat chips -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div
+          class="group text-center p-4 bg-blue-50 rounded-lg border border-blue-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-blue-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2l9 4-9 4-9-4 9-4zm0 6l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"
+              />
+            </svg>
+            <div class="text-2xl font-extrabold text-blue-700">
+              {{ stats.subjects_count }}
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-blue-800/80">
+            Subject{{ 's' if stats.subjects_count != 1 }}
+          </div>
+        </div>
+        <div
+          class="group text-center p-4 bg-green-50 rounded-lg border border-green-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-green-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z" />
+            </svg>
+            <div class="text-2xl font-extrabold text-green-700">
+              {{ stats.quizzes_count }}
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-green-800/80">
+            Quiz{{ 'zes' if stats.quizzes_count != 1 else '' }}
+          </div>
+        </div>
+        <div
+          class="group text-center p-4 bg-purple-50 rounded-lg border border-purple-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-purple-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16 11c1.66 0 2.99-1.34 2.99-3A3 3 0 0016 5a3 3 0 000 6zm-8 0c1.66 0 2.99-1.34 2.99-3A3 3 0 008 5a3 3 0 000 6zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+              />
+            </svg>
+            <div class="text-2xl font-extrabold text-purple-700">
+              {{ stats.total_students }}
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-purple-800/80">
+            Student{{ 's' if stats.total_students != 1 }}
+          </div>
+        </div>
+        <div
+          class="group text-center p-4 bg-yellow-50 rounded-lg border border-yellow-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-yellow-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 7a5 5 0 100 10 5 5 0 000-10z" />
+            </svg>
+            <div class="text-2xl font-extrabold text-yellow-700">
+              {{ stats.avg_score }}%
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-yellow-800/80">Avg Score</div>
+        </div>
+      </div>
+      <!-- Meta pills -->
+      <div class="mt-4 flex flex-wrap gap-3">
+        <span
+          class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700 ring-1 ring-gray-200"
+          >Total Quiz Attempts:
+          <span class="ml-1 font-semibold"
+            >{{ stats.total_attempts }}</span
+          ></span
+        >
+        <span
+          class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700 ring-1 ring-gray-200"
+          >Teaching Experience:
+          <span class="ml-1 font-semibold"
+            >{{ stats.teaching_experience }} month{{ 's' if
+            stats.teaching_experience != 1 }}</span
+          ></span
+        >
+      </div>
+      {% else %}
+      <!-- Stat chips -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div
+          class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-blue-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z" />
+            </svg>
+            <div class="text-2xl font-extrabold text-blue-700">
+              {{ stats.quizzes_taken }}
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-blue-800/80">
+            Quiz{{ 'zes' if stats.quizzes_taken != 1 else '' }} Taken
+          </div>
+        </div>
+        <div
+          class="text-center p-4 bg-green-50 rounded-lg border border-green-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-green-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 7a5 5 0 100 10 5 5 0 000-10z" />
+            </svg>
+            <div class="text-2xl font-extrabold text-green-700">
+              {{ stats.average_score }}%
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-green-800/80">Avg Score</div>
+        </div>
+        <div
+          class="text-center p-4 bg-purple-50 rounded-lg border border-purple-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-purple-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2l9 4-9 4-9-4 9-4zM3 14h18v2H3v-2z" />
+            </svg>
+            <div class="text-2xl font-extrabold text-purple-700">
+              {{ stats.subjects_enrolled }}
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-purple-800/80">
+            Subject{{ 's' if stats.subjects_enrolled != 1 }}
+          </div>
+        </div>
+        <div
+          class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-100"
+        >
+          <div class="flex items-center justify-center mb-2">
+            <svg
+              class="w-5 h-5 text-yellow-600 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M13 2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2V10" />
+            </svg>
+            <div class="text-2xl font-extrabold text-yellow-700">
+              {{ stats.learning_streak }}
+            </div>
+          </div>
+          <div class="text-xs tracking-wide text-yellow-800/80">Day Streak</div>
+        </div>
+      </div>
+      <!-- Meta pill -->
+      <div class="mt-4 flex flex-wrap gap-3">
+        <span
+          class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700 ring-1 ring-gray-200"
+          >Member Since:
+          <span class="ml-1 font-semibold">{{ stats.member_since }}</span></span
+        >
+      </div>
+      {% endif %}
+
+      <hr class="my-6" />
+
+      <!-- Embedded charts (lighter wrappers) -->
+      <div class="space-y-8">
+        {% if viewed_user.role == 'teacher' %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="rounded-lg p-4 ring-1 ring-gray-100">
+            <h4
+              class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+            >
+              <span
+                class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2"
+              ></span>
+              Content Overview
+            </h4>
+            <canvas id="teacherOverviewChart" width="400" height="200"></canvas>
+            <button
+              onclick="downloadChart('teacherOverviewChart')"
+              class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+            >
+              <svg
+                class="w-4 h-4 mr-1"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+              </svg>
+              Download Chart
+            </button>
+          </div>
+          <div class="rounded-lg p-4 ring-1 ring-gray-100">
+            <h4
+              class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+            >
+              <span
+                class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"
+              ></span>
+              Student Engagement
+            </h4>
+            <canvas id="engagementChart" width="400" height="200"></canvas>
+            <button
+              onclick="downloadChart('engagementChart')"
+              class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+            >
+              <svg
+                class="w-4 h-4 mr-1"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+              </svg>
+              Download Chart
+            </button>
+          </div>
+        </div>
+        <div class="rounded-lg p-4 ring-1 ring-gray-100">
+          <h4
+            class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+          >
+            <span
+              class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"
+            ></span>
+            Quiz Performance Trends
+          </h4>
+          <canvas id="performanceTrendChart" width="800" height="300"></canvas>
+          <button
+            onclick="downloadChart('performanceTrendChart')"
+            class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+          >
+            <svg
+              class="w-4 h-4 mr-1"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+            </svg>
+            Download Chart
+          </button>
+        </div>
+        {% else %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="rounded-lg p-4 ring-1 ring-gray-100">
+            <h4
+              class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+            >
+              <span
+                class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2"
+              ></span>
+              Study Overview
+            </h4>
+            <canvas id="studentOverviewChart" width="400" height="200"></canvas>
+            <button
+              onclick="downloadChart('studentOverviewChart')"
+              class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+            >
+              <svg
+                class="w-4 h-4 mr-1"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+              </svg>
+              Download Chart
+            </button>
+          </div>
+          <div class="rounded-lg p-4 ring-1 ring-gray-100">
+            <h4
+              class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+            >
+              <span
+                class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"
+              ></span>
+              Score Distribution
+            </h4>
+            <canvas id="scoreChart" width="400" height="200"></canvas>
+            <button
+              onclick="downloadChart('scoreChart')"
+              class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+            >
+              <svg
+                class="w-4 h-4 mr-1"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+              </svg>
+              Download Chart
+            </button>
+          </div>
+        </div>
+        <div class="rounded-lg p-4 ring-1 ring-gray-100">
+          <h4
+            class="text-sm font-semibold mb-4 flex items-center text-gray-900"
+          >
+            <span
+              class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"
+            ></span>
+            Study Progress Over Time
+          </h4>
+          <canvas id="progressChart" width="800" height="300"></canvas>
+          <button
+            onclick="downloadChart('progressChart')"
+            class="mt-3 inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+          >
+            <svg
+              class="w-4 h-4 mr-1"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M5 20h14v-2H5v2zM12 2l-5 5h3v6h4V7h3l-5-5z" />
+            </svg>
+            Download Chart
+          </button>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Streak & Badges Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Login Streak Card -->
+      <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl shadow-md p-6 border border-orange-200">
+        <h3 class="text-lg font-bold text-gray-900 pb-3 mb-6 border-b border-orange-200 flex items-center">
+          <span class="text-2xl mr-2">🔥</span>
+          Login Streak
+        </h3>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <!-- Current Streak -->
+          <div class="text-center p-4 bg-white rounded-lg border-2 border-orange-200">
+            <p class="text-3xl font-extrabold text-orange-600 mb-1">
+              {{ current_streak }}
+            </p>
+            <p class="text-xs font-medium text-gray-600">Days in a Row</p>
+          </div>
+
+          <!-- Best Streak -->
+          <div class="text-center p-4 bg-white rounded-lg border-2 border-amber-200">
+            <p class="text-3xl font-extrabold text-amber-600 mb-1">
+              {{ best_streak }}
+            </p>
+            <p class="text-xs font-medium text-gray-600">Personal Best</p>
+          </div>
+        </div>
+
+        {% if current_streak > 0 %}
+        <div class="p-3 bg-orange-100 rounded-lg text-sm text-orange-800">
+          💪 Keep up your streak! Log in daily to unlock more achievements.
+        </div>
+        {% else %}
+        <div class="p-3 bg-gray-100 rounded-lg text-sm text-gray-700">
+          Start your streak today! Log in daily to earn badges.
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Badges Card -->
+      <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-md p-6 border border-purple-200">
+        <h3 class="text-lg font-bold text-gray-900 pb-3 mb-6 border-b border-purple-200 flex items-center justify-between">
+          <span class="flex items-center">
+            <span class="text-2xl mr-2">🏆</span>
+            Achievements
+          </span>
+          <span class="text-sm bg-purple-200 text-purple-800 px-3 py-1 rounded-full font-semibold">
+            {{ user_badges | length }}
+          </span>
+        </h3>
+
+        {% if user_badges %}
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          {% for badge in user_badges[:6] %}
+          <div class="relative group">
+            <div class="text-center p-3 bg-white rounded-lg border border-purple-200 hover:border-purple-400 transition-all">
+              <p class="text-2xl">{{ badge.emoji }}</p>
+              <p class="text-xs font-medium text-gray-700 line-clamp-2 mt-1">
+                {{ badge.title }}
+              </p>
+            </div>
+            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10 bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+              {{ badge.description }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if user_badges | length > 6 %}
+        <p class="text-xs text-purple-700 text-center">
+          +{{ user_badges | length - 6 }} more achievements
+        </p>
+        {% endif %}
+        {% else %}
+        <p class="text-center py-6 text-gray-600 text-sm">
+          Keep logging in and completing quizzes to earn badges!
+        </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Subjects/Enrollments - Moved from sidebar -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <h2
+        class="text-xl font-bold text-gray-900 pb-3 mb-6 border-b border-gray-200"
+      >
+        {% if viewed_user.role == 'teacher' %} Teaching Subjects {% else %}
+        Enrolled Subjects {% endif %}
+      </h2>
+
+      {% if subjects %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for subject in subjects %}
+        <div
+          class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors ring-1 ring-gray-100"
+        >
+          {% if viewed_user.role == 'teacher' %}
+          <h4
+            class="font-semibold text-gray-900 text-lg mb-2 flex items-center"
+          >
+            <svg
+              class="w-4 h-4 text-indigo-600 mr-2"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 2l9 4-9 4-9-4 9-4zM3 14h18v2H3v-2z" />
+            </svg>
+            {{ subject.name }}
+          </h4>
+          <p class="text-sm text-gray-600 mb-3">
+            {{ subject.get('description', 'No description available') }}
+          </p>
+          <div class="flex justify-between items-center">
+            <div class="space-x-2">
+              {% if subject.get('topic_count') %}
+              <span
+                class="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded-full"
+                >{{ subject.topic_count }} topics</span
+              >
+              {% endif %} {% if subject.get('student_count') %}
+              <span
+                class="text-xs text-green-700 bg-green-100 px-2 py-1 rounded-full"
+                >{{ subject.student_count }} students</span
+              >
+              {% endif %}
+            </div>
+            <svg
+              class="w-4 h-4 text-gray-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </div>
+          {% else %}
+          <h4
+            class="font-semibold text-gray-900 text-lg mb-1 flex items-center"
+          >
+            <svg
+              class="w-4 h-4 text-indigo-600 mr-2"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 2l9 4-9 4-9-4 9-4zM3 14h18v2H3v-2z" />
+            </svg>
+            {{ subject.name }}
+          </h4>
+          <p class="text-sm text-gray-600 mb-2 flex items-center">
+            <svg
+              class="w-4 h-4 mr-1 text-gray-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              />
+            </svg>
+            by {{ subject.teacher_name }}
+          </p>
+          {% if subject.enrolled_at %}
+          <p class="text-xs text-gray-500 flex items-center">
+            <svg
+              class="w-3.5 h-3.5 mr-1 text-gray-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"
+              />
+            </svg>
+            Enrolleds {{ subject.enrolled_at.strftime('%B %d, %Y') if
+            subject.enrolled_at.strftime else 'recently' }}
+          </p>
+          {% endif %} {% if subject.get('progress') %}
+          <div class="mt-2">
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                class="bg-blue-600 h-2 rounded-full transition-all"
+                style="width: {{ subject.progress }}%"
+              ></div>
+            </div>
+            <span class="text-xs text-gray-500 mt-1 inline-block"
+              >{{ subject.progress }}% complete</span
+            >
+          </div>
+          {% endif %} {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div
+        class="text-center py-10 bg-gray-50 rounded-lg border border-dashed border-gray-300"
+      >
+        <svg
+          class="w-12 h-12 mx-auto text-gray-400 mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+          />
+        </svg>
+        <p class="text-gray-600">
+          {% if viewed_user.role == 'teacher' %} No subjects created yet {% else
+          %} Not enrolled in any subjects yet {% endif %}
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="space-y-8 lg:sticky lg:top-24 h-fit">
+    <!-- Quick Info -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <h3
+        class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200 flex items-center"
+      >
+        <svg
+          class="w-5 h-5 mr-2 text-indigo-600"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+          />
+        </svg>
+        Profile Info
+      </h3>
+
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Role</span>
+          <span class="font-medium capitalize">{{ viewed_user.role }}</span>
+        </div>
+
+        {% if viewed_user.created_at %}
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Joined</span>
+          <span class="font-medium">
+            {{ viewed_user.created_at.strftime('%B %Y') if
+            viewed_user.created_at.strftime else 'Recently' }}
+          </span>
+        </div>
+        {% endif %} {% if viewed_user.role == 'teacher' %}
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Students Taught</span>
+          <span class="font-medium">{{ stats.total_students }}</span>
+        </div>
+        {% else %}
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600">Learning Level</span>
+          <span class="font-medium">
+            {% if stats.average_score >= 90 %}Expert {% elif stats.average_score
+            >= 80 %}Advanced {% elif stats.average_score >= 70 %}Intermediate {%
+            elif stats.average_score >= 60 %}Beginner {% else %}Getting Started
+            {% endif %}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart data (JSON only) -->
+<script id="profile-stats" type="application/json">
+  {
+      {% if viewed_user.role == 'teacher' %}
+      "role": "teacher",
+      "subjects": {{ stats.subjects_count or 0 }},
+      "quizzes": {{ stats.quizzes_count or 0 }},
+      "topics": {{ stats.topics_count or 0 }},
+      "students": {{ stats.total_students or 0 }},
+      "activeStudents": {{ stats.active_students or 0 }},
+      "monthlyViews": {{ stats.monthly_views or 0 }},
+      "avgScore": {{ stats.avg_score or 0 }},
+      "avgCompletion": {{ stats.avg_completion_rate or 0 }}
+      {% else %}
+      "role": "student",
+      "quizzesTaken": {{ stats.quizzes_taken or 0 }},
+      "averageScore": {{ stats.average_score or 0 }},
+      "subjectsEnrolled": {{ stats.subjects_enrolled or 0 }},
+      "studyHours": {{ stats.study_hours or 0 }}
+      {% endif %}
+  }
+</script>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Global chart style tweaks for a modern academic look
+  Chart.defaults.font.family =
+    'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"';
+  Chart.defaults.color = "#374151";
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.pointStyle = "circle";
+  Chart.defaults.elements.line.tension = 0.35;
+  Chart.defaults.borderColor = "#E5E7EB";
+
+  // Chart instances
+  let charts = {};
+
+  // Stats data from backend (parsed from JSON to avoid inline Jinja in JS)
+  const statsData = JSON.parse(
+    document.getElementById("profile-stats").textContent
+  );
+
+  // Chart initialization
+  function initCharts() {
+    if (statsData.role === "teacher") {
+      initTeacherCharts();
+    } else {
+      initStudentCharts();
+    }
+  }
+
+  function initTeacherCharts() {
+    // Teacher Overview Chart (Doughnut)
+    const overviewCtx = document
+      .getElementById("teacherOverviewChart")
+      .getContext("2d");
+    charts.teacherOverview = new Chart(overviewCtx, {
+      type: "doughnut",
+      data: {
+        labels: ["Subjects", "Quizzes", "Topics"],
+        datasets: [
+          {
+            data: [statsData.subjects, statsData.quizzes, statsData.topics],
+            backgroundColor: ["#3B82F6", "#10B981", "#8B5CF6"],
+            borderWidth: 2,
+            borderColor: "#fff",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+          tooltip: {
+            backgroundColor: "#111827",
+            titleColor: "#F9FAFB",
+            bodyColor: "#E5E7EB",
+            borderColor: "#374151",
+            borderWidth: 1,
+          },
+        },
+      },
+    });
+
+    // Engagement Chart (Bar)
+    const engagementCtx = document
+      .getElementById("engagementChart")
+      .getContext("2d");
+    charts.engagement = new Chart(engagementCtx, {
+      type: "bar",
+      data: {
+        labels: ["Total Students", "Active Students", "Monthly Views"],
+        datasets: [
+          {
+            label: "Count",
+            data: [
+              statsData.students,
+              statsData.activeStudents,
+              statsData.monthlyViews,
+            ],
+            backgroundColor: ["#F59E0B", "#EF4444", "#06B6D4"],
+            borderWidth: 0,
+            borderRadius: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: "#111827",
+            titleColor: "#F9FAFB",
+            bodyColor: "#E5E7EB",
+            borderColor: "#374151",
+            borderWidth: 1,
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: "#F3F4F6" },
+          },
+          x: {
+            grid: { display: false },
+          },
+        },
+      },
+    });
+
+    // Performance Trend Chart (Line)
+    const trendCtx = document
+      .getElementById("performanceTrendChart")
+      .getContext("2d");
+    charts.performanceTrend = new Chart(trendCtx, {
+      type: "line",
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [
+          {
+            label: "Average Score %",
+            data: [65, 72, 68, 75, 82, statsData.avgScore],
+            borderColor: "#3B82F6",
+            backgroundColor: "rgba(59, 130, 246, 0.12)",
+            tension: 0.4,
+            fill: true,
+          },
+          {
+            label: "Completion Rate %",
+            data: [78, 85, 82, 88, 91, statsData.avgCompletion],
+            borderColor: "#10B981",
+            backgroundColor: "rgba(16, 185, 129, 0.12)",
+            tension: 0.4,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            grid: { color: "#F3F4F6" },
+          },
+          x: {
+            grid: { display: false },
+          },
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: "#111827",
+            titleColor: "#F9FAFB",
+            bodyColor: "#E5E7EB",
+            borderColor: "#374151",
+            borderWidth: 1,
+          },
+        },
+      },
+    });
+  }
+
+  function initStudentCharts() {
+    // Student Overview Chart (Polar Area)
+    const overviewCtx = document
+      .getElementById("studentOverviewChart")
+      .getContext("2d");
+    charts.studentOverview = new Chart(overviewCtx, {
+      type: "polarArea",
+      data: {
+        labels: ["Quizzes Taken", "Subjects Enrolled", "Study Hours"],
+        datasets: [
+          {
+            data: [
+              statsData.quizzesTaken,
+              statsData.subjectsEnrolled,
+              statsData.studyHours,
+            ],
+            backgroundColor: ["#3B82F6", "#8B5CF6", "#F59E0B"],
+            borderWidth: 2,
+            borderColor: "#fff",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+          tooltip: {
+            backgroundColor: "#111827",
+            titleColor: "#F9FAFB",
+            bodyColor: "#E5E7EB",
+            borderColor: "#374151",
+            borderWidth: 1,
+          },
+        },
+      },
+    });
+
+    // Score Chart (Gauge-style doughnut)
+    const scoreCtx = document.getElementById("scoreChart").getContext("2d");
+    charts.score = new Chart(scoreCtx, {
+      type: "doughnut",
+      data: {
+        labels: ["Score", "Remaining"],
+        datasets: [
+          {
+            data: [statsData.averageScore, 100 - statsData.averageScore],
+            backgroundColor: [
+              statsData.averageScore >= 80
+                ? "#10B981"
+                : statsData.averageScore >= 60
+                ? "#F59E0B"
+                : "#EF4444",
+              "#E5E7EB",
+            ],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        cutout: "70%",
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: "#111827",
+            titleColor: "#F9FAFB",
+            bodyColor: "#E5E7EB",
+            borderColor: "#374151",
+            borderWidth: 1,
+          },
+        },
+      },
+    });
+
+    // Progress Chart (Line)
+    const progressCtx = document
+      .getElementById("progressChart")
+      .getContext("2d");
+    charts.progress = new Chart(progressCtx, {
+      type: "line",
+      data: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
+        datasets: [
+          {
+            label: "Quizzes Completed",
+            data: [2, 5, 8, 12, 15, statsData.quizzesTaken],
+            borderColor: "#3B82F6",
+            backgroundColor: "rgba(59, 130, 246, 0.12)",
+            tension: 0.4,
+            fill: true,
+          },
+          {
+            label: "Average Score",
+            data: [45, 52, 61, 68, 75, statsData.averageScore],
+            borderColor: "#10B981",
+            backgroundColor: "rgba(16, 185, 129, 0.12)",
+            tension: 0.4,
+            fill: true,
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            beginAtZero: true,
+            grid: { color: "#F3F4F6" },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            beginAtZero: true,
+            max: 100,
+            grid: {
+              drawOnChartArea: false,
+            },
+          },
+          x: {
+            grid: { display: false },
+          },
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: "#111827",
+            titleColor: "#F9FAFB",
+            bodyColor: "#E5E7EB",
+            borderColor: "#374151",
+            borderWidth: 1,
+          },
+        },
+      },
+    });
+  }
+
+  // Download chart function
+  function downloadChart(chartId) {
+    const canvas = document.getElementById(chartId);
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${chartId}_${new Date().toISOString().slice(0, 10)}.png`;
+    a.click();
+  }
+
+  // Initialize charts when page loads
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(initCharts, 100); // Small delay to ensure canvases are ready
+  });
+</script>
+
+<style>
+  /* Minimal page-specific polish without altering global styles */
+  .animal-avatar,
+  .initial-avatar {
+    box-shadow: 0 10px 20px -10px rgba(79, 70, 229, 0.35);
+  }
+  button:focus {
+    outline: none;
+  }
+  button:focus-visible {
+    outline: 2px solid rgba(79, 70, 229, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* Animated gradient cover photo for the profile header */
+  .animated-cover {
+    background: linear-gradient(-45deg, #ff9966, #ff5e62, #6a82fb, #56ccf2);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Layered wave motion */
+  .animated-cover .wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 220%;
+    height: 5rem; /* keep waves subtle to reveal more gradient */
+    pointer-events: none;
+    will-change: transform;
+  }
+  .animated-cover .wave-1 {
+    color: rgba(255, 255, 255, 0.24);
+    transform: translateX(0) translateY(2px);
+    animation: waveSlide 22s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite
+      alternate;
+  }
+  .animated-cover .wave-2 {
+    color: rgba(255, 255, 255, 0.14);
+    transform: translateX(-8%) translateY(8px);
+    animation: waveSlideReverse 28s cubic-bezier(0.45, 0.05, 0.55, 0.95)
+      infinite alternate;
+  }
+
+  @keyframes waveSlide {
+    0% {
+      transform: translateX(0) translateY(4px);
+    }
+    100% {
+      transform: translateX(-18%) translateY(8px);
+    }
+  }
+  @keyframes waveSlideReverse {
+    0% {
+      transform: translateX(-8%) translateY(10px);
+    }
+    100% {
+      transform: translateX(2%) translateY(6px);
+    }
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .animated-cover {
+      animation: none;
+    }
+    .animated-cover .wave-1,
+    .animated-cover .wave-2 {
+      animation: none;
+    }
+  }
+</style>
+
+{% endblock %}

@@ -1,0 +1,2036 @@
+{% extends "base.html" %} {% block title %}{{ subject.name }} Announcements -
+Quizera{% endblock %} {% block extra_css %}
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+{% endblock %} {% block content %}
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    /* GLOBAL FONT SETTINGS */
+    --font-primary: "Poppins", sans-serif;
+    --font-secondary: "Poppins", sans-serif;
+
+    /* HERO HEADER FONTS */
+    --hero-title-font: "Poppins", sans-serif;
+    --hero-title-size: 2.5rem;
+    --hero-title-weight: 900;
+    --hero-title-color: #ffa73b;
+
+    /* INFO BOX FONTS */
+    --info-title-font: "Poppins", sans-serif;
+    --info-title-size: 1.5rem;
+    --info-title-weight: 700;
+    --info-title-color: #000000;
+    --info-text-font: "Poppins", sans-serif;
+    --info-text-size: 1rem;
+    --info-text-weight: 400;
+    --info-text-color: rgba(0, 0, 0, 0.9);
+
+    /* STATS BOX FONTS */
+    --stats-number-font: "Poppins", sans-serif;
+    --stats-number-size: 2rem;
+    --stats-number-weight: 700;
+    --stats-number-color: #000000;
+    --stats-label-font: "Poppins", sans-serif;
+    --stats-label-size: 0.85rem;
+    --stats-label-weight: 400;
+    --stats-label-color: rgba(0, 0, 0, 0.9);
+
+    /* AUTHOR NAME FONTS */
+    --author-name-font: "Poppins", sans-serif;
+    --author-name-size: 1rem;
+    --author-name-weight: 600;
+    --author-name-color: #2c3e50;
+
+    /* AUTHOR BADGE FONTS */
+    --author-badge-font: "Poppins", sans-serif;
+    --author-badge-size: 0.65rem;
+    --author-badge-weight: 400;
+    --author-badge-color: #ffffff;
+    --author-badge-bg: #ff8c42;
+
+    /* ANNOUNCEMENT TITLE FONTS */
+    --announcement-title-font: "Poppins", sans-serif;
+    --announcement-title-size: 1.5rem;
+    --announcement-title-weight: 700;
+    --announcement-title-color: #2c3e50;
+
+    /* ANNOUNCEMENT CONTENT FONTS */
+    --announcement-content-font: "Poppins", sans-serif;
+    --announcement-content-size: 1rem;
+    --announcement-content-weight: 400;
+    --announcement-content-color: #888888;
+    --announcement-content-line-height: 1.6;
+
+    /* META INFO FONTS */
+    --meta-info-font: "Poppins", sans-serif;
+    --meta-info-size: 0.85rem;
+    --meta-info-weight: 400;
+    --meta-info-color: #6c757d;
+
+    /* PRIORITY BADGE FONTS */
+    --priority-badge-font: "Poppins", sans-serif;
+    --priority-badge-size: 0.7rem;
+    --priority-badge-weight: 600;
+    --urgent-badge-color: #ffffff;
+    --urgent-badge-bg: #dc3545;
+    --important-badge-color: #212529;
+    --important-badge-bg: #ffc107;
+
+    /* COMMENTS HEADER FONTS */
+    --comments-header-font: "Poppins", sans-serif;
+    --comments-header-size: 1.25rem;
+    --comments-header-weight: 700;
+    --comments-header-color: #2c3e50;
+
+    /* COMMENT AUTHOR FONTS */
+    --comment-author-font: "Poppins", sans-serif;
+    --comment-author-size: 0.95rem;
+    --comment-author-weight: 700;
+    --comment-author-color: #2c3e50;
+
+    /* COMMENT USERNAME BADGE FONTS */
+    --comment-username-font: "Poppins", sans-serif;
+    --comment-username-size: 0.75rem;
+    --comment-username-weight: 600;
+    --comment-username-color: #000000;
+    --comment-username-bg: #ff8c42;
+
+    /* COMMENT TEXT FONTS */
+    --comment-text-font: "Poppins", sans-serif;
+    --comment-text-size: 0.9rem;
+    --comment-text-weight: 400;
+    --comment-text-color: #495057;
+    --comment-text-line-height: 1.5;
+
+    /* COMMENT TIME FONTS */
+    --comment-time-font: "Poppins", sans-serif;
+    --comment-time-size: 0.75rem;
+    --comment-time-weight: 400;
+    --comment-time-color: #6c757d;
+
+    /* BUTTON TEXT FONTS */
+    --button-font: "Poppins", sans-serif;
+    --button-size: 0.9rem;
+    --button-weight: 600;
+    --button-primary-color: #ffffff;
+    --button-primary-bg: #007bff;
+
+    /* CREATE BUTTON FONTS */
+    --create-button-font: "Poppins", sans-serif;
+    --create-button-size: 1rem;
+    --create-button-weight: 600;
+    --create-button-color: #2c3e50;
+    --create-button-bg: #ffd700;
+
+    /* SEARCH INPUT FONTS */
+    --search-input-font: "Poppins", sans-serif;
+    --search-input-size: 0.95rem;
+    --search-input-weight: 400;
+    --search-input-color: #495057;
+
+    /* EMPTY STATE FONTS */
+    --empty-title-font: "Poppins", sans-serif;
+    --empty-title-size: 1.75rem;
+    --empty-title-weight: 700;
+    --empty-title-color: #2c3e50;
+    --empty-text-font: "Poppins", sans-serif;
+    --empty-text-size: 1rem;
+    --empty-text-weight: 400;
+    --empty-text-color: #6c757d;
+
+    /* NO COMMENTS MESSAGE FONTS */
+    --no-comments-font: "Poppins", sans-serif;
+    --no-comments-size: 0.95rem;
+    --no-comments-weight: 400;
+    --no-comments-color: #6c757d;
+    --no-comments-style: italic;
+
+    /* DROPDOWN MENU FONTS */
+    --dropdown-font: "Poppins", sans-serif;
+    --dropdown-size: 0.9rem;
+    --dropdown-weight: 400;
+    --dropdown-color: #212529;
+  }
+
+  /* Main container */
+  body {
+    font-family: var(--font-primary);
+    background: #f8f9fa;
+  }
+
+  .announcements-page {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+    font-family: var(--font-primary);
+  }
+
+  /* Hero Header */
+  .hero-header {
+    background: linear-gradient(
+      135deg,
+      #4a5c8f 0%,
+      #7b68a6 25%,
+      #b87db8 50%,
+      #e8a5c8 75%,
+      #ffa94d 100%
+    );
+    position: relative;
+    min-height: 300px;
+    overflow: hidden;
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Animated gradient overlay */
+  .hero-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 169, 77, 0.2),
+      rgba(184, 125, 184, 0.2),
+      rgba(74, 92, 143, 0.2)
+    );
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+    pointer-events: none;
+  }
+
+  @keyframes gradientShift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Sparkle effects */
+  .sparkle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffa94d;
+    animation: sparkleFloat 3s ease-in-out infinite;
+    opacity: 0;
+  }
+
+  @keyframes sparkleFloat {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translateY(0) scale(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-30px) scale(1);
+    }
+  }
+
+  .sparkle:nth-child(1) {
+    left: 10%;
+    top: 20%;
+    animation-delay: 0s;
+  }
+  .sparkle:nth-child(2) {
+    left: 20%;
+    top: 60%;
+    animation-delay: 0.5s;
+  }
+  .sparkle:nth-child(3) {
+    left: 35%;
+    top: 30%;
+    animation-delay: 1s;
+  }
+  .sparkle:nth-child(4) {
+    left: 50%;
+    top: 70%;
+    animation-delay: 1.5s;
+  }
+  .sparkle:nth-child(5) {
+    left: 65%;
+    top: 25%;
+    animation-delay: 2s;
+  }
+  .sparkle:nth-child(6) {
+    left: 75%;
+    top: 65%;
+    animation-delay: 2.5s;
+  }
+  .sparkle:nth-child(7) {
+    left: 85%;
+    top: 40%;
+    animation-delay: 0.8s;
+  }
+  .sparkle:nth-child(8) {
+    left: 90%;
+    top: 80%;
+    animation-delay: 1.8s;
+  }
+
+  /* Floating particles */
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: particleRise 6s linear infinite;
+  }
+
+  @keyframes particleRise {
+    0% {
+      transform: translateY(100vh) translateX(0) scale(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100px) translateX(50px) scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  .particle:nth-child(odd) {
+    animation-duration: 8s;
+  }
+  .particle:nth-child(even) {
+    animation-duration: 10s;
+  }
+
+  .content-wrapper {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    gap: 2rem;
+    flex-wrap: wrap;
+    background: transparent !important;
+  }
+
+  .text-content {
+    flex: 1;
+    min-width: 300px;
+    background: transparent !important;
+  }
+
+  .text-content h1,
+  .text-content p,
+  .text-content .subtitle {
+    background: transparent !important;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    animation: badgePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes badgePulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0);
+    }
+  }
+
+  .badge:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  .badge i {
+    font-size: 1.2rem;
+    animation: iconBounce 1s ease-in-out infinite;
+  }
+
+  @keyframes iconBounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .hero-header h1 {
+    font-family: "Poppins", sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 169, 77, 0.5),
+      0 0 40px rgba(255, 169, 77, 0.3);
+    animation: titleFloat 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  @keyframes titleFloat {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .hero-header h1:hover {
+    transform: scale(1.05) translateY(-5px);
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 169, 77, 0.8),
+      0 0 60px rgba(255, 169, 77, 0.5);
+  }
+
+  /* Glitter effect on title */
+  .hero-header h1::after {
+    content: "✨";
+    position: absolute;
+    font-size: 2rem;
+    animation: glitterMove 4s linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes glitterMove {
+    0% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(100px, -50px);
+      opacity: 0;
+    }
+  }
+
+  .subtitle {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .btn-light {
+    background: white;
+    color: #4a5c8f;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-light:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, #ffa94d 0%, #ff8f3d 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4);
+  }
+
+  .btn-warning:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(255, 169, 77, 0.6);
+  }
+
+  .btn i {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .btn span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn:hover i {
+    transform: scale(1.2);
+  }
+
+  /* Star decorations */
+  .star {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5rem;
+    animation: starTwinkle 2s ease-in-out infinite;
+  }
+
+  @keyframes starTwinkle {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2) rotate(180deg);
+    }
+  }
+
+  .star:nth-child(9) {
+    top: 15%;
+    left: 15%;
+    animation-delay: 0s;
+  }
+  .star:nth-child(10) {
+    top: 25%;
+    right: 20%;
+    animation-delay: 0.5s;
+  }
+  .star:nth-child(11) {
+    bottom: 20%;
+    left: 25%;
+    animation-delay: 1s;
+  }
+  .star:nth-child(12) {
+    bottom: 30%;
+    right: 15%;
+    animation-delay: 1.5s;
+  }
+
+  /* Announcements Section Styles */
+  .announcements-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    background: #f8f9fa;
+  }
+
+  .announcements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .announcement-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    cursor: pointer;
+  }
+
+  .announcement-card:hover {
+    box-shadow: 0 20px 40px rgba(74, 92, 143, 0.2);
+    transform: translateY(-12px) scale(1.02);
+  }
+
+  .announcement-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .announcement-card:hover::before {
+    left: 100%;
+  }
+
+  .card-priority-bar {
+    height: 5px;
+    background: linear-gradient(90deg, #4a5c8f, #7b68a6);
+    transition: height 0.3s ease;
+  }
+
+  .announcement-card:hover .card-priority-bar {
+    height: 8px;
+  }
+
+  .important-bar {
+    background: linear-gradient(90deg, #ffa94d, #ff8f3d) !important;
+    animation: importantPulse 2s ease-in-out infinite;
+  }
+
+  .urgent-bar {
+    background: linear-gradient(90deg, #dc3545, #c82333) !important;
+    animation: importantPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes importantPulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+
+  .card-header-section {
+    margin-bottom: 1rem;
+  }
+
+  .important-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #ffa94d, #ff8f3d);
+    color: white;
+    border-radius: 50px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(255, 169, 77, 0.3);
+    animation: badgeGlow 2s ease-in-out infinite;
+  }
+
+  .urgent-badge {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+  }
+
+  @keyframes badgeGlow {
+    0%,
+    100% {
+      box-shadow: 0 4px 10px rgba(255, 169, 77, 0.3);
+    }
+    50% {
+      box-shadow: 0 6px 20px rgba(255, 169, 77, 0.6);
+    }
+  }
+
+  .important-badge i {
+    animation: starSpin 3s linear infinite;
+  }
+
+  @keyframes starSpin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .card-title {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    transition: color 0.3s ease;
+  }
+
+  .announcement-card:hover .card-title {
+    color: #4a5c8f;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-family: "Poppins", sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .announcement-card:hover .meta-item {
+    color: #4a5c8f;
+  }
+
+  .meta-item i {
+    font-size: 1rem;
+  }
+
+  .card-description {
+    color: #495057;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 2px solid #f0f0f0;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #4a5c8f, #7b68a6);
+    color: white;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .inactive-badge {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+  }
+
+  .live-badge i {
+    animation: livePulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes livePulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.2);
+    }
+  }
+
+  .announcement-card:hover .live-badge {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(74, 92, 143, 0.4);
+  }
+
+  .comments-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #4a5c8f;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .comments-btn:hover {
+    background: #4a5c8f;
+    color: white;
+    border-color: #4a5c8f;
+    transform: scale(1.05);
+  }
+
+  .comment-count {
+    background: #4a5c8f;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+  }
+
+  .comments-btn:hover .comment-count {
+    background: white;
+    color: #4a5c8f;
+  }
+
+  /* Card actions dropdown */
+  .card-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+  }
+
+  .card-actions .dropdown-toggle {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a5c8f;
+    transition: all 0.3s ease;
+  }
+
+  .card-actions .dropdown-toggle:hover {
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Comments Section - UPDATED TO COMPACT BOX */
+  .comments-section {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 420px;
+    max-height: 600px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
+  }
+
+  .comments-section.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .comments-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1040;
+    display: none;
+    visibility: hidden;
+  }
+
+  .comments-overlay.show {
+    display: block;
+    visibility: visible;
+  }
+
+  .comments-section-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 600px;
+  }
+
+  .comments-container-inner {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 380px;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Custom scrollbar for comments */
+  .comments-container-inner::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .comments-container-inner::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .comments-container-inner::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+
+  .comments-container-inner::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  /* Comments Header */
+  .comments-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  .comments-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .comments-header i {
+    font-size: 1.25rem;
+  }
+
+  .comments-header h4 {
+    font-family: var(--comments-header-font);
+    font-size: 1.1rem;
+    font-weight: var(--comments-header-weight);
+    color: var(--comments-header-color);
+    margin: 0;
+  }
+
+  .comments-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: all 0.2s ease;
+  }
+
+  .comments-close-btn:hover {
+    color: #dc3545;
+    transform: rotate(90deg);
+  }
+
+  /* Comment Form */
+  .comment-form {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+  }
+
+  .comment-avatar.teacher {
+    background: linear-gradient(45deg, #ff8c42, #ff6b35);
+  }
+
+  .comment-textarea {
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 0.75rem;
+    resize: vertical;
+    min-height: 70px;
+    font-family: "Poppins", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  .comment-textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+    outline: none;
+  }
+
+  /* Comment Items */
+  .comment-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  .comment-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .comment-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .comment-author {
+    font-family: var(--comment-author-font);
+    font-size: var(--comment-author-size);
+    font-weight: var(--comment-author-weight);
+    color: var(--comment-author-color);
+  }
+
+  .comment-username {
+    font-family: var(--comment-username-font);
+    font-size: var(--comment-username-size);
+    font-weight: var(--comment-username-weight);
+    color: var(--comment-username-color);
+    background: var(--comment-username-bg);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+  }
+
+  .comment-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--comment-time-font);
+    font-size: var(--comment-time-size);
+    font-weight: var(--comment-time-weight);
+    color: var(--comment-time-color);
+  }
+
+  .comment-right i {
+    font-size: 0.7rem;
+  }
+
+  .comment-text {
+    font-family: var(--comment-text-font);
+    font-size: var(--comment-text-size);
+    font-weight: var(--comment-text-weight);
+    color: var(--comment-text-color);
+    line-height: var(--comment-text-line-height);
+    margin-top: 0.5rem;
+    padding-left: 3rem;
+  }
+
+  .delete-comment-btn {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border: 1px solid #dc3545 !important;
+    color: #dc3545 !important;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    background: transparent;
+    font-family: var(--button-font);
+  }
+
+  .delete-comment-btn:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+  }
+
+  .comment-item:hover .delete-comment-btn {
+    opacity: 1;
+  }
+
+  /* Dropdown */
+  .dropdown-toggle-no-caret::after {
+    display: none;
+  }
+
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+  }
+
+  .dropdown-item {
+    font-family: var(--dropdown-font);
+    font-size: var(--dropdown-size);
+    font-weight: var(--dropdown-weight);
+    color: var(--dropdown-color);
+    padding: 0.65rem 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background: #f8f9fa;
+    transform: translateX(4px);
+  }
+
+  /* Empty State */
+  .empty-state {
+    background: white;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .empty-state h2 {
+    font-family: var(--empty-title-font);
+    font-size: var(--empty-title-size);
+    font-weight: var(--empty-title-weight);
+    color: var(--empty-title-color);
+  }
+
+  .empty-state p {
+    font-family: var(--empty-text-font);
+    font-size: var(--empty-text-size);
+    font-weight: var(--empty-text-weight);
+    color: var(--empty-text-color);
+  }
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2c3e50, #3d5a80);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .empty-icon i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-header h1 {
+      font-size: 2.5rem;
+    }
+
+    .hero-header {
+      padding: 2rem 1.5rem;
+      min-height: 250px;
+    }
+
+    .button-group {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .announcements-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .announcements-container {
+      padding: 2rem 1rem;
+    }
+  }
+
+  /* Notification */
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 350px;
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    font-family: var(--button-font);
+    font-size: var(--button-size);
+    font-weight: var(--button-weight);
+    color: var(--button-primary-color);
+    background: var(--button-primary-bg);
+  }
+</style>
+
+<div class="announcements-page">
+  <div class="container-fluid px-0">
+    <!-- Hero Header -->
+    <div class="hero-header">
+      <!-- Sparkles -->
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+
+      <!-- Floating particles -->
+      <div class="particle" style="left: 5%"></div>
+      <div class="particle" style="left: 15%"></div>
+      <div class="particle" style="left: 25%"></div>
+      <div class="particle" style="left: 35%"></div>
+      <div class="particle" style="left: 45%"></div>
+      <div class="particle" style="left: 55%"></div>
+      <div class="particle" style="left: 65%"></div>
+      <div class="particle" style="left: 75%"></div>
+      <div class="particle" style="left: 85%"></div>
+      <div class="particle" style="left: 95%"></div>
+
+      <!-- Stars -->
+      <div class="star">✨</div>
+      <div class="star">⭐</div>
+      <div class="star">✨</div>
+      <div class="star">⭐</div>
+
+      <div class="content-wrapper">
+        <div class="text-content">
+          <div class="badge">
+            <i class="fas fa-bullhorn"></i>
+            <span>{{ subject.name }} Announcements</span>
+          </div>
+          <h1>Stay Updated</h1>
+          <p class="subtitle">Important announcements for {{ subject.name }}</p>
+        </div>
+
+        <div class="button-group">
+          <a
+            href="{{ url_for('view_subject', subject_id=subject.id) }}"
+            class="btn btn-light"
+          >
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Subject</span>
+          </a>
+          {% if role == 'teacher' %}
+          <a href="{{ url_for('post_announcement') }}" class="btn btn-warning">
+            <i class="fas fa-plus"></i>
+            <span>Create Announcement</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Announcements Section -->
+  <div class="announcements-container">
+    <!-- Announcements List -->
+    {% if announcements %}
+    <div class="announcements-grid">
+      {% for announcement in announcements %}
+      <div class="announcement-card">
+        <!-- Priority Bar -->
+        <div
+          class="card-priority-bar {% if announcement.priority == 'important' %}important-bar{% elif announcement.priority == 'urgent' %}urgent-bar{% endif %}"
+        ></div>
+
+        <div class="card-content">
+          <div class="card-header-section">
+            <!-- Priority Badge -->
+            {% if announcement.priority in ['urgent', 'important'] %}
+            <div
+              class="important-badge {% if announcement.priority == 'urgent' %}urgent-badge{% endif %}"
+            >
+              <i class="fas fa-star"></i>
+              {{ announcement.priority|upper }}
+            </div>
+            {% endif %}
+
+            <h3 class="card-title">{{ announcement.title }}</h3>
+
+            <div class="card-meta">
+              <div class="meta-item">
+                <i class="fas fa-user"></i>
+                <span>{{ announcement.teacher_name }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-calendar"></i>
+                <span>{{ announcement.created_at.strftime('%b %d, %Y') }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-clock"></i>
+                <span>{{ announcement.created_at.strftime('%I:%M %p') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="card-description">{{ announcement.content }}</p>
+
+          <div class="card-footer">
+            <span
+              class="live-badge {% if not announcement.is_active %}inactive-badge{% endif %}"
+            >
+              <i class="fas fa-circle"></i>
+              {% if announcement.is_active %}Live{% else %}Inactive{% endif %}
+            </span>
+            <button
+              class="comments-btn"
+              onclick="event.stopPropagation(); toggleComments('{{ announcement.id }}')"
+            >
+              <i class="fas fa-comments"></i>
+              Comments
+              <span
+                class="comment-count"
+                id="comments-count-{{ announcement.id }}"
+                >0</span
+              >
+            </button>
+          </div>
+        </div>
+
+        <!-- Card Actions (Teacher Only) -->
+        {% if role == 'teacher' and announcement.teacher_id == session.user_id
+        %}
+        <div class="card-actions">
+          <div class="dropdown">
+            <button
+              class="dropdown-toggle dropdown-toggle-no-caret"
+              type="button"
+              data-bs-toggle="dropdown"
+            >
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <form
+                  method="POST"
+                  action="{{ url_for('toggle_announcement', announcement_id=announcement.id) }}"
+                  style="display: inline"
+                >
+                  <button type="submit" class="dropdown-item">
+                    <i
+                      class="fas fa-{% if announcement.is_active %}eye-slash{% else %}eye{% endif %} me-2"
+                    ></i>
+                    {% if announcement.is_active %}Deactivate{% else
+                    %}Activate{% endif %}
+                  </button>
+                </form>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <form
+                  method="POST"
+                  action="{{ url_for('delete_announcement', announcement_id=announcement.id) }}"
+                  onsubmit="return confirm('Are you sure you want to delete this announcement?')"
+                  style="display: inline"
+                >
+                  <button type="submit" class="dropdown-item text-danger">
+                    <i class="fas fa-trash me-2"></i>Delete
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      {% endfor %}
+    </div>
+
+    <!-- Comments Sections (Outside cards) -->
+    {% for announcement in announcements %}
+    <!-- Comments Overlay -->
+    <div
+      class="comments-overlay"
+      id="comments-overlay-{{ announcement.id }}"
+      onclick="closeComments('{{ announcement.id }}')"
+    ></div>
+
+    <!-- Comments Section -->
+    <div class="comments-section" id="comments-section-{{ announcement.id }}">
+      <div class="comments-section-content">
+        <div class="comments-header">
+          <div class="comments-header-left">
+            <i class="fas fa-comment"></i>
+            <h4>Comments</h4>
+          </div>
+          <button
+            class="comments-close-btn"
+            onclick="closeComments('{{ announcement.id }}')"
+            title="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="comments-container-inner">
+          <!-- Comment Form -->
+          {% if session.user_id %}
+          <div class="comment-form">
+            <form id="comment-form-{{ announcement.id }}">
+              <div class="d-flex gap-3">
+                <div
+                  class="comment-avatar {% if role == 'teacher' %}teacher{% endif %}"
+                >
+                  {{ session.username[0].upper() }}
+                </div>
+                <div class="flex-grow-1">
+                  <textarea
+                    class="form-control comment-textarea"
+                    placeholder="Add a comment..."
+                    required
+                    name="comment_text"
+                    id="comment-input-{{ announcement.id }}"
+                  ></textarea>
+                  <div
+                    class="d-flex justify-content-between align-items-center mt-2"
+                  >
+                    <small class="text-muted">
+                      <i class="fas fa-user me-1"></i>
+                      {{ session.username }}
+                    </small>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                      <i class="fas fa-paper-plane me-1"></i>
+                      Post
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          {% else %}
+          <div class="alert alert-info text-center">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Please log in to post comments.
+          </div>
+          {% endif %}
+
+          <!-- Comments List -->
+          <div class="comments-list" id="comments-list-{{ announcement.id }}">
+            <div
+              class="text-center"
+              id="comments-loading-{{ announcement.id }}"
+            >
+              <div
+                class="spinner-border spinner-border-sm text-primary"
+                role="status"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <span class="ms-2">Loading comments...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-bullhorn"></i>
+      </div>
+      <h2 class="fw-bold mb-3">No Announcements Yet</h2>
+      <p class="text-muted mb-4">
+        {% if role == 'teacher' %} No announcements have been posted for {{
+        subject.name }} yet. Create your first announcement to get started. {%
+        else %} No announcements have been posted for {{ subject.name }} yet.
+        Check back later for updates! {% endif %}
+      </p>
+      {% if role == 'teacher' %}
+      <a href="{{ url_for('post_announcement') }}" class="btn btn-warning">
+        <i class="fas fa-rocket me-2"></i>
+        <span>Create First Announcement</span>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  window.currentUsername = "{{ session.username }}";
+  const loadedComments = new Map();
+
+  function searchAnnouncements() {
+    const searchInput = document.getElementById("searchInput");
+    const filter = searchInput.value.toLowerCase();
+    const cards = document.querySelectorAll(".announcement-card");
+
+    cards.forEach((card) => {
+      const title = card.dataset.title || "";
+      const content = card.dataset.content || "";
+
+      if (title.includes(filter) || content.includes(filter)) {
+        card.style.display = "";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+
+  function toggleComments(announcementId) {
+    console.log(`Toggling comments for announcement: ${announcementId}`);
+
+    const section = document.getElementById(
+      `comments-section-${announcementId}`
+    );
+    const overlay = document.getElementById(
+      `comments-overlay-${announcementId}`
+    );
+
+    if (!section || !overlay) {
+      console.error("Comments section or overlay not found");
+      return;
+    }
+
+    const isCurrentlyShown = section.classList.contains("show");
+
+    // Close all other comment sections first
+    document
+      .querySelectorAll(".comments-section.show")
+      .forEach((otherSection) => {
+        if (otherSection.id !== `comments-section-${announcementId}`) {
+          otherSection.classList.remove("show");
+        }
+      });
+
+    document
+      .querySelectorAll(".comments-overlay.show")
+      .forEach((otherOverlay) => {
+        if (otherOverlay.id !== `comments-overlay-${announcementId}`) {
+          otherOverlay.classList.remove("show");
+        }
+      });
+
+    // Toggle the clicked comments section
+    if (!isCurrentlyShown) {
+      section.classList.add("show");
+      overlay.classList.add("show");
+      document.body.style.overflow = "hidden";
+
+      // Load comments if not already loaded
+      if (!loadedComments.get(announcementId)) {
+        loadComments(announcementId);
+        loadedComments.set(announcementId, true);
+      }
+    } else {
+      section.classList.remove("show");
+      overlay.classList.remove("show");
+      document.body.style.overflow = "";
+    }
+  }
+
+  function closeComments(announcementId) {
+    const section = document.getElementById(
+      `comments-section-${announcementId}`
+    );
+    const overlay = document.getElementById(
+      `comments-overlay-${announcementId}`
+    );
+
+    if (section && overlay) {
+      section.classList.remove("show");
+      overlay.classList.remove("show");
+      document.body.style.overflow = "";
+    }
+  }
+
+  function updateCommentsCount(announcementId, count) {
+    const countElement = document.getElementById(
+      `comments-count-${announcementId}`
+    );
+    if (countElement) {
+      countElement.textContent = count;
+    }
+  }
+
+  function deleteComment(commentId, announcementId) {
+    if (!commentId || !announcementId) {
+      console.error("Missing commentId or announcementId");
+      showNotification("Error: Missing comment or announcement ID", "error");
+      return;
+    }
+
+    const deleteBtn = document.querySelector(
+      `button[onclick="deleteComment('${commentId}', '${announcementId}')"]`
+    );
+    if (!deleteBtn) {
+      console.error("Delete button not found");
+      showNotification("Error: Delete button not found", "error");
+      return;
+    }
+
+    const originalHTML = deleteBtn.innerHTML;
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    fetch(`/announcement/comment/${commentId}/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          const commentElement = document.getElementById(
+            `comment-${commentId}`
+          );
+          if (commentElement) {
+            commentElement.style.opacity = "0.5";
+            commentElement.style.transform = "translateX(-10px)";
+
+            setTimeout(() => {
+              commentElement.remove();
+
+              const countElement = document.getElementById(
+                `comments-count-${announcementId}`
+              );
+              if (countElement) {
+                const currentCount = parseInt(countElement.textContent) || 0;
+                countElement.textContent = Math.max(0, currentCount - 1);
+              }
+
+              const commentsList = document.getElementById(
+                `comments-list-${announcementId}`
+              );
+              const remainingComments =
+                commentsList.querySelectorAll(".comment-item");
+              if (remainingComments.length === 0) {
+                commentsList.innerHTML = `
+                  <div class="no-comments">
+                    <i class="fas fa-comment-slash fs-3 mb-2 d-block"></i>
+                    No comments yet. Be the first to comment!
+                  </div>
+                `;
+              }
+            }, 300);
+          }
+
+          showNotification("Comment deleted successfully!", "success");
+        } else {
+          deleteBtn.disabled = false;
+          deleteBtn.innerHTML = originalHTML;
+          showNotification(
+            data.message || "Failed to delete comment.",
+            "error"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting comment:", error);
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = originalHTML;
+        showNotification(`Failed to delete comment: ${error.message}`, "error");
+      });
+  }
+
+  function loadComments(announcementId) {
+    const loading = document.getElementById(
+      `comments-loading-${announcementId}`
+    );
+    const commentsList = document.getElementById(
+      `comments-list-${announcementId}`
+    );
+
+    if (!loading || !commentsList) {
+      console.error("Loading or comments list element not found");
+      return;
+    }
+
+    loading.style.display = "block";
+
+    fetch(`/announcement/${announcementId}/comments`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        loading.style.display = "none";
+
+        if (data.success) {
+          if (data.comments.length === 0) {
+            commentsList.innerHTML = `
+              <div class="no-comments">
+                <i class="fas fa-comment-slash fs-3 mb-2 d-block"></i>
+                No comments yet. Be the first to comment!
+              </div>
+            `;
+          } else {
+            commentsList.innerHTML = data.comments
+              .map(
+                (c) => `
+              <div class="comment-item" id="comment-${c.id}">
+                <div class="comment-header">
+                  <div class="comment-left">
+                    <div class="comment-avatar ${
+                      c.is_teacher ? "teacher" : ""
+                    }">${c.username.charAt(0).toUpperCase()}</div>
+                    <span class="comment-author">${c.username}</span>
+                    <span class="comment-username">${c.username.toUpperCase()}</span>
+                  </div>
+                  <div class="comment-right">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="d-flex align-items-center gap-1">
+                        <i class="fas fa-calendar"></i>
+                        <span>${c.created_at || ""}</span>
+                      </div>
+                      ${
+                        c.is_owner
+                          ? `
+                        <button class="btn btn-sm btn-outline-danger delete-comment-btn"
+                                onclick="deleteComment('${c.id}', '${announcementId}')"
+                                title="Delete comment">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      `
+                          : ""
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="comment-text">${escapeHtml(c.content)}</div>
+              </div>
+            `
+              )
+              .join("");
+          }
+          updateCommentsCount(announcementId, data.comments.length);
+        } else {
+          commentsList.innerHTML = `<div class="alert alert-danger">Failed to load comments: ${data.message}</div>`;
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading comments:", error);
+        loading.style.display = "none";
+        commentsList.innerHTML = `<div class="alert alert-danger">Failed to load comments: ${error.message}</div>`;
+      });
+  }
+
+  function loadCommentCount(announcementId) {
+    if (!announcementId) {
+      console.error("No announcement ID provided");
+      return;
+    }
+
+    fetch(`/announcement/${announcementId}/comments/count`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      credentials: "same-origin",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success && typeof data.count === "number") {
+          updateCommentsCount(announcementId, data.count);
+        }
+      })
+      .catch((error) => {
+        console.log(
+          `Failed to load comment count for announcement ${announcementId}:`,
+          error
+        );
+      });
+  }
+
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function showNotification(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.className = `fixed-top alert alert-${
+      type === "success" ? "success" : type === "error" ? "danger" : "info"
+    } alert-dismissible fade show`;
+    notification.style.cssText =
+      "position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 300px;";
+    notification.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 3000);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", searchAnnouncements);
+    }
+
+    // Handle comment form submissions
+    document.querySelectorAll(".comments-section form").forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const commentsSection = form.closest(".comments-section");
+        const announcementId = commentsSection.id.replace(
+          "comments-section-",
+          ""
+        );
+        const textarea = form.querySelector(`#comment-input-${announcementId}`);
+        const commentText = textarea.value.trim();
+
+        if (!commentText) {
+          showNotification("Please enter a comment before posting.", "error");
+          return;
+        }
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        // Prevent duplicate submissions
+        if (submitBtn.disabled) {
+          return;
+        }
+
+        // Save the original button HTML before changing it
+        if (!submitBtn.dataset.originalHtml) {
+          submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+        }
+
+        // Define button states
+        const originalHTML =
+          submitBtn.dataset.originalHtml ||
+          '<i class="fas fa-paper-plane me-1"></i>Post';
+        const loadingHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Post';
+
+        // Function to restore button to original state
+        const restoreButton = () => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHTML;
+        };
+
+        // Change to loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = loadingHTML;
+
+        const formData = new FormData();
+        formData.append("content", commentText);
+
+        fetch(`/announcement/${announcementId}/comment`, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              textarea.value = "";
+
+              const commentsList = document.getElementById(
+                `comments-list-${announcementId}`
+              );
+              const newCommentHtml = `
+                <div class="comment-item" id="comment-${
+                  data.comment.id || "new-" + Date.now()
+                }">
+                  <div class="comment-header">
+                    <div class="comment-left">
+                      <div class="comment-avatar">${data.comment.username
+                        .charAt(0)
+                        .toUpperCase()}</div>
+                      <span class="comment-author">${
+                        data.comment.username
+                      }</span>
+                      <span class="comment-username">${data.comment.username.toUpperCase()}</span>
+                    </div>
+                    <div class="comment-right">
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-1">
+                          <i class="fas fa-calendar"></i>
+                          <span>just now</span>
+                        </div>
+                        ${
+                          data.comment.id
+                            ? `
+                          <button class="btn btn-sm btn-outline-danger delete-comment-btn"
+                                  onclick="deleteComment('${data.comment.id}', '${announcementId}')"
+                                  title="Delete comment">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        `
+                            : ""
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="comment-text">${escapeHtml(
+                    data.comment.content
+                  )}</div>
+                </div>
+              `;
+
+              commentsList.insertAdjacentHTML("afterbegin", newCommentHtml);
+
+              // Update comments count
+              const countElement = document.getElementById(
+                `comments-count-${announcementId}`
+              );
+              if (countElement) {
+                const currentCount = parseInt(countElement.textContent) || 0;
+                countElement.textContent = currentCount + 1;
+              }
+
+              // Remove "no comments" message if it exists
+              const noCommentsDiv = commentsList.querySelector(".no-comments");
+              if (noCommentsDiv) {
+                noCommentsDiv.remove();
+              }
+
+              showNotification("Comment posted successfully!", "success");
+
+              // Restore button to original state
+              restoreButton();
+            } else {
+              showNotification(
+                data.message || "Failed to post comment.",
+                "error"
+              );
+              // Restore button to original state on error too
+              restoreButton();
+            }
+          })
+          .catch((error) => {
+            console.error("Error posting comment:", error);
+            showNotification(
+              "Failed to post comment. Please try again.",
+              "error"
+            );
+            // Restore button to original state on error
+            restoreButton();
+          });
+      });
+    });
+
+    // Initialize all comments sections as hidden
+    document.querySelectorAll(".comments-section").forEach((section) => {
+      section.classList.remove("show");
+    });
+
+    // Load comment counts for all announcements on page load
+    document.querySelectorAll(".announcement-card").forEach((card) => {
+      const commentsBtn = card.querySelector(".comments-btn");
+      if (commentsBtn) {
+        const onclickAttr = commentsBtn.getAttribute("onclick");
+        if (onclickAttr) {
+          const match = onclickAttr.match(/toggleComments\('([^']+)'\)/);
+          if (match && match[1]) {
+            const announcementId = match[1];
+            loadCommentCount(announcementId);
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}
