@@ -46,8 +46,6 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 # Ensure upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-MAINTENANCE_MODE = os.getenv('MAINTENANCE_MODE', 'false').lower() == 'true'
-
 # Helper function for file validation
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -61,29 +59,11 @@ class User:
         self.email = email
         self.role = role
 
-
-def is_database_enabled():
-    """Check if database access is enabled"""
-    try:
-        config = db.collection('app_settings').document('config').get()
-        if config.exists:
-            return config.to_dict().get('database_enabled', True)
-        return True  # Default to enabled if config doesn't exist
-    except:
-        return True  # Default to enabled on error
-
-@app.before_request
-def check_database_access():
-    """Block all requests if database is disabled"""
-    # Skip static files and the maintenance page itself
-    if request.endpoint and request.endpoint != 'static' and request.endpoint != 'maintenance':
-        if not is_database_enabled():
-            return render_template('maintenance.html'), 503
+# MAINTENANCE MODE TOGGLE
+MAINTENANCE_MODE = True  # Set to True to disable app
 
 @app.before_request
 def check_maintenance():
-    """Block all requests if in maintenance mode"""
-    # Skip static files and maintenance page
     if request.endpoint not in ['static', 'maintenance', None]:
         if MAINTENANCE_MODE:
             return render_template('maintenance.html'), 503
@@ -91,7 +71,6 @@ def check_maintenance():
 @app.route('/maintenance')
 def maintenance():
     return render_template('maintenance.html'), 503
-
 
 
 @app.template_filter('get_animal_emoji')
