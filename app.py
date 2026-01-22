@@ -59,18 +59,12 @@ class User:
         self.email = email
         self.role = role
 
-# MAINTENANCE MODE TOGGLE
-MAINTENANCE_MODE = True  # Set to True to disable app
+MAINTENANCE = os.getenv("MAINTENANCE", "false") == "true"
 
 @app.before_request
-def check_maintenance():
-    if request.endpoint not in ['static', 'maintenance', None]:
-        if MAINTENANCE_MODE:
-            return render_template('maintenance.html'), 503
-
-@app.route('/maintenance')
-def maintenance():
-    return render_template('maintenance.html'), 503
+def block_requests():
+    if MAINTENANCE:
+        return {"error": "Service temporarily disabled"}, 503
 
 
 @app.template_filter('get_animal_emoji')
