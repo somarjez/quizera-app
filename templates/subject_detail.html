@@ -1,0 +1,1626 @@
+{% extends "base.html" %} {% block title %}{{ subject.name }} - Quizera{%
+endblock %} {% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/subjectdetail.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+/>
+<style>
+  * {
+    font-family: "Poppins", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: "Paytone One", sans-serif;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+  }
+
+  main {
+    background: #ffffff !important;
+  }
+
+  #main-content {
+    background: #ffffff !important;
+  }
+
+  .content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4rem;
+    background: transparent !important;
+  }
+
+  @media (max-width: 768px) {
+    .content-wrapper {
+      padding: 0 1.5rem;
+    }
+  }
+
+  /* Breadcrumb */
+  .breadcrumb-nav {
+    margin-bottom: 1rem;
+  }
+
+  .breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb-link:hover {
+    color: #111827;
+  }
+
+  .breadcrumb-icon {
+    font-size: 18px;
+    margin-right: 0.375rem;
+  }
+
+  .breadcrumb-separator {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin: 0 0.25rem;
+  }
+
+  .breadcrumb-current {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+  }
+
+  /* Subject Header Card */
+  .subject-header-card {
+    background: linear-gradient(135deg, #0f0c29 0%, #1e5e98 100%);
+    border-radius: 50px;
+    padding: 3rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .subject-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  .subject-description {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .subject-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .subject-meta-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .subject-meta-icon {
+    font-size: 18px;
+    margin-right: 0.375rem;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .action-btn-purple {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-purple:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-green {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-green:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-indigo {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-indigo:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-amber {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-amber:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-red {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-red:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-blue {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-blue:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-btn-icon {
+    margin-right: 0.5rem;
+  }
+
+  .enrollment-status {
+    display: inline-flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+    margin-left: 0.75rem;
+  }
+
+  .enrollment-status-icon {
+    font-size: 18px;
+    margin-right: 0.375rem;
+  }
+
+  /* Progress Card */
+  .progress-card {
+    background: #eeeded;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #cccccc;
+  }
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .progress-title {
+    font-size: 1.25rem;
+    font-weight: 650;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 2px; /* minimal spacing */
+  }
+
+  .progress-title-icon {
+    color: #10b981;
+    margin-right: 0.5rem;
+  }
+
+  .progress-percentage {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+  }
+
+  .progress-bar-container {
+    width: 100%;
+    background: #f3f4f6;
+    border-radius: 9999px;
+    height: 0.625rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    background: #10b981;
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .progress-badge {
+    display: flex;
+    align-items: center;
+  }
+
+  .progress-badge-icon {
+    font-size: 18px;
+    margin-right: 0.375rem;
+  }
+
+  /* Certificate Card */
+  .certificate-card {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #ef4444 100%);
+    border-radius: 1rem;
+    padding: 3rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .certificate-icon {
+    font-size: 72px;
+    margin-bottom: 1rem;
+  }
+
+  .certificate-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .certificate-message {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    opacity: 0.95;
+  }
+
+  .certificate-submessage {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .certificate-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .certificate-btn {
+    background: #ffffff;
+    color: #f59e0b;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .certificate-btn:hover {
+    background: #fef3c7;
+  }
+
+  .certificate-btn-icon {
+    margin-right: 0.5rem;
+  }
+
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+    min-width: 16rem;
+    z-index: 10;
+    border: 1px solid #f3f4f6;
+    overflow: hidden;
+  }
+
+  .dropdown-content.hidden {
+    display: none;
+  }
+
+  .dropdown-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #1f2937;
+    transition: background 0.2s;
+  }
+
+  .dropdown-item:hover {
+    background: #f9fafb;
+  }
+
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-item-title {
+    font-weight: 500;
+  }
+
+  .dropdown-item-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    margin-top: 0.25rem;
+  }
+
+  .dropdown-item-meta-icon {
+    font-size: 16px;
+    margin-right: 0.25rem;
+  }
+
+  .certificate-info {
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .certificate-info-icon {
+    margin-right: 0.5rem;
+  }
+
+  /* Enrollment Notice */
+  .enrollment-notice {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .enrollment-notice-icon-wrapper {
+    flex-shrink: 0;
+  }
+
+  .enrollment-notice-icon {
+    color: #f59e0b;
+    font-size: 2rem;
+  }
+
+  .enrollment-notice-content {
+    margin-left: 1rem;
+    flex: 1;
+  }
+
+  .enrollment-notice-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #78350f;
+  }
+
+  .enrollment-notice-text {
+    margin-top: 0.25rem;
+    color: #92400e;
+    font-size: 0.875rem;
+  }
+
+  /* Topics Card */
+  .topics-card {
+    background: #eeeded;
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid #cccccc;
+  }
+
+  .topics-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .topics-header-icon {
+    color: #3b82f6;
+    margin-right: 0.5rem;
+  }
+
+  .topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .topic-item {
+    border: 1px solid #cccccc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .topic-item:hover {
+    background: #c4c4c4;
+  }
+
+  .topic-item.completed {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  .topic-content-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topic-left {
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .topic-status-icon-wrapper {
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+
+  .topic-status-icon.completed {
+    color: #10b981;
+    font-size: 1.25rem;
+  }
+
+  .topic-status-icon.incomplete {
+    color: #9ca3af;
+    font-size: 1.25rem;
+  }
+
+  .topic-details {
+    flex: 1;
+  }
+
+  .topic-title-wrapper {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .topic-title-wrapper.completed {
+    color: #065f46;
+  }
+
+  .topic-completed-badge {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    background: #d1fae5;
+    color: #065f46;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-weight: 500;
+  }
+
+  .topic-description {
+    color: #6b7280;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .topic-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+
+  .topic-meta-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .topic-meta-icon {
+    font-size: 16px;
+    margin-right: 0.25rem;
+  }
+
+  .topic-meta-icon.video {
+    color: #ef4444;
+  }
+
+  .topic-meta-icon.pdf {
+    color: #ef4444;
+  }
+
+  .topic-meta-icon.text {
+    color: #3b82f6;
+  }
+
+  .topic-actions {
+    margin-left: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .topic-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid;
+  }
+
+  .topic-btn-view {
+    background: #eff6ff;
+    color: #1e40af;
+    border-color: #dbeafe;
+  }
+
+  .topic-btn-view:hover {
+    background: #dbeafe;
+  }
+
+  .topic-btn-delete {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+
+  .topic-btn-delete:hover {
+    background: #fecaca;
+  }
+
+  .topic-btn-icon {
+    font-size: 18px;
+    margin-right: 0.375rem;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .empty-state-icon {
+    color: #d1d5db;
+    font-size: 72px;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state-text {
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .empty-state-btn {
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid #dbeafe;
+  }
+
+  .empty-state-btn:hover {
+    background: #dbeafe;
+  }
+
+  .empty-state-btn-icon {
+    margin-right: 0.5rem;
+  }
+
+  /* Size Controls */
+  .toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    transition: background 0.2s;
+  }
+
+  .toggle-btn:hover {
+    background: #2563eb;
+  }
+
+  .size-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    min-width: 200px;
+    border: 1px solid #f3f4f6;
+  }
+
+  .control-group {
+    margin-bottom: 0.75rem;
+  }
+
+  .control-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .control-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 0.375rem;
+    color: #374151;
+  }
+
+  .control-value {
+    display: inline-block;
+    font-size: 0.6875rem;
+    color: #6b7280;
+    margin-left: 0.5rem;
+  }
+
+  .control-input {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e5e7eb;
+    outline: none;
+    appearance: none;
+  }
+
+  .control-input::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+  }
+
+  .control-input::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    border: none;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.hidden {
+    display: none;
+  }
+
+  .modal-content {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    max-width: 28rem;
+    width: 100%;
+    margin: 0 1rem;
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .modal-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #111827;
+  }
+
+  .modal-text {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  .modal-btn-cancel {
+    padding: 0.5rem 1rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+  }
+
+  .modal-btn-cancel:hover {
+    color: #111827;
+    background: #f9fafb;
+  }
+
+  .modal-btn-confirm {
+    padding: 0.5rem 1rem;
+    background: #3b82f6;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .modal-btn-confirm:hover {
+    background: #2563eb;
+  }
+
+  .modal-btn-confirm.danger {
+    background: #ef4444;
+  }
+
+  .modal-btn-confirm.danger:hover {
+    background: #dc2626;
+  }
+
+  /* Flash Messages */
+  .flash-message {
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .flash-message.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+  }
+
+  .flash-message.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  .flash-message.warning {
+    background: #fefce8;
+    border: 1px solid #fef08a;
+    color: #854d0e;
+  }
+
+  .flash-message.info {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    color: #1e40af;
+  }
+
+  .flash-message-content {
+    display: flex;
+    align-items: center;
+  }
+
+  .flash-message-icon {
+    font-size: 20px;
+    margin-right: 0.5rem;
+  }
+
+  .flash-message-close {
+    transition: opacity 0.2s;
+  }
+
+  .flash-message-close:hover {
+    opacity: 0.7;
+  }
+
+  .flash-message-close-icon {
+    font-size: 20px;
+  }
+
+  .flash-message.success .flash-message-close {
+    color: #166534;
+  }
+
+  .flash-message.error .flash-message-close {
+    color: #991b1b;
+  }
+
+  .flash-message.warning .flash-message-close {
+    color: #854d0e;
+  }
+
+  .flash-message.info .flash-message-close {
+    color: #1e40af;
+  }
+</style>
+{% endblock %} {% block main_class %}{% endblock %} {% block content %}
+<div class="content-wrapper py-8">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-2">
+      <li class="inline-flex items-center">
+        <a href="{{ url_for('dashboard') }}" class="breadcrumb-link">
+          <span class="material-symbols-outlined breadcrumb-icon">home</span>
+        </a>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <span class="material-symbols-outlined breadcrumb-separator"
+            >chevron_right</span
+          >
+          <span class="breadcrumb-current">{{ subject.name }}</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Subject Header -->
+  <div class="subject-header-card">
+    <div class="flex items-center justify-between">
+      <div class="flex-1">
+        <h1 class="subject-title">{{ subject.name }}</h1>
+        <p class="subject-description">{{ subject.description }}</p>
+        <div class="subject-meta">
+          <span class="subject-meta-item">
+            <span class="material-symbols-outlined subject-meta-icon"
+              >person</span
+            >{{ subject.teacher_name }}
+          </span>
+          <span class="subject-meta-item">
+            <span class="material-symbols-outlined subject-meta-icon">list</span
+            >{{ topics|length }} Topics
+          </span>
+          <span class="subject-meta-item">
+            <span class="material-symbols-outlined subject-meta-icon"
+              >calendar_today</span
+            >{{ subject.created_at.strftime('%B %d, %Y') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <!-- Announcements Button - Available for all users -->
+        <a
+          href="{{ url_for('subject_announcement', subject_id=subject.id) }}"
+          class="action-btn action-btn-purple"
+        >
+          <span class="material-symbols-outlined action-btn-icon">campaign</span
+          >Announcements
+        </a>
+
+        {% if role == 'teacher' and subject.teacher_id == user_id %}
+        <a
+          href="{{ url_for('create_topic', subject_id=subject.id) }}"
+          class="action-btn action-btn-green"
+        >
+          <span class="material-symbols-outlined action-btn-icon">add</span>Add
+          Topic
+        </a>
+        <a
+          href="{{ url_for('post_announcement') }}?subject_id={{ subject.id }}"
+          class="action-btn action-btn-indigo"
+        >
+          <span class="material-symbols-outlined action-btn-icon">campaign</span
+          >Post
+        </a>
+        <button
+          class="subject-edit-btn action-btn action-btn-amber"
+          data-subject-id="{{ subject.id }}"
+          data-subject-name="{{ subject.name }}"
+          data-subject-description="{{ subject.description }}"
+        >
+          <span class="material-symbols-outlined action-btn-icon">edit</span
+          >Edit
+        </button>
+        <button
+          class="subject-delete-btn action-btn action-btn-red"
+          data-subject-id="{{ subject.id }}"
+          data-subject-name="{{ subject.name }}"
+        >
+          <span class="material-symbols-outlined action-btn-icon">delete</span
+          >Delete
+        </button>
+        {% elif role == 'student' %}
+        <div id="enrollmentSection">
+          {% if is_enrolled %}
+          <button
+            id="unenrollBtn"
+            class="action-btn action-btn-red"
+            data-subject-id="{{ subject.id }}"
+            data-subject-name="{{ subject.name }}"
+          >
+            <span class="material-symbols-outlined action-btn-icon"
+              >person_remove</span
+            >Unenroll
+          </button>
+          <span class="enrollment-status" style="color: #10b981">
+            <span class="material-symbols-outlined enrollment-status-icon"
+              >check_circle</span
+            >Enrolled
+          </span>
+          {% else %}
+          <button
+            id="enrollBtn"
+            class="action-btn action-btn-blue"
+            data-subject-id="{{ subject.id }}"
+            data-subject-name="{{ subject.name }}"
+          >
+            <span class="material-symbols-outlined action-btn-icon"
+              >person_add</span
+            >Enroll Now
+          </button>
+          <span class="enrollment-status">
+            <span class="material-symbols-outlined enrollment-status-icon"
+              >info</span
+            >Not Enrolled
+          </span>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Section for Students -->
+  {% if role == 'student' and is_enrolled %}
+  <div class="progress-card">
+    <div class="progress-header">
+      <h2 class="progress-title">
+        <span class="material-symbols-outlined progress-title-icon"
+          >trending_up</span
+        >Your Progress
+      </h2>
+      <span id="progressPercentage" class="progress-percentage"
+        >{{ progress }}%</span
+      >
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+      <div
+        id="progressBar"
+        class="progress-bar-fill"
+        style="width: 0%"
+        data-progress="{{ progress }}"
+      ></div>
+    </div>
+
+    <div class="progress-footer">
+      <span id="progressText"
+        >{{ completed_topics|length }} of {{ topics|length }} topics
+        completed</span
+      >
+      <span id="progressBadge" class="progress-badge">
+        {% if progress == 100 %}
+        <span
+          class="material-symbols-outlined progress-badge-icon"
+          style="color: #eab308"
+          >emoji_events</span
+        >Completed! {% elif progress >= 75 %}
+        <span
+          class="material-symbols-outlined progress-badge-icon"
+          style="color: #f97316"
+          >local_fire_department</span
+        >Almost there! {% elif progress >= 50 %}
+        <span
+          class="material-symbols-outlined progress-badge-icon"
+          style="color: #3b82f6"
+          >thumb_up</span
+        >Great progress! {% else %}
+        <span
+          class="material-symbols-outlined progress-badge-icon"
+          style="color: #6b7280"
+          >play_arrow</span
+        >Keep going! {% endif %}
+      </span>
+    </div>
+  </div>
+
+  <!-- E-Certificate Section -->
+  {% if progress == 100 %}
+  <div class="certificate-card">
+    <div>
+      <span class="material-symbols-outlined certificate-icon"
+        >workspace_premium</span
+      >
+      <h3 class="certificate-title">Congratulations!</h3>
+      <p class="certificate-message">
+        You've completed all topics in {{ subject.name }}!
+      </p>
+      <p class="certificate-submessage">
+        Take the subject quizzes to earn your E-Certificate!
+      </p>
+      <div class="certificate-buttons">
+        {% if subject_quizzes %}
+        <div class="dropdown">
+          <button class="certificate-btn dropdown-btn">
+            <span class="material-symbols-outlined certificate-btn-icon"
+              >emoji_events</span
+            >Take Quiz for Certificate
+            <span class="material-symbols-outlined" style="margin-left: 0.5rem"
+              >expand_more</span
+            >
+          </button>
+          <div class="dropdown-content hidden">
+            {% for quiz in subject_quizzes %}
+            <a
+              href="{{ url_for('take_quiz', quiz_id=quiz.id) }}"
+              class="dropdown-item"
+            >
+              <div class="dropdown-item-title">{{ quiz.title }}</div>
+              <div class="dropdown-item-meta">
+                <span class="material-symbols-outlined dropdown-item-meta-icon"
+                  >help</span
+                >{{ quiz.question_count }} Questions
+                <span
+                  class="material-symbols-outlined dropdown-item-meta-icon"
+                  style="margin-left: 0.75rem"
+                  >schedule</span
+                >{{ quiz.time_limit }} min
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="certificate-info">
+          <span class="material-symbols-outlined certificate-info-icon"
+            >info</span
+          >Check your Dashboard to View all available Quizzes
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %} {% endif %}
+
+  <!-- Enrollment Required Notice -->
+  {% if enrollment_required %}
+  <div class="enrollment-notice">
+    <div class="enrollment-notice-icon-wrapper">
+      <span class="material-symbols-outlined enrollment-notice-icon">lock</span>
+    </div>
+    <div class="enrollment-notice-content">
+      <h3 class="enrollment-notice-title">Enrollment Required</h3>
+      <p class="enrollment-notice-text">
+        You need to enroll in this subject to access topics and quizzes. Click
+        the "Enroll Now" button above to get started!
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Topics Section -->
+  <div class="topics-card">
+    <h2 class="topics-header">
+      <span class="material-symbols-outlined topics-header-icon">list</span
+      >Topics
+    </h2>
+
+    {% if topics %}
+    <div class="topics-list">
+      {% for topic in topics %}
+      <div
+        class="topic-item {% if role == 'student' and topic.is_completed %}completed{% endif %}"
+      >
+        <div class="topic-content-wrapper">
+          <div class="topic-left">
+            {% if role == 'student' %}
+            <div class="topic-status-icon-wrapper">
+              {% if topic.is_completed %}
+              <span
+                class="material-symbols-outlined topic-status-icon completed"
+                >check_circle</span
+              >
+              {% else %}
+              <span
+                class="material-symbols-outlined topic-status-icon incomplete"
+                >radio_button_unchecked</span
+              >
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="topic-details">
+              <h3
+                class="topic-title-wrapper {% if role == 'student' and topic.is_completed %}completed{% endif %}"
+              >
+                {{ topic.title }} {% if role == 'student' and topic.is_completed
+                %}
+                <span class="topic-completed-badge">Completed</span>
+                {% endif %}
+              </h3>
+              {% if topic.content_text %}
+              <p class="topic-description">
+                {{ topic.content_text[:150] }}{% if topic.content_text|length >
+                150 %}...{% endif %}
+              </p>
+              {% endif %}
+
+              <div class="topic-meta">
+                <span class="topic-meta-item"
+                  ><span class="material-symbols-outlined topic-meta-icon"
+                    >schedule</span
+                  >{{ topic.created_at.strftime('%B %d, %Y') }}</span
+                >
+                {% if topic.video_link %}
+                <span class="topic-meta-item"
+                  ><span class="material-symbols-outlined topic-meta-icon video"
+                    >play_circle</span
+                  >Video Available</span
+                >
+                {% endif %} {% if topic.pdf_url %}
+                <span class="topic-meta-item"
+                  ><span class="material-symbols-outlined topic-meta-icon pdf"
+                    >picture_as_pdf</span
+                  >PDF Available</span
+                >
+                {% endif %} {% if topic.content_text %}
+                <span class="topic-meta-item"
+                  ><span class="material-symbols-outlined topic-meta-icon text"
+                    >description</span
+                  >Text Content</span
+                >
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="topic-actions">
+            <a
+              href="{{ url_for('view_topic', topic_id=topic.id) }}"
+              class="topic-btn topic-btn-view"
+            >
+              <span class="material-symbols-outlined topic-btn-icon"
+                >visibility</span
+              >View
+            </a>
+            {% if role == 'teacher' and subject.teacher_id == user_id %}
+            <button
+              class="topic-delete-btn topic-btn topic-btn-delete"
+              data-topic-id="{{ topic.id }}"
+              data-topic-title="{{ topic.title }}"
+            >
+              <span class="material-symbols-outlined topic-btn-icon"
+                >delete</span
+              >Delete
+            </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <span class="material-symbols-outlined empty-state-icon">list</span>
+      <h3 class="empty-state-title">
+        {% if enrollment_required %} Enroll to View Topics {% else %} No Topics
+        Yet {% endif %}
+      </h3>
+      <p class="empty-state-text">
+        {% if enrollment_required %} Enroll in this subject to access all
+        available topics and learning materials. {% else %} This subject doesn't
+        have any topics yet. {% endif %}
+      </p>
+      {% if role == 'teacher' and subject.teacher_id == user_id %}
+      <a
+        href="{{ url_for('create_topic', subject_id=subject.id) }}"
+        class="empty-state-btn"
+      >
+        <span class="material-symbols-outlined empty-state-btn-icon">add</span
+        >Create First Topic
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Size Controls -->
+<button class="toggle-btn" id="toggleControls">
+  <span class="material-symbols-outlined">tune</span>
+</button>
+
+<div class="size-controls" id="sizeControls" style="display: none">
+  <div class="control-group">
+    <label class="control-label">
+      Text Size <span class="control-value" id="textValue">100%</span>
+    </label>
+    <input
+      type="range"
+      min="80"
+      max="150"
+      value="100"
+      class="control-input"
+      id="textScale"
+    />
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">
+      Brightness <span class="control-value" id="brightnessValue">100%</span>
+    </label>
+    <input
+      type="range"
+      min="70"
+      max="130"
+      value="100"
+      class="control-input"
+      id="brightnessScale"
+    />
+  </div>
+</div>
+
+<!-- Modals -->
+<div id="enrollModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3 class="modal-title">Confirm Enrollment</h3>
+    <p id="enrollModalText" class="modal-text"></p>
+    <div class="modal-actions">
+      <button id="cancelEnroll" class="modal-btn-cancel">Cancel</button>
+      <button id="confirmEnroll" class="modal-btn-confirm">Enroll</button>
+    </div>
+  </div>
+</div>
+
+<div id="unenrollModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3 class="modal-title">Confirm Unenrollment</h3>
+    <p id="unenrollModalText" class="modal-text"></p>
+    <div class="modal-actions">
+      <button id="cancelUnenroll" class="modal-btn-cancel">Cancel</button>
+      <button id="confirmUnenroll" class="modal-btn-confirm danger">
+        Unenroll
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  // Size Controls
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggleControls");
+    const controls = document.getElementById("sizeControls");
+    const textScale = document.getElementById("textScale");
+    const brightnessScale = document.getElementById("brightnessScale");
+    const textValue = document.getElementById("textValue");
+    const brightnessValue = document.getElementById("brightnessValue");
+
+    // Toggle controls
+    toggleBtn.addEventListener("click", function () {
+      if (controls.style.display === "none") {
+        controls.style.display = "block";
+      } else {
+        controls.style.display = "none";
+      }
+    });
+
+    // Text size control
+    textScale.addEventListener("input", function () {
+      const scale = this.value / 100;
+      document.documentElement.style.setProperty("--text-scale", scale);
+      textValue.textContent = this.value + "%";
+      localStorage.setItem("textScale", this.value);
+    });
+
+    // Brightness control
+    brightnessScale.addEventListener("input", function () {
+      const brightness = this.value / 100;
+      document.documentElement.style.setProperty("--bg-brightness", brightness);
+      brightnessValue.textContent = this.value + "%";
+      localStorage.setItem("brightnessScale", this.value);
+    });
+
+    // Load saved preferences
+    const savedTextScale = localStorage.getItem("textScale");
+    const savedBrightness = localStorage.getItem("brightnessScale");
+
+    if (savedTextScale) {
+      textScale.value = savedTextScale;
+      document.documentElement.style.setProperty(
+        "--text-scale",
+        savedTextScale / 100
+      );
+      textValue.textContent = savedTextScale + "%";
+    }
+
+    if (savedBrightness) {
+      brightnessScale.value = savedBrightness;
+      document.documentElement.style.setProperty(
+        "--bg-brightness",
+        savedBrightness / 100
+      );
+      brightnessValue.textContent = savedBrightness + "%";
+    }
+  });
+
+  // Progress bar animation
+  document.addEventListener("DOMContentLoaded", function () {
+    const progressBar = document.getElementById("progressBar");
+    if (progressBar) {
+      const progress = progressBar.dataset.progress;
+      setTimeout(() => {
+        progressBar.style.width = progress + "%";
+      }, 100);
+    }
+  });
+
+  // Dropdown functionality
+  document.addEventListener("DOMContentLoaded", function () {
+    const dropdownBtn = document.querySelector(".dropdown-btn");
+    const dropdownContent = document.querySelector(".dropdown-content");
+
+    if (dropdownBtn && dropdownContent) {
+      dropdownBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        dropdownContent.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", function (e) {
+        if (
+          !dropdownBtn.contains(e.target) &&
+          !dropdownContent.contains(e.target)
+        ) {
+          dropdownContent.classList.add("hidden");
+        }
+      });
+    }
+  });
+
+  // Enrollment functionality
+  document.addEventListener("DOMContentLoaded", function () {
+    const enrollBtn = document.getElementById("enrollBtn");
+    const unenrollBtn = document.getElementById("unenrollBtn");
+    const enrollModal = document.getElementById("enrollModal");
+    const unenrollModal = document.getElementById("unenrollModal");
+    const enrollModalText = document.getElementById("enrollModalText");
+    const unenrollModalText = document.getElementById("unenrollModalText");
+    const confirmEnroll = document.getElementById("confirmEnroll");
+    const confirmUnenroll = document.getElementById("confirmUnenroll");
+    const cancelEnroll = document.getElementById("cancelEnroll");
+    const cancelUnenroll = document.getElementById("cancelUnenroll");
+
+    if (enrollBtn) {
+      enrollBtn.addEventListener("click", function () {
+        const subjectName = this.dataset.subjectName;
+        enrollModalText.textContent = `Are you sure you want to enroll in "${subjectName}"? You'll gain access to all topics and quizzes for this subject.`;
+        enrollModal.classList.remove("hidden");
+      });
+    }
+
+    if (unenrollBtn) {
+      unenrollBtn.addEventListener("click", function () {
+        const subjectName = this.dataset.subjectName;
+        unenrollModalText.textContent = `Are you sure you want to unenroll from "${subjectName}"? You'll lose access to all topics and quizzes for this subject.`;
+        unenrollModal.classList.remove("hidden");
+      });
+    }
+
+    if (confirmEnroll) {
+      confirmEnroll.addEventListener("click", function () {
+        const subjectId = enrollBtn.dataset.subjectId;
+
+        fetch(`/subject/${subjectId}/enroll`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showFlashMessage(data.message, "success");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            } else {
+              showFlashMessage(data.message, "error");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showFlashMessage("An error occurred while enrolling.", "error");
+          });
+
+        enrollModal.classList.add("hidden");
+      });
+    }
+
+    if (confirmUnenroll) {
+      confirmUnenroll.addEventListener("click", function () {
+        const subjectId = unenrollBtn.dataset.subjectId;
+
+        fetch(`/subject/${subjectId}/unenroll`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showFlashMessage(data.message, "success");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            } else {
+              showFlashMessage(data.message, "error");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showFlashMessage("An error occurred while unenrolling.", "error");
+          });
+
+        unenrollModal.classList.add("hidden");
+      });
+    }
+
+    if (cancelEnroll) {
+      cancelEnroll.addEventListener("click", () => {
+        enrollModal.classList.add("hidden");
+      });
+    }
+    if (cancelUnenroll) {
+      cancelUnenroll.addEventListener("click", () => {
+        unenrollModal.classList.add("hidden");
+      });
+    }
+
+    enrollModal?.addEventListener("click", function (e) {
+      if (e.target === this) {
+        this.classList.add("hidden");
+      }
+    });
+    unenrollModal?.addEventListener("click", function (e) {
+      if (e.target === this) {
+        this.classList.add("hidden");
+      }
+    });
+  });
+
+  function showFlashMessage(message, type) {
+    const contentWrapper = document.querySelector(".content-wrapper");
+    if (!contentWrapper) return;
+
+    const colorMap = {
+      success: "green",
+      error: "red",
+      warning: "yellow",
+      info: "blue",
+    };
+
+    const selectedColor = colorMap[type] || "blue";
+    const iconMap = {
+      success: "check_circle",
+      error: "error",
+      warning: "warning",
+      info: "info",
+    };
+
+    const selectedIcon = iconMap[type] || "info";
+
+    const flashDiv = document.createElement("div");
+    flashDiv.className = `flash-message ${type}`;
+
+    flashDiv.innerHTML =
+      '<span class="flash-message-content"><span class="material-symbols-outlined flash-message-icon">' +
+      selectedIcon +
+      "</span>" +
+      message +
+      "</span>" +
+      '<button onclick="this.parentElement.remove()" class="flash-message-close">' +
+      '<span class="material-symbols-outlined flash-message-close-icon">close</span>' +
+      "</button>";
+
+    contentWrapper.insertBefore(flashDiv, contentWrapper.firstChild);
+
+    setTimeout(() => {
+      flashDiv.remove();
+    }, 5000);
+  }
+</script>
+{% endblock %}

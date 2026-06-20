@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Flashcards - {{ topic_title }}</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .back-button {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateX(-5px);
+      }
+
+      /* Generation Screen */
+      .generation-screen {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .generation-screen.hidden {
+        display: none;
+      }
+
+      .control-group {
+        margin-bottom: 2rem;
+      }
+
+      .control-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .control-group select {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+      }
+
+      .control-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .generate-btn {
+        width: 100%;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 2rem;
+      }
+
+      .generate-btn:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      .generate-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Loading Screen */
+      .loading-screen {
+        background: white;
+        border-radius: 20px;
+        padding: 4rem;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .loading-screen.hidden {
+        display: none;
+      }
+
+      .spinner {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 2rem;
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Flashcard Screen */
+      .flashcard-screen {
+        display: none;
+      }
+
+      .flashcard-screen.active {
+        display: block;
+      }
+
+      .flashcard-controls {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-counter {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .flashcard-container {
+        perspective: 1000px;
+        margin-bottom: 2rem;
+      }
+
+      .flashcard {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+        cursor: pointer;
+      }
+
+      .flashcard.flipped {
+        transform: rotateY(180deg);
+      }
+
+      .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-front {
+        background: white;
+      }
+
+      .card-back {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: rotateY(180deg);
+      }
+
+      .card-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+      }
+
+      .card-front .card-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .card-back .card-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      .card-text {
+        font-size: 1.5rem;
+        line-height: 1.6;
+        text-align: center;
+        max-width: 700px;
+      }
+
+      .card-label {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        opacity: 0.7;
+      }
+
+      .navigation-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .nav-btn {
+        padding: 1rem 2rem;
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        border-radius: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .nav-btn:hover:not(:disabled) {
+        background: #667eea;
+        color: white;
+        transform: translateY(-3px);
+      }
+
+      .progress-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .progress-track {
+        height: 10px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+      }
+
+      .hint-text {
+        text-align: center;
+        color: white;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      /* Quiz Mode Styles */
+      .quiz-option {
+        background: white;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+
+      .quiz-option:hover {
+        border-color: #667eea;
+        transform: translateX(5px);
+      }
+
+      .quiz-option.correct {
+        background: #4caf50;
+        color: white;
+        border-color: #4caf50;
+      }
+
+      .quiz-option.incorrect {
+        background: #f44336;
+        color: white;
+        border-color: #f44336;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .card-text {
+          font-size: 1.2rem;
+        }
+
+        .flashcard {
+          height: 350px;
+        }
+
+        .action-buttons {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a
+      href="{{ url_for('view_topic', topic_id=topic_id) }}"
+      class="back-button"
+    >
+      <i class="fas fa-arrow-left"></i> Back to Topic
+    </a>
+
+    <div class="container">
+      <div class="header">
+        <h1><i class="fas fa-brain"></i> AI Flashcards</h1>
+        <p>{{ topic_title }}</p>
+      </div>
+
+      <!-- Generation Screen -->
+      <div id="generationScreen" class="generation-screen">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: #333">
+          <i class="fas fa-magic" style="color: #667eea"></i> Generate Your
+          Flashcards
+        </h2>
+
+        <div class="control-group">
+          <label for="cardCount">
+            <i class="fas fa-layer-group" style="color: #667eea"></i> Number of
+            Cards
+          </label>
+          <select id="cardCount">
+            <option value="5">5 cards</option>
+            <option value="10" selected>10 cards</option>
+            <option value="15">15 cards</option>
+            <option value="20">20 cards</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="difficulty">
+            <i class="fas fa-chart-line" style="color: #667eea"></i> Difficulty
+            Level
+          </label>
+          <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+
+        <button class="generate-btn" onclick="generateFlashcards()">
+          <i class="fas fa-magic"></i> Generate Flashcards
+        </button>
+      </div>
+
+      <!-- Loading Screen -->
+      <div id="loadingScreen" class="loading-screen hidden">
+        <div class="spinner"></div>
+        <h2 style="color: #667eea; margin-bottom: 1rem">
+          Creating Your Flashcards...
+        </h2>
+        <p style="color: #666">
+          AI is analyzing your lesson content and crafting personalized
+          flashcards
+        </p>
+      </div>
+
+      <!-- Flashcard Screen -->
+      <div id="flashcardScreen" class="flashcard-screen">
+        <div class="flashcard-controls">
+          <div class="card-counter">
+            <span id="currentCard">1</span> / <span id="totalCards">0</span>
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="shuffleCards()">
+              <i class="fas fa-random"></i> Shuffle
+            </button>
+            <button class="btn btn-secondary" onclick="restartCards()">
+              <i class="fas fa-redo"></i> Restart
+            </button>
+            <button class="btn btn-primary" onclick="startQuizMode()">
+              <i class="fas fa-play"></i> Quiz Mode
+            </button>
+          </div>
+        </div>
+
+        <div class="flashcard-container">
+          <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+              <span class="card-label">QUESTION</span>
+              <div class="card-icon">
+                <i class="fas fa-question"></i>
+              </div>
+              <div class="card-text" id="questionText"></div>
+            </div>
+            <div class="card-face card-back">
+              <span class="card-label">ANSWER</span>
+              <div class="card-icon">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <div class="card-text" id="answerText"></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="hint-text">
+          <i class="fas fa-info-circle"></i> Click the card to flip it
+        </p>
+
+        <div class="navigation-buttons">
+          <button
+            class="nav-btn"
+            id="prevBtn"
+            onclick="previousCard()"
+            disabled
+          >
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          <button class="nav-btn" id="nextBtn" onclick="nextCard()">
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-info">
+            <span><i class="fas fa-chart-line"></i> Study Progress</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              id="progressFill"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let flashcards = [];
+      let currentIndex = 0;
+      const topicId = "{{ topic_id }}";
+      const topicTitle = "{{ topic_title }}";
+
+      async function generateFlashcards() {
+        const count = document.getElementById("cardCount").value;
+        const difficulty = document.getElementById("difficulty").value;
+
+        console.log("Generating flashcards with:", {
+          topicId,
+          count,
+          difficulty,
+        });
+
+        // Show loading screen
+        document.getElementById("generationScreen").classList.add("hidden");
+        document.getElementById("loadingScreen").classList.remove("hidden");
+
+        try {
+          const response = await fetch("/api/generate-flashcards", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              topic_id: topicId,
+              count: parseInt(count),
+              difficulty: difficulty,
+            }),
+          });
+
+          console.log("Response status:", response.status);
+          const data = await response.json();
+          console.log("Response data:", data);
+
+          if (data.success) {
+            flashcards = data.flashcards;
+            showFlashcards();
+          } else {
+            console.error("Error from server:", data.message);
+            alert("Error generating flashcards: " + data.message);
+            document.getElementById("loadingScreen").classList.add("hidden");
+            document
+              .getElementById("generationScreen")
+              .classList.remove("hidden");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert(
+            "An error occurred while generating flashcards: " + error.message
+          );
+          document.getElementById("loadingScreen").classList.add("hidden");
+          document
+            .getElementById("generationScreen")
+            .classList.remove("hidden");
+        }
+      }
+
+      function showFlashcards() {
+        document.getElementById("loadingScreen").classList.add("hidden");
+        document.getElementById("flashcardScreen").classList.add("active");
+        document.getElementById("totalCards").textContent = flashcards.length;
+        displayCard(0);
+      }
+
+      function displayCard(index) {
+        currentIndex = index;
+        const card = flashcards[index];
+
+        document.getElementById("questionText").textContent = card.question;
+        document.getElementById("answerText").textContent = card.answer;
+        document.getElementById("currentCard").textContent = index + 1;
+
+        // Reset flip
+        document.getElementById("flashcard").classList.remove("flipped");
+
+        // Update navigation buttons
+        document.getElementById("prevBtn").disabled = index === 0;
+        document.getElementById("nextBtn").disabled =
+          index === flashcards.length - 1;
+
+        // Update progress
+        const progress = ((index + 1) / flashcards.length) * 100;
+        document.getElementById("progressFill").style.width = progress + "%";
+        document.getElementById("progressPercent").textContent =
+          Math.round(progress) + "%";
+      }
+
+      function flipCard() {
+        document.getElementById("flashcard").classList.toggle("flipped");
+      }
+
+      function previousCard() {
+        if (currentIndex > 0) {
+          displayCard(currentIndex - 1);
+        }
+      }
+
+      function nextCard() {
+        if (currentIndex < flashcards.length - 1) {
+          displayCard(currentIndex + 1);
+        }
+      }
+
+      function shuffleCards() {
+        for (let i = flashcards.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+        }
+        displayCard(0);
+      }
+
+      function restartCards() {
+        displayCard(0);
+      }
+
+      function startQuizMode() {
+        // Store flashcards in sessionStorage for quiz mode
+        sessionStorage.setItem("quizFlashcards", JSON.stringify(flashcards));
+        sessionStorage.setItem("quizTopicTitle", topicTitle);
+
+        // Redirect to quiz mode page
+        window.location.href = "/flashcard-quiz/" + topicId;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: quizera
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --timeout 120 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: FIREBASE_CREDENTIALS
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.6

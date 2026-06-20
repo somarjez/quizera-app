@@ -1,0 +1,499 @@
+{% extends "base.html" %} {% block title %}All Coding Exercises - Quizera{%
+endblock %} {% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">
+        {% if role == 'teacher' %} My Coding Exercises {% else %} Available
+        Coding Exercises {% endif %}
+      </h1>
+      <p class="text-gray-600">
+        {% if role == 'teacher' %} Manage and view all your coding exercises {%
+        else %} Practice your coding skills with these exercises {% endif %}
+      </p>
+    </div>
+
+    <!-- Add Create Button for Teachers -->
+    {% if role == 'teacher' %}
+    <button
+      id="openCreateExerciseModal"
+      class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-lg flex items-center gap-2"
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4v16m8-8H4"
+        ></path>
+      </svg>
+      Create New Exercise
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- Filter and Sort -->
+  <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <div class="flex flex-wrap gap-4 items-center">
+      <div class="flex-1">
+        <input
+          type="text"
+          id="searchExercises"
+          placeholder="Search exercises by title, subject, or language..."
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-purple-500"
+        />
+      </div>
+
+      <select
+        id="filterLanguage"
+        class="px-4 py-2 border rounded-lg focus:outline-none focus:border-purple-500"
+      >
+        <option value="">All Languages</option>
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+      </select>
+
+      <select
+        id="filterDifficulty"
+        class="px-4 py-2 border rounded-lg focus:outline-none focus:border-purple-500"
+      >
+        <option value="">All Difficulties</option>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+
+      {% if role == 'teacher' %}
+      <select
+        id="filterStatus"
+        class="px-4 py-2 border rounded-lg focus:outline-none focus:border-purple-500"
+      >
+        <option value="">All Status</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Statistics Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div
+      class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg p-6 shadow"
+    >
+      <div class="text-3xl font-bold">{{ exercises|length }}</div>
+      <div class="text-purple-100">Total Exercises</div>
+    </div>
+
+    {% if role == 'teacher' %}
+    <div
+      class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg p-6 shadow"
+    >
+      <div class="text-3xl font-bold">
+        {{ exercises|selectattr('is_published')|list|length }}
+      </div>
+      <div class="text-green-100">Published</div>
+    </div>
+
+    <div
+      class="bg-gradient-to-br from-gray-500 to-gray-600 text-white rounded-lg p-6 shadow"
+    >
+      <div class="text-3xl font-bold">
+        {{ exercises|rejectattr('is_published')|list|length }}
+      </div>
+      <div class="text-gray-100">Drafts</div>
+    </div>
+    {% else %}
+    <div
+      class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg p-6 shadow"
+    >
+      <div class="text-3xl font-bold">
+        {{ exercises|selectattr('attempt_count')|list|length }}
+      </div>
+      <div class="text-green-100">Attempted</div>
+    </div>
+
+    <div
+      class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg p-6 shadow"
+    >
+      <div class="text-3xl font-bold">
+        {{ exercises|rejectattr('attempt_count')|list|length }}
+      </div>
+      <div class="text-blue-100">Not Attempted</div>
+    </div>
+    {% endif %}
+
+    <div
+      class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-lg p-6 shadow"
+    >
+      <div class="text-3xl font-bold">
+        {{ exercises|selectattr('language', 'equalto', 'python')|list|length }}
+      </div>
+      <div class="text-indigo-100">Python</div>
+    </div>
+  </div>
+
+  <!-- Exercises Grid -->
+  {% if exercises %}
+  <div
+    id="exercisesGrid"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+  >
+    {% for exercise in exercises %}
+    <div
+      class="exercise-card bg-white rounded-lg shadow hover:shadow-xl transition-all border border-gray-200"
+      data-title="{{ exercise.title|lower }}"
+      data-subject="{{ exercise.subject_name|lower }}"
+      data-language="{{ exercise.language }}"
+      data-difficulty="{{ exercise.difficulty }}"
+      data-status="{{ 'published' if exercise.is_published else 'draft' }}"
+    >
+      <!-- Header -->
+      <div
+        class="p-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-t-lg"
+      >
+        <h3 class="font-semibold text-lg mb-2">{{ exercise.title }}</h3>
+        <p class="text-sm text-purple-100">{{ exercise.subject_name }}</p>
+      </div>
+
+      <!-- Body -->
+      <div class="p-4">
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+          {{ exercise.description }}
+        </p>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+            {{ exercise.language }}
+          </span>
+          <span
+            class="px-2 py-1 {{ 'bg-green-100 text-green-800' if exercise.difficulty == 'beginner' else ('bg-yellow-100 text-yellow-800' if exercise.difficulty == 'intermediate' else 'bg-red-100 text-red-800') }} rounded text-xs"
+          >
+            {{ exercise.difficulty|capitalize }}
+          </span>
+          {% if role == 'teacher' %} {% if exercise.is_published %}
+          <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs"
+            >Published</span
+          >
+          {% else %}
+          <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs"
+            >Draft</span
+          >
+          {% endif %} {% endif %} {% if role == 'student' and
+          exercise.attempt_count > 0 %}
+          <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">
+            {{ exercise.attempt_count }} attempt{{ 's' if exercise.attempt_count
+            != 1 else '' }}
+          </span>
+          {% endif %}
+        </div>
+
+        <!-- Student Progress -->
+        {% if role == 'student' and exercise.best_score > 0 %}
+        <div class="mb-4">
+          <div class="flex justify-between text-xs text-gray-600 mb-1">
+            <span>Best Score</span>
+            <span>{{ exercise.best_score|round|int }}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div
+              class="bg-green-500 h-2 rounded-full"
+              style="width: {{ exercise.best_score }}%"
+            ></div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Metadata -->
+        <div class="text-xs text-gray-500 mb-4">
+          <div class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            {{ exercise.created_at.strftime('%b %d, %Y') if exercise.created_at
+            else 'Recently' }}
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <a
+          href="{{ url_for('view_coding_exercise', exercise_id=exercise.id) }}"
+          class="block text-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all"
+        >
+          {% if role == 'teacher' %} View & Edit {% else %} Start Exercise {%
+          endif %}
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="noResults" class="hidden text-center py-16">
+    <svg
+      class="w-16 h-16 text-gray-400 mx-auto mb-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      ></path>
+    </svg>
+    <p class="text-gray-500 text-lg">
+      No exercises found matching your filters
+    </p>
+    <button
+      onclick="resetFilters()"
+      class="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+    >
+      Reset Filters
+    </button>
+  </div>
+
+  {% else %}
+  <div class="text-center py-16 bg-white rounded-lg shadow">
+    <svg
+      class="w-16 h-16 text-gray-400 mx-auto mb-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+      ></path>
+    </svg>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">
+      No Coding Exercises Yet
+    </h3>
+    <p class="text-gray-500 mb-6">
+      {% if role == 'teacher' %} Start creating coding exercises for your
+      students {% else %} Check back later for new exercises {% endif %}
+    </p>
+    {% if role == 'teacher' %}
+    <button
+      id="openCreateExerciseModalEmpty"
+      class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+    >
+      Create First Exercise
+    </button>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- Create Exercise Modal (only for teachers) -->
+{% if role == 'teacher' %}
+<div
+  id="createExerciseModal"
+  class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+>
+  <div
+    class="bg-white rounded-xl max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
+  >
+    <div class="p-6 border-b border-gray-200 sticky top-0 bg-white">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl font-bold text-gray-800">
+          Select Subject for Coding Exercise
+        </h3>
+        <button
+          id="closeCreateModal"
+          class="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <p class="text-gray-600 mt-2">
+        Choose a subject to create a new coding exercise
+      </p>
+    </div>
+
+    <div id="subjectListForCoding" class="p-6">
+      <div class="text-center text-gray-500">Loading your subjects...</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  // Filter and search functionality
+  const searchInput = document.getElementById("searchExercises");
+  const languageFilter = document.getElementById("filterLanguage");
+  const difficultyFilter = document.getElementById("filterDifficulty");
+  const statusFilter = document.getElementById("filterStatus");
+  const cards = document.querySelectorAll(".exercise-card");
+  const noResults = document.getElementById("noResults");
+  const grid = document.getElementById("exercisesGrid");
+
+  function filterExercises() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const language = languageFilter.value;
+    const difficulty = difficultyFilter.value;
+    const status = statusFilter ? statusFilter.value : "";
+
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const title = card.dataset.title;
+      const subject = card.dataset.subject;
+      const cardLanguage = card.dataset.language;
+      const cardDifficulty = card.dataset.difficulty;
+      const cardStatus = card.dataset.status;
+
+      const matchesSearch =
+        title.includes(searchTerm) || subject.includes(searchTerm);
+      const matchesLanguage = !language || cardLanguage === language;
+      const matchesDifficulty = !difficulty || cardDifficulty === difficulty;
+      const matchesStatus = !status || cardStatus === status;
+
+      if (
+        matchesSearch &&
+        matchesLanguage &&
+        matchesDifficulty &&
+        matchesStatus
+      ) {
+        card.classList.remove("hidden");
+        visibleCount++;
+      } else {
+        card.classList.add("hidden");
+      }
+    });
+
+    if (visibleCount === 0) {
+      noResults.classList.remove("hidden");
+      if (grid) grid.classList.add("hidden");
+    } else {
+      noResults.classList.add("hidden");
+      if (grid) grid.classList.remove("hidden");
+    }
+  }
+
+  function resetFilters() {
+    searchInput.value = "";
+    languageFilter.value = "";
+    difficultyFilter.value = "";
+    if (statusFilter) statusFilter.value = "";
+    filterExercises();
+  }
+
+  searchInput?.addEventListener("input", filterExercises);
+  languageFilter?.addEventListener("change", filterExercises);
+  difficultyFilter?.addEventListener("change", filterExercises);
+  statusFilter?.addEventListener("change", filterExercises);
+
+  // Create Exercise Modal functionality
+  {% if role == 'teacher' %}
+  const modal = document.getElementById('createExerciseModal');
+  const openBtn = document.getElementById('openCreateExerciseModal');
+  const openBtnEmpty = document.getElementById('openCreateExerciseModalEmpty');
+  const closeBtn = document.getElementById('closeCreateModal');
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    loadTeacherSubjects();
+  }
+
+  if (openBtn) {
+    openBtn.addEventListener('click', openModal);
+  }
+
+  if (openBtnEmpty) {
+    openBtnEmpty.addEventListener('click', openModal);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+  }
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+
+  async function loadTeacherSubjects() {
+    const container = document.getElementById('subjectListForCoding');
+
+    try {
+      const response = await fetch('/api/teacher/subjects');
+      const data = await response.json();
+
+      if (data.success && data.subjects.length > 0) {
+        container.innerHTML = data.subjects.map(subject => `
+          <div class="border border-gray-200 rounded-lg p-4 mb-3 hover:border-purple-400 hover:shadow-md transition-all">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h4 class="font-semibold text-lg text-gray-800">${subject.name}</h4>
+                <p class="text-gray-600 text-sm mt-1">${subject.description || 'No description'}</p>
+                <div class="flex gap-2 mt-2">
+                  <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                    ${subject.topic_count || 0} Topics
+                  </span>
+                  <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                    ${subject.created_at || 'Recently created'}
+                  </span>
+                </div>
+              </div>
+              <a
+                href="/subject/${subject.id}/create-coding-exercise"
+                class="ml-4 bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-600 transition-all whitespace-nowrap"
+              >
+                Create Exercise
+              </a>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = `
+          <div class="text-center py-8">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <p class="text-gray-600 mb-4">You haven't created any subjects yet.</p>
+            <a href="/create-subject" class="bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 inline-block">
+              Create Your First Subject
+            </a>
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error('Error loading subjects:', error);
+      container.innerHTML = `
+        <div class="text-center text-red-500 py-8">
+          Error loading subjects. Please try again.
+        </div>
+      `;
+    }
+  }
+  {% endif %}
+</script>
+{% endblock %}

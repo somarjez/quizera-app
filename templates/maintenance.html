@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center" style="padding:80px 20px;">
+  {% if read_only %}
+    <h1>We're a bit busy right now</h1>
+    <p>Saving is paused for a little while to keep Quizera within its free
+       daily limits. You can still browse and read. Please try saving again
+       later today.</p>
+  {% else %}
+    <h1>Quizera is taking a short break</h1>
+    <p>We've hit today's free usage limit. The service resets at midnight
+       Pacific time. Please check back soon — thanks for your patience!</p>
+  {% endif %}
+</div>
+{% endblock %}

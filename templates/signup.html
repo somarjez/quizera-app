@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Quizera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Full-screen fixed background container */
+      #bg-container {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        background: #e8ecf1;
+      }
+
+      /* Layered radial gradients */
+      #bg-container .layer1 {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            circle at 15% 25%,
+            rgba(50, 100, 200, 0.45) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 85% 75%,
+            rgba(255, 140, 66, 0.33) 0%,
+            transparent 45%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 120, 180, 0.25) 0%,
+            transparent 70%
+          );
+        z-index: 0;
+        opacity: 1;
+      }
+
+      /* Linear gradient overlay with animation */
+      #bg-container .layer2 {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.5) 20%,
+            transparent 50%,
+            rgba(220, 225, 230, 0.5) 80%,
+            transparent 100%
+          ),
+          linear-gradient(
+            -45deg,
+            transparent 0%,
+            rgba(210, 215, 225, 0.4) 30%,
+            transparent 60%,
+            rgba(255, 255, 255, 0.3) 85%,
+            transparent 100%
+          );
+        background-size: 400% 400%;
+        opacity: 0.8;
+        animation: bgfloat 28s linear infinite;
+      }
+
+      /* Soft large ellipses for depth */
+      #bg-container .soft-ellipses {
+        position: absolute;
+        width: 220%;
+        height: 220%;
+        top: -60%;
+        left: -60%;
+        z-index: -1;
+        opacity: 0.12;
+        background: radial-gradient(
+            ellipse 40% 35% at 30% 40%,
+            rgba(150, 160, 175, 0.38),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 30% 25% at 70% 60%,
+            rgba(160, 170, 185, 0.34),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 45% 35% at 50% 80%,
+            rgba(140, 150, 165, 0.28),
+            transparent
+          );
+        transform: translate3d(0, 0, 0);
+      }
+
+      @keyframes bgfloat {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Main content sits above background */
+      .app-wrap {
+        position: relative;
+        z-index: 10;
+      }
+
+      /* Allow page to grow taller than viewport and scroll */
+      html,
+      body {
+        min-height: 100%;
+        height: auto;
+      }
+      /* Decorative floating code-like blocks for left panel */
+      .code-float {
+        position: absolute;
+        z-index: 5;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.5rem 0.7rem;
+        border-radius: 0.6rem;
+        box-shadow: 0 10px 28px rgba(3, 7, 18, 0.3);
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        opacity: 0.85;
+        color: rgba(255, 255, 255, 0.94);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+          "Courier New", monospace;
+        font-size: 0.9rem;
+        pointer-events: none;
+        white-space: nowrap;
+        transform-origin: center;
+      }
+      .code-float.small {
+        padding: 0.36rem 0.45rem;
+        font-size: 0.78rem;
+        opacity: 0.72;
+      }
+      /* Stronger floating animation */
+      .code-float.moving {
+        animation: floaty 5s ease-in-out infinite;
+      }
+      @keyframes floaty {
+        0% {
+          transform: var(--init-transform) translateY(0px);
+        }
+        50% {
+          transform: var(--init-transform) translateY(-18px);
+        }
+        100% {
+          transform: var(--init-transform) translateY(0px);
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen flex flex-col justify-center items-center p-6 bg-transparent overflow-y-auto"
+  >
+    <!-- Background container -->
+    <div id="bg-container" aria-hidden="true">
+      <div class="layer1"></div>
+      <div class="layer2"></div>
+      <div class="soft-ellipses"></div>
+    </div>
+
+    <div
+      class="app-wrap my-auto max-w-7xl w-full bg-white/70 rounded-2xl shadow-2xl overflow-hidden flex flex-col lg:flex-row"
+      style="max-width: calc(80rem - 2cm)"
+    >
+      <!-- Left Side -->
+      <div
+        class="hidden lg:flex lg:w-1/2 py-10 px-10 flex-col justify-between text-white relative overflow-hidden"
+        style="
+          background-color: #0d1863;
+          background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20viewBox%3D%270%200%20800%20800%27%3E%3Cg%20%3E%3Ccircle%20fill%3D%27%230D1863%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27600%27%2F%3E%3Ccircle%20fill%3D%27%234d2458%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27500%27%2F%3E%3Ccircle%20fill%3D%27%2372334b%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27400%27%2F%3E%3Ccircle%20fill%3D%27%2393443d%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27300%27%2F%3E%3Ccircle%20fill%3D%27%23b3572b%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27200%27%2F%3E%3Ccircle%20fill%3D%27%23D36A05%27%20cx%3D%27400%27%20cy%3D%27400%27%20r%3D%27100%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+          background-attachment: scroll;
+          background-size: cover;
+          padding-top: calc(3rem + 1cm);
+          padding-bottom: calc(3rem + 1cm);
+        "
+      >
+        <div class="relative z-10">
+          <div class="flex items-center mb-2 -mt-4">
+            <span
+              class="text-3xl font-extrabold"
+              style="display: inline-block; transform: translateY(-0.75cm)"
+              >Quizera</span
+            >
+          </div>
+        </div>
+
+        <!-- Decorative floating code-like blocks (behind text) -->
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div
+            class="code-float moving"
+            style="
+              left: 8%;
+              top: 34%;
+              --init-transform: rotate(-5deg) scale(0.98) translateY(-0.75cm);
+              transform: var(--init-transform);
+              animation-delay: 0.1s;
+            "
+          >
+            <code>&lt;section&gt;…&lt;/section&gt;</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              right: 6%;
+              top: 48%;
+              --init-transform: rotate(6deg) scale(0.94);
+              transform: var(--init-transform);
+              animation-delay: 0.7s;
+            "
+          >
+            <code>.card { gap: .5rem; }</code>
+          </div>
+          <div
+            class="code-float moving"
+            style="
+              left: 20%;
+              top: 60%;
+              --init-transform: rotate(-4deg) scale(0.92);
+              transform: var(--init-transform);
+              animation-delay: 1.2s;
+            "
+          >
+            <code>print('hello')</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              right: 22%;
+              top: 22%;
+              --init-transform: rotate(7deg) scale(0.9);
+              transform: var(--init-transform);
+              animation-delay: 1.9s;
+            "
+          >
+            <code>if x: …</code>
+          </div>
+          <!-- Additional floating snippets -->
+          <div
+            class="code-float moving"
+            style="
+              left: 14%;
+              top: 18%;
+              --init-transform: rotate(-10deg) scale(0.9);
+              transform: var(--init-transform);
+              animation-delay: 0.4s;
+            "
+          >
+            <code>&lt;img /&gt;</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              left: 30%;
+              top: 50%;
+              --init-transform: rotate(5deg) scale(0.9);
+              transform: var(--init-transform);
+              animation-delay: 1.5s;
+            "
+          >
+            <code>const pi = 3.14;</code>
+          </div>
+          <div
+            class="code-float moving"
+            style="
+              right: 14%;
+              top: 58%;
+              --init-transform: rotate(-3deg) scale(0.93);
+              transform: var(--init-transform);
+              animation-delay: 0.9s;
+            "
+          >
+            <code>// note</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              left: 46%;
+              top: 28%;
+              --init-transform: rotate(8deg) scale(0.88);
+              transform: var(--init-transform);
+              animation-delay: 2.3s;
+            "
+          >
+            <code>.col { flex:1 }</code>
+          </div>
+          <!-- Three more larger moving snippets -->
+          <div
+            class="code-float moving"
+            style="
+              left: 4%;
+              top: 6%;
+              --init-transform: rotate(-9deg) scale(1.05) translateY(6.5cm);
+              transform: var(--init-transform);
+              animation-delay: 0.6s;
+            "
+          >
+            <code>&lt;nav&gt;…&lt;/nav&gt;</code>
+          </div>
+          <div
+            class="code-float moving"
+            style="
+              right: 6%;
+              top: 70%;
+              --init-transform: rotate(4deg) scale(1.03);
+              transform: var(--init-transform);
+              animation-delay: 1s;
+            "
+          >
+            <code>await fetch()</code>
+          </div>
+          <div
+            class="code-float small moving"
+            style="
+              left: 32%;
+              top: 74%;
+              --init-transform: rotate(-5deg) scale(1.02);
+              transform: var(--init-transform);
+              animation-delay: 1.8s;
+            "
+          >
+            <code>.meta { }</code>
+          </div>
+        </div>
+
+        <div class="relative z-10 mt-2">
+          <h2
+            class="text-4xl font-bold mb-4 leading-tight"
+            style="transform: translateY(0.4cm)"
+          >
+            Join Our Learning Community at Quizera
+          </h2>
+          <p
+            class="text-blue-100 text-xl mt-1"
+            style="transform: translateY(0.4cm)"
+          >
+            Begin your journey of knowledge. Create your account to access our
+            courses and resources.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Side -->
+      <div
+        class="w-full lg:w-1/2 py-12 px-12 lg:py-14 lg:px-20 bg-white/70 backdrop-blur-md"
+        style="
+          padding-top: calc(1.5rem - 1cm + 0.5cm);
+          padding-bottom: calc(1.5rem - 1cm + 0.5cm);
+          min-height: 700px;
+        "
+      >
+        <div style="transform: translateY(1cm)">
+          <!-- Mobile Header -->
+          <div class="lg:hidden flex items-center mb-8">
+            <span class="text-xl font-bold text-gray-800">Quizera</span>
+          </div>
+
+          <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
+            <p class="text-gray-600">
+              Enter your personal data to create your account
+            </p>
+          </div>
+
+          <!-- Flash Messages -->
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <div class="mb-6">
+            {% for message in messages %}
+            <div
+              class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded mb-2"
+            >
+              {{ message|safe }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
+
+          <!-- Signup Form -->
+          <form method="POST" class="space-y-5">
+            <!-- Username -->
+            <div>
+              <label
+                for="username"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Username</label
+              >
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                placeholder="eg. Martin"
+              />
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                placeholder="eg. martin@gmail.com"
+              />
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label
+                for="password"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Password</label
+              >
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  minlength="6"
+                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onclick="togglePassword('password', this)"
+                  aria-label="Toggle password visibility"
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  <!-- Eye (open) icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5 text-gray-500 hover:text-gray-700 transition eye-icon hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M1.5 12s3.75-6.75 10.5-6.75S22.5 12 22.5 12s-3.75 6.75-10.5 6.75S1.5 12 1.5 12z"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <!-- Eye-slash (closed) icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5 text-gray-500 hover:text-gray-700 transition eye-slash"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 0 0 1.5 12s3.75 6.75 10.5 6.75c1.896 0 3.678-.424 5.25-1.173m2.743-1.936A10.45 10.45 0 0 0 22.5 12s-3.75-6.75-10.5-6.75a10.45 10.45 0 0 0-5.25 1.173"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 3l18 18"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">
+                Must be at least 8 characters.
+              </p>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+              <label
+                for="confirm_password"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Confirm Password</label
+              >
+              <div class="relative">
+                <input
+                  type="password"
+                  id="confirm_password"
+                  name="confirm_password"
+                  required
+                  minlength="6"
+                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  placeholder="Confirm your password"
+                />
+                <button
+                  type="button"
+                  onclick="togglePassword('confirm_password', this)"
+                  aria-label="Toggle confirm password visibility"
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  <!-- Eye (open) icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5 text-gray-500 hover:text-gray-700 transition eye-icon hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M1.5 12s3.75-6.75 10.5-6.75S22.5 12 22.5 12s-3.75 6.75-10.5 6.75S1.5 12 1.5 12z"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <!-- Eye-slash (closed) icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5 text-gray-500 hover:text-gray-700 transition eye-slash"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 0 0 1.5 12s3.75 6.75 10.5 6.75c1.896 0 3.678-.424 5.25-1.173m2.743-1.936A10.45 10.45 0 0 0 22.5 12s-3.75-6.75-10.5-6.75a10.45 10.45 0 0 0-5.25 1.173"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 3l18 18"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Role Selection -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >I am a:</label
+              >
+              <div class="space-y-3">
+                <label class="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="student"
+                    required
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    checked
+                  />
+                  <span class="ml-3 text-sm text-gray-700">Student</span>
+                </label>
+                <label class="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="teacher"
+                    required
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <span class="ml-3 text-sm text-gray-700">Teacher</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="w-full bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 font-medium"
+            >
+              Sign Up
+            </button>
+          </form>
+
+          <!-- Links -->
+          <div class="text-center mt-6">
+            <p class="text-sm text-gray-600">
+              Already have an account?
+              <a
+                href="{{ url_for('login') }}"
+                class="text-blue-600 hover:text-blue-800 font-semibold"
+              >
+                Log In
+              </a>
+            </p>
+          </div>
+
+          <div class="text-center mt-4">
+            <a
+              href="{{ url_for('home') }}"
+              class="text-sm text-gray-500 hover:text-gray-700"
+            >
+              ← Back to Home
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Password visibility toggle + icon swap
+      function togglePassword(fieldId, btnEl) {
+        const field = document.getElementById(fieldId);
+        const makeVisible = field.type === "password";
+        field.type = makeVisible ? "text" : "password";
+
+        if (btnEl) {
+          const openIcon = btnEl.querySelector(".eye-icon");
+          const slashIcon = btnEl.querySelector(".eye-slash");
+          if (openIcon && slashIcon) {
+            openIcon.classList.toggle("hidden", !makeVisible);
+            slashIcon.classList.toggle("hidden", makeVisible);
+          }
+        }
+      }
+
+      // Form validation
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirm_password").value;
+        const email = document.getElementById("email").value;
+        const username = document.getElementById("username").value;
+
+        if (password.length < 6) {
+          alert("Password must be at least 6 characters long");
+          e.preventDefault();
+          return;
+        }
+
+        if (username.length < 3) {
+          alert("Username must be at least 3 characters long");
+          e.preventDefault();
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match");
+          e.preventDefault();
+          return;
+        }
+      });
+
+      // Real-time password confirmation validation
+      document
+        .getElementById("confirm_password")
+        .addEventListener("input", function () {
+          const password = document.getElementById("password").value;
+          const confirmPassword = this.value;
+          const confirmInput = this;
+
+          if (confirmPassword && password !== confirmPassword) {
+            confirmInput.style.borderColor = "#ef4444";
+            confirmInput.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.1)";
+          } else {
+            confirmInput.style.borderColor = "#d1d5db";
+            confirmInput.style.boxShadow = "";
+          }
+        });
+    </script>
+  </body>
+</html>

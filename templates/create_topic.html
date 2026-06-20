@@ -1,0 +1,790 @@
+{% extends "base.html" %} {% block title %}Create Topic - Quizera{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/createtopic.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  * {
+    font-family: "Poppins", sans-serif;
+  }
+
+  .tab-btn {
+    transition: all 0.2s ease;
+  }
+
+  .tab-btn.active {
+    background: #fdb45c;
+    color: white;
+    font-weight: 500;
+  }
+
+  .format-btn {
+    transition: all 0.2s ease;
+    color: #6b7280;
+  }
+
+  .format-btn:hover {
+    background: white;
+  }
+
+  .input-field {
+    border-color: #e5e7eb;
+    transition: all 0.3s ease;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: #fdb45c;
+    box-shadow: 0 0 0 3px rgba(253, 180, 92, 0.1);
+  }
+
+  .textarea-field {
+    border-color: #e5e7eb;
+    transition: all 0.3s ease;
+  }
+
+  .textarea-field:focus {
+    outline: none;
+    border-color: #fdb45c;
+  }
+
+  .textarea-field:focus + .toolbar {
+    border-color: #fdb45c;
+  }
+
+  .file-upload-area {
+    transition: all 0.3s ease;
+    border: 2px dashed #d1d5db;
+  }
+
+  .file-upload-area:hover {
+    border-color: #fdb45c;
+    background: rgba(253, 180, 92, 0.05);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tab-content {
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-backdrop {
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .breadcrumb-link {
+    transition: all 0.2s ease;
+  }
+
+  .breadcrumb-link:hover {
+    color: #fdb45c;
+    transform: translateX(2px);
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto max-w-6xl p-6">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol
+      class="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm"
+    >
+      <li class="inline-flex items-center">
+        <a
+          href="{{ url_for('dashboard') }}"
+          class="breadcrumb-link inline-flex items-center text-sm font-medium text-gray-600"
+        >
+          <i class="fas fa-home mr-2"></i>Dashboard
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 text-xs mx-2"></i>
+          <a
+            href="{{ url_for('view_subject', subject_id=subject_id) }}"
+            class="breadcrumb-link text-sm font-medium text-gray-600"
+            >Subject</a
+          >
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 text-xs mx-2"></i>
+          <span class="text-sm font-medium text-gray-900">Create Topic</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Main Card -->
+  <div
+    class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
+  >
+    <!-- Header -->
+    <div
+      class="p-8 border-b border-gray-100 relative overflow-hidden"
+      style="
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+      "
+    >
+      <!-- Animated background elements -->
+      <div class="absolute inset-0 opacity-10">
+        <div
+          class="absolute top-2 left-10 w-20 h-20 rounded-full bg-white animate-pulse"
+          style="animation: float 6s ease-in-out infinite"
+        ></div>
+        <div
+          class="absolute bottom-4 right-20 w-32 h-32 rounded-full bg-white animate-pulse"
+          style="animation: float 8s ease-in-out infinite; animation-delay: 2s"
+        ></div>
+        <div
+          class="absolute top-10 right-1/4 w-16 h-16 rounded-full bg-white animate-pulse"
+          style="animation: float 7s ease-in-out infinite; animation-delay: 4s"
+        ></div>
+      </div>
+
+      <div class="relative z-10">
+        <div class="flex items-center gap-4 mb-3">
+          <div
+            class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg border-2 border-white/30"
+          >
+            <i class="fas fa-lightbulb text-4xl text-white"></i>
+          </div>
+          <h1 class="text-4xl font-bold text-white drop-shadow-lg">
+            Create New Topic
+          </h1>
+        </div>
+
+        <p class="text-sm font-medium text-white/90">
+          Share knowledge and inspire your students
+        </p>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <div class="p-8">
+      <form
+        method="POST"
+        enctype="multipart/form-data"
+        id="topicForm"
+        class="space-y-6"
+      >
+        <!-- Topic Title -->
+        <div>
+          <label
+            for="title"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            <i class="fas fa-heading mr-2 text-blue-600"></i>Topic Title *
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent form-input"
+            placeholder="e.g., Introduction to Variables"
+          />
+        </div>
+
+        <!-- Content Tabs -->
+        <div>
+          <div class="flex border-b border-gray-200 mb-6">
+            <button
+              type="button"
+              id="text-tab"
+              class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent tab-btn active"
+            >
+              <i class="fas fa-file-text mr-2"></i>Text Content
+            </button>
+            <button
+              type="button"
+              id="video-tab"
+              class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent tab-btn ml-8"
+            >
+              <i class="fas fa-video mr-2"></i>Video Link
+            </button>
+            <button
+              type="button"
+              id="pdf-tab"
+              class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent tab-btn ml-8"
+            >
+              <i class="fas fa-file-pdf mr-2"></i>PDF Document
+            </button>
+          </div>
+
+          <!-- Text Content Tab -->
+          <div id="text-content" class="tab-content">
+            <label
+              for="content_text"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              <i class="fas fa-align-left mr-2 text-blue-600"></i>Text Content
+            </label>
+            <div class="mb-4">
+              <div class="flex space-x-2 mb-2">
+                <button
+                  type="button"
+                  onclick="formatText('bold')"
+                  class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  title="Bold"
+                >
+                  <i class="fas fa-bold"></i>
+                </button>
+                <button
+                  type="button"
+                  onclick="formatText('italic')"
+                  class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  title="Italic"
+                >
+                  <i class="fas fa-italic"></i>
+                </button>
+                <button
+                  type="button"
+                  onclick="formatText('underline')"
+                  class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  title="Underline"
+                >
+                  <i class="fas fa-underline"></i>
+                </button>
+                <button
+                  type="button"
+                  onclick="formatText('heading')"
+                  class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  title="Heading"
+                >
+                  <i class="fas fa-heading"></i>
+                </button>
+                <button
+                  type="button"
+                  onclick="formatText('list')"
+                  class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  title="List"
+                >
+                  <i class="fas fa-list-ul"></i>
+                </button>
+              </div>
+            </div>
+            <textarea
+              id="content_text"
+              name="content_text"
+              rows="12"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent form-input resize-vertical"
+              placeholder="Write your lesson content here. You can include explanations, examples, code snippets, etc."
+            ></textarea>
+            <p class="text-sm text-gray-500 mt-2">
+              <i class="fas fa-info-circle mr-1"></i>
+              Write detailed explanations, examples, and instructions for this
+              topic.
+            </p>
+          </div>
+
+          <!-- Video Content Tab -->
+          <div id="video-content" class="tab-content hidden">
+            <label
+              for="video_link"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              <i class="fas fa-link mr-2 text-blue-600"></i>Video URL
+            </label>
+            <input
+              type="url"
+              id="video_link"
+              name="video_link"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent form-input"
+              placeholder="https://www.youtube.com/watch?v=example"
+            />
+            <p class="text-sm text-gray-500 mt-2">
+              <i class="fas fa-info-circle mr-1"></i>
+              Supported platforms: YouTube and Vimeo
+            </p>
+
+            <!-- Video Preview -->
+            <div id="videoPreviewContainer" class="mt-4 hidden">
+              <h4 class="text-sm font-medium text-gray-700 mb-2">
+                Video Preview:
+              </h4>
+              <div
+                id="videoPreview"
+                class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden"
+              ></div>
+            </div>
+          </div>
+
+          <!-- PDF Content Tab -->
+          <div id="pdf-content" class="tab-content hidden">
+            <label
+              for="pdf_file"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              <i class="fas fa-file-pdf mr-2 text-blue-600"></i>Upload PDF
+              Document
+            </label>
+
+            <!-- File Upload Area -->
+            <div
+              class="file-upload-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center"
+            >
+              <input
+                type="file"
+                id="pdf_file"
+                name="pdf_file"
+                accept=".pdf"
+                class="hidden"
+                onchange="handlePDFUpload(event)"
+              />
+              <label for="pdf_file" class="cursor-pointer">
+                <div class="space-y-2">
+                  <i class="fas fa-cloud-upload-alt text-5xl text-gray-400"></i>
+                  <p class="text-gray-600 font-medium">
+                    Click to upload or drag and drop
+                  </p>
+                  <p class="text-sm text-gray-500">PDF files only (max 10MB)</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- PDF Preview -->
+            <div id="pdfPreview" class="mt-4 hidden">
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <i class="fas fa-file-pdf text-red-500 text-3xl"></i>
+                    <div>
+                      <p
+                        id="pdfFileName"
+                        class="text-sm font-medium text-gray-700"
+                      ></p>
+                      <p id="pdfFileSize" class="text-xs text-gray-500"></p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onclick="removePDF()"
+                    class="text-red-500 hover:text-red-700 transition-colors"
+                  >
+                    <i class="fas fa-times-circle text-2xl"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm text-gray-500 mt-4">
+              <i class="fas fa-info-circle mr-1"></i>
+              Upload learning materials, slides, or reference documents in PDF
+              format.
+            </p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div
+          class="flex items-center justify-between pt-6 border-t border-gray-200"
+        >
+          <a
+            href="{{ url_for('view_subject', subject_id=subject_id) }}"
+            class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <i class="fas fa-times mr-2"></i>Cancel
+          </a>
+          <div class="space-x-4">
+            <button
+              type="button"
+              onclick="previewContent()"
+              class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+            >
+              <i class="fas fa-eye mr-2"></i>Preview
+            </button>
+            <button
+              type="submit"
+              class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors btn-hover"
+            >
+              <i class="fas fa-save mr-2"></i>Save Topic
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div
+    id="preview-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4"
+  >
+    <div
+      class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+    >
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-bold text-gray-800">
+            <i class="fas fa-eye mr-2 text-blue-600"></i>Topic Preview
+          </h3>
+          <button
+            onclick="closePreview()"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <i class="fas fa-times text-2xl"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <h2
+          id="previewTitle"
+          class="text-3xl font-bold text-gray-800 mb-6"
+        ></h2>
+
+        <!-- Preview Content -->
+        <div id="previewTextContent" class="mb-6"></div>
+        <div id="previewVideoContent" class="mb-6"></div>
+        <div id="previewPDFContent" class="mb-6"></div>
+      </div>
+      <div class="p-6 border-t border-gray-200 flex justify-end">
+        <button
+          onclick="closePreview()"
+          class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+        >
+          Close Preview
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  // Tab Switching
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", function () {
+        const tabId = this.id;
+
+        // Remove active class from all tabs
+        tabs.forEach((t) => {
+          t.classList.remove("active");
+          t.classList.remove("text-blue-600", "border-blue-600");
+          t.classList.add("text-gray-500");
+        });
+
+        // Add active class to clicked tab
+        this.classList.add("active", "text-blue-600", "border-blue-600");
+        this.classList.remove("text-gray-500");
+
+        // Hide all contents
+        contents.forEach((content) => content.classList.add("hidden"));
+
+        // Show corresponding content
+        if (tabId === "text-tab") {
+          document.getElementById("text-content").classList.remove("hidden");
+        } else if (tabId === "video-tab") {
+          document.getElementById("video-content").classList.remove("hidden");
+        } else if (tabId === "pdf-tab") {
+          document.getElementById("pdf-content").classList.remove("hidden");
+        }
+      });
+    });
+
+    // Video link preview
+    const videoLinkInput = document.getElementById("video_link");
+    if (videoLinkInput) {
+      videoLinkInput.addEventListener("blur", function () {
+        const url = this.value.trim();
+        if (url) {
+          previewVideo(url);
+        }
+      });
+    }
+  });
+
+  // Text Formatting Functions
+  function formatText(command) {
+    const textarea = document.getElementById("content_text");
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    let formattedText = "";
+
+    switch (command) {
+      case "bold":
+        formattedText = `**${selectedText}**`;
+        break;
+      case "italic":
+        formattedText = `*${selectedText}*`;
+        break;
+      case "underline":
+        formattedText = `__${selectedText}__`;
+        break;
+      case "heading":
+        formattedText = `## ${selectedText}`;
+        break;
+      case "list":
+        formattedText = `- ${selectedText}`;
+        break;
+      default:
+        formattedText = selectedText;
+    }
+
+    textarea.value =
+      textarea.value.substring(0, start) +
+      formattedText +
+      textarea.value.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start, start + formattedText.length);
+  }
+
+  // PDF Upload Handling
+  function handlePDFUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== "application/pdf") {
+      alert("Please upload a PDF file");
+      event.target.value = "";
+      return;
+    }
+
+    // Validate file size (10MB max)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("PDF file size must be less than 10MB");
+      event.target.value = "";
+      return;
+    }
+
+    // Show preview
+    document.getElementById("pdfFileName").textContent = file.name;
+    document.getElementById("pdfFileSize").textContent = formatFileSize(
+      file.size
+    );
+    document.getElementById("pdfPreview").classList.remove("hidden");
+  }
+
+  function removePDF() {
+    document.getElementById("pdf_file").value = "";
+    document.getElementById("pdfPreview").classList.add("hidden");
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+  }
+
+  // Video Preview
+  function previewVideo(url) {
+    const videoId = extractVideoId(url);
+    const previewContainer = document.getElementById("videoPreviewContainer");
+    const preview = document.getElementById("videoPreview");
+
+    if (videoId) {
+      preview.innerHTML = `
+            <iframe src="https://www.youtube.com/embed/${videoId}"
+                    class="w-full h-64 rounded-lg"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+        `;
+      previewContainer.classList.remove("hidden");
+    } else if (url) {
+      preview.innerHTML = `
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                <p class="text-yellow-800">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Invalid video URL. Please use a valid YouTube or Vimeo link.
+                </p>
+            </div>
+        `;
+      previewContainer.classList.remove("hidden");
+    } else {
+      previewContainer.classList.add("hidden");
+    }
+  }
+
+  function extractVideoId(url) {
+    // YouTube
+    let match = url.match(
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+    );
+    if (match) return match[1];
+
+    // Vimeo
+    match = url.match(/(?:vimeo\.com\/)([0-9]+)/);
+    if (match) return match[1];
+
+    return null;
+  }
+
+  // Preview Content
+  function previewContent() {
+    const title = document.getElementById("title").value;
+    const content = document.getElementById("content_text").value;
+    const videoLink = document.getElementById("video_link").value;
+    const pdfFile = document.getElementById("pdf_file").files[0];
+
+    if (!title) {
+      alert("Please enter a topic title");
+      return;
+    }
+
+    // Set preview title
+    document.getElementById("previewTitle").textContent = title;
+
+    // Preview text content
+    const previewTextContent = document.getElementById("previewTextContent");
+    if (content) {
+      previewTextContent.innerHTML = `
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <h4 class="font-semibold mb-3 text-lg">
+                    <i class="fas fa-file-text mr-2 text-blue-600"></i>Text Content
+                </h4>
+                <div class="prose max-w-none text-gray-700 whitespace-pre-wrap">${escapeHtml(
+                  content
+                )}</div>
+            </div>
+        `;
+    } else {
+      previewTextContent.innerHTML = "";
+    }
+
+    // Preview video
+    const previewVideoContent = document.getElementById("previewVideoContent");
+    if (videoLink) {
+      const videoId = extractVideoId(videoLink);
+      if (videoId) {
+        previewVideoContent.innerHTML = `
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <h4 class="font-semibold mb-3 text-lg">
+                        <i class="fas fa-video mr-2 text-red-600"></i>Video Content
+                    </h4>
+                    <div class="aspect-w-16 aspect-h-9">
+                        <iframe src="https://www.youtube.com/embed/${videoId}"
+                                class="w-full h-64 rounded-lg"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            `;
+      } else {
+        previewVideoContent.innerHTML = `
+                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                    <p class="text-yellow-800">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Invalid video URL
+                    </p>
+                </div>
+            `;
+      }
+    } else {
+      previewVideoContent.innerHTML = "";
+    }
+
+    // Preview PDF
+    const previewPDFContent = document.getElementById("previewPDFContent");
+    if (pdfFile) {
+      previewPDFContent.innerHTML = `
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <h4 class="font-semibold mb-3 text-lg">
+                    <i class="fas fa-file-pdf mr-2 text-red-600"></i>PDF Document
+                </h4>
+                <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                    <i class="fas fa-file-pdf text-red-500 text-4xl mr-4"></i>
+                    <div>
+                        <p class="font-medium text-gray-700">${escapeHtml(
+                          pdfFile.name
+                        )}</p>
+                        <p class="text-sm text-gray-500">${formatFileSize(
+                          pdfFile.size
+                        )}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+      previewPDFContent.innerHTML = "";
+    }
+
+    // Show modal
+    document.getElementById("preview-modal").classList.remove("hidden");
+  }
+
+  function closePreview() {
+    document.getElementById("preview-modal").classList.add("hidden");
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Close modal on outside click
+  document
+    .getElementById("preview-modal")
+    .addEventListener("click", function (e) {
+      if (e.target === this) {
+        closePreview();
+      }
+    });
+
+  // Form validation before submit
+  document.getElementById("topicForm").addEventListener("submit", function (e) {
+    const title = document.getElementById("title").value.trim();
+
+    if (!title) {
+      e.preventDefault();
+      alert("Please enter a topic title");
+      return false;
+    }
+
+    return true;
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+
+
+
+{% block title %}
+    Edit Question - {{ quiz.title }} - Quizera
+{% endblock %}
+
+
+
+
+{% block extra_head %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/createquiz.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Match Create Quiz page background and card styles */
+        html, body { height: 100%; margin: 0; }
+
+
+        /* Background gradient + visible waves (same as create_quiz) */
+        body {
+            background: linear-gradient(180deg, #eef2ff 0%, #e0e7ff 40%, #f8fafc 100%);
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+
+        .bg-curves {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 63vh;
+            z-index: -5;
+            pointer-events: none;
+            overflow: visible;
+            opacity: 1.65;
+        }
+        .bg-curves svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            filter: saturate(1.4) brightness(1.08) drop-shadow(0 6px 18px rgba(37,70,219,0.08));
+        }
+
+
+        :root {
+            --accent-a: #2546db;
+            --accent-b: #ff9f43;
+        }
+
+
+        /* Quiz card style (same as create_quiz) */
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: none;
+            border-radius: 1.25rem;
+            border: none;
+            border-top: 8px solid #08196d !important;
+            overflow: hidden;
+            box-shadow: 0 10px 34px rgba(37,70,219,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.25s ease, border-color 0.4s ease;
+        }
+        .quiz-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+
+
+        /* Inputs get the same focus style as create_quiz */
+        .form-input {
+            background-color: #f9fafb;
+            border: 1px solid #0e1c64;
+            transition: all 0.25s ease;
+        }
+        .form-input:focus {
+            border-color: var(--accent-a);
+            box-shadow: 0 0 0 3px rgba(37,70,219,0.12);
+            background-color: #fff;
+        }
+    </style>
+{% endblock %}
+
+
+
+
+{% block content %}
+    <!-- Decorative background curves (same as create_quiz) -->
+    <div class="bg-curves" aria-hidden="true">
+        <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#2b3b8c" opacity="0.45" d="M0,192L48,170.7C96,149,192,107,288,101.3C384,96,480,128,576,128C672,128,768,96,864,74.7C960,53,1056,43,1152,74.7C1248,107,1344,181,1392,218.7L1440,256L1440,0L0,0Z"></path>
+            <path fill="#f5a45b" opacity="0.45" d="M0,160L48,154.7C96,149,192,139,288,144C384,149,480,171,576,176C672,181,768,171,864,160C960,149,1056,139,1152,154.7C1248,171,1344,213,1392,234.7L1440,256L1440,0L0,0Z"></path>
+            <path fill="#2b3b8c" opacity="0.6" d="M0,96L48,106.7C96,117,192,139,288,154.7C384,171,480,181,576,181.3C672,181,768,171,864,149.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,0L0,0Z"></path>
+            <!-- Front accent wave (yellow, subtle) -->
+            <path fill="#ffd166" opacity="0.28" d="M0,160L48,154.7C96,149,192,139,288,144C384,149,480,171,576,176C672,181,768,171,864,160C960,149,1056,139,1152,154.7C1248,171,1344,213,1392,234.7L1440,256L1440,0L0,0Z"></path>
+        </svg>
+    </div>
+
+
+
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="max-w-4xl mx-auto flex flex-col" style="height: calc(100vh - 120px);">
+           
+            <!-- Header/Breadcrumb -->
+            <div class="flex items-center space-x-2 text-[0.975rem] text-gray-600 mb-4 pb-2 border-b border-black/30">
+                <a href="{{ url_for('dashboard') }}" class="hover:text-blue-600 text-black">Dashboard</a>
+                <i class="fas fa-chevron-right text-xs text-black"></i>
+                <a href="{{ url_for('manage_quiz', quiz_id=quiz_id) }}" class="hover:text-blue-600 text-black">{{ quiz.title }}</a>
+                <i class="fas fa-chevron-right text-xs text-black"></i>
+                <span class="font-bold text-black">Edit Question</span>
+            </div>
+
+
+
+
+            <h1 class="text-2xl md:text-3xl font-bold text-black">Edit Question</h1>
+            <p class="text-sm md:text-base mb-4 text-black">Quiz: {{ quiz.title }}</p>
+
+
+
+
+            <!-- Question Edit Card -->
+            <div class="quiz-card overflow-hidden flex-1 flex flex-col">
+                <form method="POST" id="editQuestionForm" class="flex flex-col h-full">
+
+
+
+
+                    <!-- Scrollable body -->
+                    <div class="overflow-auto flex-1">
+                        <!-- Question Text -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-2">
+                                    <i class="fas fa-question text-blue-800 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <textarea name="question_text"
+                                              placeholder="Question"
+                                              class="w-full text-lg border-0 border-b-2 border-gray-200 focus:border-blue-700 focus:ring-0 resize-none outline-none p-2 bg-transparent placeholder-gray-400"
+                                              rows="2"
+                                              required>{{ question.question_text }}</textarea>
+                                    <div class="mt-4">
+                                        <select name="question_type" id="questionType"
+                                                class="form-input rounded-md px-3 py-2 text-sm"
+                                                required>
+                                            <option value="">Question Type</option>
+                                            <option value="multiple_choice" {% if question.question_type == 'multiple_choice' %}selected{% endif %}>Multiple Choice</option>
+                                            <option value="true_false" {% if question.question_type == 'true_false' %}selected{% endif %}>True/False</option>
+                                            <option value="identification" {% if question.question_type == 'identification' %}selected{% endif %}>Short Answer</option>
+                                            <option value="enumeration" {% if question.question_type == 'enumeration' %}selected{% endif %}>Paragraph</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <!-- Answer Options -->
+                        <div class="p-6">
+                            <!-- Multiple Choice -->
+                            <div id="multipleChoiceOptions" class="{% if question.question_type != 'multiple_choice' %}hidden{% endif %}">
+                                <div class="space-y-4">
+                                    {% for letter, index in [('A', 0), ('B', 1), ('C', 2), ('D', 3)] %}
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct_answer" value="{{ letter }}" id="correct{{ letter }}"
+                                               class="w-4 h-4 text-blue-800 border-gray-300"
+                                               {% if question.correct_answer == letter %}checked{% endif %}>
+                                        <div class="flex items-center space-x-3 flex-1">
+                                            <span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">{{ letter }}</span>
+                          <input type="text" name="option_{{ letter|lower }}" placeholder="Option {{ loop.index }}"
+                              class="flex-1 border-0 border-b border-gray-200 focus:border-blue-700 focus:ring-0 outline-none py-2 bg-transparent"
+                                                   value="{{ question.options[index] if question.options and question.options|length > index else '' }}">
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="mt-4 p-3 bg-blue-50 rounded-md">
+                                    <p class="text-sm text-blue-800">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        Select the radio button next to the correct answer.
+                                    </p>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- True / False -->
+                            <div id="trueFalseOptions" class="{% if question.question_type != 'true_false' %}hidden{% endif %}">
+                                <div class="space-y-3">
+                                    <label class="flex items-center space-x-3">
+                         <input type="radio" name="tf_answer" value="true" id="tfTrue"
+                             class="w-4 h-4 text-blue-800 border-gray-300"
+                                               {% if question.correct_answer == true %}checked{% endif %}>
+                                        <span class="text-gray-700">True</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3">
+                         <input type="radio" name="tf_answer" value="false" id="tfFalse"
+                             class="w-4 h-4 text-blue-800 border-gray-300"
+                                               {% if question.correct_answer == false %}checked{% endif %}>
+                                        <span class="text-gray-700">False</span>
+                                    </label>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- Open Ended -->
+                            <div id="openEndedOptions" class="{% if question.question_type not in ['identification', 'enumeration'] %}hidden{% endif %}">
+                                <div class="space-y-4">
+                                    <div class="border border-gray-200 rounded-md p-4 bg-gray-50">
+                                        <p class="text-sm text-gray-600 mb-3">Correct answer(s)</p>
+                                        <textarea name="correct_answers"
+                                                  rows="3"
+                                                  class="w-full border-0 bg-transparent resize-none outline-none text-gray-700 placeholder-gray-400"
+                                                  placeholder="Enter acceptable answers separated by commas">{{ question.correct_answers | join(', ') if question.correct_answers else '' }}</textarea>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        Separate multiple acceptable answers with commas (e.g., JavaScript, JS, javascript)
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- Footer -->
+                    <div class="sticky bottom-0 z-10 p-6 bg-gray-50 border-t border-gray-200 flex-shrink-0 shadow-sm rounded-b-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm text-gray-600">Points:</label>
+                                <input type="number" name="points" value="{{ question.points }}" min="1" max="10"
+                                       class="form-input w-20 px-2 py-1 rounded text-sm">
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <a href="{{ url_for('manage_quiz', quiz_id=quiz_id) }}"
+                                   class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 transition-colors">
+                                    Cancel
+                                </a>
+                <button type="submit"
+                    class="bg-blue-800 text-white px-6 py-2 text-sm rounded-md hover:bg-blue-900 transition-colors shadow-sm font-semibold inline-flex items-center gap-2 align-middle">
+                                    Update Question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+{% block extra_scripts %}
+    <script src="{{ url_for('static', filename='js/editquestion.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+

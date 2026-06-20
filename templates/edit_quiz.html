@@ -1,0 +1,243 @@
+{% extends "base.html" %} {% block title %}Edit Quiz - Quizera{% endblock %} {%
+block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<style>
+  * {
+    font-family: "Poppins", sans-serif;
+  }
+
+  body {
+    background: linear-gradient(
+      to right,
+      #ffffff 0%,
+      #ffffff 50%,
+      #fdb913 50%,
+      #fdb913 100%
+    );
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  .yellow-bg {
+    background: #fdb913;
+  }
+
+  .main-container {
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .welcome-title {
+    font-family: "Paytone One", sans-serif;
+    font-size: 90px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .welcome-subtitle {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+  }
+
+  .form-title {
+    font-family: "Paytone One", sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #000000;
+  }
+
+  .form-subtitle {
+    font-family: "Poppins", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #000000;
+    margin-top: 8px;
+    margin-bottom: 12px;
+  }
+
+  .divider-line {
+    height: 2px;
+    background: #bcbbbb;
+    margin: 20px 0;
+  }
+
+  .form-label {
+    font-family: "Poppins", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #a4a4a4;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .form-input {
+    font-family: "Poppins", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+
+  .form-input::placeholder {
+    color: #000000;
+    font-weight: 400;
+  }
+
+  .btn-primary {
+    font-family: "Poppins", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 12px;
+    padding: 14px 20px;
+    text-transform: uppercase;
+  }
+
+  .btn-secondary {
+    font-family: "Poppins", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 12px;
+    padding: 14px 20px;
+    text-transform: uppercase;
+  }
+
+  .form-section {
+    border-radius: 0 32px 32px 0;
+    background: #f3f4f6;
+  }
+
+  .welcome-section {
+    border-radius: 32px 0 0 32px;
+  }
+
+  @media (max-width: 768px) {
+    .welcome-title {
+      font-size: 2.5rem;
+    }
+
+    .form-title {
+      font-size: 2rem;
+    }
+
+    .welcome-section {
+      border-radius: 32px 32px 0 0;
+    }
+
+    .form-section {
+      border-radius: 0 0 32px 32px;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<!-- Edit Quiz Form -->
+<div
+  class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center"
+>
+  <div class="max-w-5xl w-full">
+    <div
+      class="grid md:grid-cols-2 gap-0 bg-white main-container overflow-hidden"
+    >
+      <!-- Left Side - Welcome Section -->
+      <div
+        class="yellow-bg welcome-section p-12 flex flex-col items-center justify-center text-center text-white"
+      >
+        <div class="mb-8">
+          <h2 class="welcome-title mb-6">Update Your<br />Quiz!</h2>
+          <p class="welcome-subtitle opacity-90">Make your changes</p>
+        </div>
+        <a
+          href="{{ url_for('manage_quiz', quiz_id=quiz.id) }}"
+          class="btn-secondary bg-transparent text-white border-2 border-white"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>BACK TO QUIZ
+        </a>
+      </div>
+
+      <!-- Right Side - Form -->
+      <div class="form-section p-12">
+        <div class="mb-6">
+          <h1 class="form-title text-gray-800">Edit Quiz</h1>
+          <p class="form-subtitle">Quizera Online Course</p>
+          <div class="divider-line"></div>
+        </div>
+
+        <form method="POST">
+          <div class="mb-6">
+            <label for="title" class="form-label">Quiz Name</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value="{{ quiz.title }}"
+              required
+              placeholder="Enter quiz name"
+              class="form-input w-full bg-white border-0 focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm"
+            />
+          </div>
+
+          <div class="mb-6">
+            <label for="description" class="form-label">Quiz Description</label>
+            <textarea
+              id="description"
+              name="description"
+              rows="3"
+              placeholder="Enter quiz description"
+              class="form-input w-full bg-white border-0 focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm resize-none"
+            >
+{{ quiz.description }}</textarea
+            >
+          </div>
+
+          <div class="mb-8">
+            <label for="time_limit" class="form-label">Number of Items</label>
+            <input
+              type="number"
+              id="time_limit"
+              name="time_limit"
+              min="1"
+              max="180"
+              value="{{ quiz.time_limit }}"
+              required
+              placeholder="Enter number of items"
+              class="form-input w-full bg-white border-0 focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm"
+            />
+          </div>
+
+          <div class="flex justify-center">
+            <button
+              type="submit"
+              class="btn-primary w-2/3 bg-gray-800 text-white"
+            >
+              <i class="fas fa-save mr-2"></i>UPDATE QUIZ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

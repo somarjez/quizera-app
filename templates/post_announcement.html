@@ -1,0 +1,652 @@
+{% extends "base.html" %} {% block title %}Post Announcement - Quizera{%
+endblock %}
+
+<!-- Add Poppins Font -->
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap"
+  rel="stylesheet"
+/>
+{% endblock %} {% block content %}
+
+<style>
+  /* Apply Poppins font globally */
+  * {
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* Remove any default margins/padding that might cause gaps */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .container-fluid.px-4.py-3 {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hero Header - Match image design */
+  .hero-header {
+    background: linear-gradient(#181e57);
+    position: relative;
+    padding: 5rem 4rem;
+    margin: 0;
+    border-radius: 0;
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Decorative Elements */
+  .hero-header::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(251, 191, 36, 0.15);
+    top: -250px;
+    left: -150px;
+    z-index: 0;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  .hero-header::after {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(251, 191, 36, 0.12);
+    bottom: -200px;
+    right: -100px;
+    z-index: 0;
+    animation: pulse 5s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  .hero-decorative-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid rgba(251, 191, 36, 0.3);
+  }
+
+  .circle-1 {
+    width: 180px;
+    height: 180px;
+    top: 15%;
+    right: 12%;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .circle-2 {
+    width: 120px;
+    height: 120px;
+    bottom: 25%;
+    left: 10%;
+    animation: float 5s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  .circle-3 {
+    width: 90px;
+    height: 90px;
+    top: 55%;
+    right: 18%;
+    animation: float 4.5s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) scale(1);
+    }
+    50% {
+      transform: translateY(-40px) scale(1.05);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  .hero-content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-header h1 {
+    color: #fbbf24;
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: "Paytone One", sans-serif;
+    margin-bottom: 0.5rem;
+    text-shadow: none;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+
+  .hero-header .subtitle {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-header .btn-light {
+    background: #ffffff;
+    color: #1e3a8a;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    box-shadow: none;
+    transition: all 0.3s ease;
+  }
+
+  .hero-header .btn-light:hover {
+    background: #f3f4f6;
+    transform: translateY(-2px);
+  }
+
+  /* Form Container */
+  .form-container-wrapper {
+    background: #f3f4f6;
+    padding: 3rem 2rem;
+  }
+
+  /* Form Card - Match image design */
+  .form-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: none;
+    border: none;
+    overflow: visible;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .form-card::before {
+    display: none;
+  }
+
+  .form-card .card-header {
+    display: none;
+  }
+
+  .form-card .card-body {
+    padding: 2.5rem;
+  }
+
+  /* Form Labels - Match image style */
+  .form-label {
+    font-weight: 600;
+    color: #f97316;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .form-label i {
+    display: none;
+  }
+
+  /* Form Controls - Match image design */
+  .form-control,
+  .form-select {
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    background: white;
+    outline: none;
+  }
+
+  .form-control::placeholder {
+    color: #9ca3af;
+  }
+
+  /* Character count */
+  .form-text {
+    margin-top: 0.25rem;
+  }
+
+  .form-text small {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+
+  /* Priority and Audience Sections */
+  .priority-audience-row {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .priority-audience-row > div {
+    flex: 1;
+  }
+
+  /* Show the select dropdowns */
+  #priority,
+  #audience {
+    display: block;
+  }
+
+  /* Subject Select Animation */
+  #subject-select {
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+  }
+
+  #subject-select.show {
+    max-height: 200px;
+    opacity: 1;
+    margin-bottom: 1rem;
+  }
+
+  /* Email Notification Box - Styled like other form controls */
+  .email-notification-box {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1.5rem 1.25rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .email-notification-box .form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    margin: 0;
+  }
+
+  .email-notification-box .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+    accent-color: #f97316; /* orange tone consistent with theme */
+  }
+
+  .email-notification-box .form-check-label {
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+  }
+
+  .email-notification-box .form-check-label small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+  .email-notification-box {
+    justify-content: center;
+  }
+  /* Buttons - Match image style */
+  .btn-primary {
+    background: #f97316;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    box-shadow: none;
+    transition: all 0.3s ease;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #ea580c;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: #ffffff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #374151;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-secondary:hover {
+    background: #f3f4f6;
+    transform: translateY(-2px);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-header {
+      padding: 3rem 2rem;
+      min-height: 300px;
+    }
+
+    .hero-header h1 {
+      font-size: 2rem;
+    }
+
+    .form-card .card-body {
+      padding: 1.5rem;
+    }
+
+    .priority-audience-row {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .priority-buttons,
+    .audience-buttons {
+      flex-direction: column;
+    }
+
+    .email-notification-box {
+      max-width: 100%;
+    }
+  }
+
+  /* Loading States */
+  .btn.loading {
+    position: relative;
+    color: transparent;
+  }
+
+  .btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .fade-in-up {
+    animation: fadeInUpSmall 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  @keyframes fadeInUpSmall {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="container-fluid px-4 py-3">
+  <!-- Hero Header Section -->
+  <div class="hero-header">
+    <!-- Decorative Circles -->
+    <div class="hero-decorative-circle circle-1"></div>
+    <div class="hero-decorative-circle circle-2"></div>
+    <div class="hero-decorative-circle circle-3"></div>
+    <div class="hero-decorative-circle circle-4"></div>
+    <div class="hero-decorative-circle circle-5"></div>
+    <div class="hero-decorative-circle circle-6"></div>
+    <div class="hero-decorative-circle circle-7"></div>
+    <div class="hero-decorative-circle circle-8"></div>
+
+    <div class="hero-content-wrapper">
+      <div
+        class="d-flex flex-column justify-content-center align-items-center text-center"
+      >
+        <div class="mb-4">
+          <h1>Create Your Announcement</h1>
+          <p class="subtitle mb-0">
+            Keep your students updated — anytime, anywhere.
+          </p>
+        </div>
+        <a href="{{ url_for('view_announcements') }}" class="btn btn-light">
+          View All
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-container-wrapper">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="card form-card">
+          <div class="card-body">
+            <form method="POST" id="announcementForm">
+              <!-- Title Input -->
+              <div class="mb-4">
+                <label for="title" class="form-label">Announcement Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  placeholder="Enter a clear and engaging title..."
+                  required
+                  maxlength="200"
+                />
+              </div>
+
+              <!-- Content Textarea -->
+              <div class="mb-4">
+                <label for="content" class="form-label">Content</label>
+                <textarea
+                  class="form-control"
+                  id="content"
+                  name="content"
+                  rows="6"
+                  placeholder="Write your announcement content here..."
+                  required
+                  maxlength="2000"
+                ></textarea>
+                <div class="form-text">
+                  <small class="text-muted">
+                    <span id="charCount">0</span>/2000 characters
+                  </small>
+                </div>
+              </div>
+
+              <!-- Priority and Audience Row -->
+              <div class="priority-audience-row mb-4">
+                <div>
+                  <label class="form-label">Priority Level</label>
+                  <select class="form-select" id="priority" name="priority">
+                    <option value="normal" selected>Normal</option>
+                    <option value="important">Important</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Target Audience</label>
+                  <select class="form-select" id="audience" name="audience">
+                    <option value="all" selected>All Students</option>
+                    <option value="subject">Subject Students</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Subject Selection (Hidden by default) -->
+              <div class="mb-4" id="subject-select">
+                <label for="subject_id" class="form-label"
+                  >Select Subject</label
+                >
+                <select class="form-select" id="subject_id" name="subject_id">
+                  <option value="">Choose a subject...</option>
+                  {% for subject in subjects %}
+                  <option value="{{ subject.id }}">
+                    {{ subject.name }} - {{ subject.description }}
+                  </option>
+                  {% endfor %}
+                </select>
+                <div class="form-text">
+                  <small class="text-muted">
+                    Only students enrolled in this subject will see the
+                    announcement
+                  </small>
+                </div>
+              </div>
+
+              <!-- Email Notification Checkbox - Inside White Box -->
+              <div class="mb-5">
+                <div class="email-notification-box">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="send_email"
+                      name="send_email"
+                      checked
+                    />
+                    <label class="form-check-label" for="send_email">
+                      Send email notification to recipients
+                      <small
+                        >Recipients will receive an email with the announcement
+                        details.</small
+                      >
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div
+                class="d-flex flex-column flex-sm-row gap-3 justify-content-end"
+              >
+                <a
+                  href="{{ url_for('view_announcements') }}"
+                  class="btn btn-secondary btn-lg"
+                >
+                  Cancel
+                </a>
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  id="submitBtn"
+                >
+                  Post Announcement
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const audienceSelect = document.getElementById("audience");
+    const subjectSelect = document.getElementById("subject-select");
+    const subjectField = document.getElementById("subject_id");
+    const contentTextarea = document.getElementById("content");
+    const charCount = document.getElementById("charCount");
+    const form = document.getElementById("announcementForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Handle audience selection change
+    audienceSelect.addEventListener("change", function () {
+      if (this.value === "subject") {
+        subjectSelect.classList.add("show");
+        subjectField.required = true;
+      } else {
+        subjectSelect.classList.remove("show");
+        subjectField.required = false;
+        subjectField.value = "";
+      }
+    });
+
+    // Character counter for content textarea
+    contentTextarea.addEventListener("input", function () {
+      const currentLength = this.value.length;
+      charCount.textContent = currentLength;
+
+      // Change color based on character count
+      if (currentLength > 1800) {
+        charCount.parentElement.classList.add("text-danger");
+        charCount.parentElement.classList.remove("text-warning", "text-muted");
+      } else if (currentLength > 1600) {
+        charCount.parentElement.classList.add("text-warning");
+        charCount.parentElement.classList.remove("text-danger", "text-muted");
+      } else {
+        charCount.parentElement.classList.add("text-muted");
+        charCount.parentElement.classList.remove("text-danger", "text-warning");
+      }
+    });
+
+    // Form submission with loading state
+    form.addEventListener("submit", function (e) {
+      submitBtn.classList.add("loading");
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        if (submitBtn.classList.contains("loading")) {
+          submitBtn.classList.remove("loading");
+          submitBtn.disabled = false;
+        }
+      }, 10000);
+    });
+  });
+</script>
+
+{% endblock %}

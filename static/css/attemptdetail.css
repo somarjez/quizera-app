@@ -1,0 +1,65 @@
+ .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    /* Remove any hover movement while keeping shadow and visual design */
+    .card-hover {
+        transition: none !important;
+        transform: none !important;
+    }
+    /* If there were animations or transforms on hover, disable them but keep shadow */
+    .card-hover:hover {
+        transform: none !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    .question-correct {
+        border-left: 4px solid #065f46; /* deeper emerald */
+        background: #eefdf6;
+        /* Keep the nice shadow style */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+    .question-incorrect {
+        border-left: 4px solid #b91c1c; /* deeper red */
+        background: #fff5f5;
+        /* Keep the nice shadow style */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+    /* Optional: Make sure hover doesn’t dim or shift the background */
+    .question-correct:hover,
+    .question-incorrect:hover {
+        background-color: inherit !important;
+    }
+    .answer-correct {
+        background: #c7f0dd;
+        border: 1px solid #065f46; /* deeper border */
+        color: #044235; /* deeper text */
+    }
+    .answer-incorrect {
+        background: #fde3e3;
+        border: 1px solid #7f1d1d; /* deeper red border */
+        color: #5c0f0f; /* deeper text */
+    }
+    .answer-user {
+        background: #cfe3ff;
+        border: 1px solid #1e3a8a; /* deeper blue */
+        color: #0f2a66; /* deeper text */
+    }
+    /* Header card styling similar to manage quiz card */
+    .attempt-header-card {
+        background: rgba(255,255,255,0.92);
+        border-top: 8px solid #08196d; /* accent border, match edit question card */
+        box-shadow: 0 10px 34px rgba(37,70,219,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .attempt-header-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+    /* Solid dark blue title (replaces gradient for attempt page title) */
+    .attempt-title {
+        color: #08196d;
+    }
+   
+

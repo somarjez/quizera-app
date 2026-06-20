@@ -1,0 +1,561 @@
+{% extends 'base.html' %} {% block title %}About Us - Quizera{% endblock %} {%
+block extra_head %}
+<style>
+  :root {
+    --quizera-dark: #0a1628;
+    --quizera-accent1: #f2994a;
+    --quizera-accent2: #f2c94c;
+  }
+
+  /* Improved hero section with geometric pattern background */
+  .hero-section {
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2000 1500'%3E%3Cdefs%3E%3Crect stroke='%23ffffff' stroke-width='.5' width='1' height='1' id='s'/%3E%3Cpattern id='a' width='3' height='3' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cuse fill='%23fcfcfc' href='%23s' y='2'/%3E%3Cuse fill='%23fcfcfc' href='%23s' x='1' y='2'/%3E%3Cuse fill='%23fafafa' href='%23s' x='2' y='2'/%3E%3Cuse fill='%23fafafa' href='%23s'/%3E%3Cuse fill='%23f7f7f7' href='%23s' x='2'/%3E%3Cuse fill='%23f7f7f7' href='%23s' x='1' y='1'/%3E%3C/pattern%3E%3Cpattern id='b' width='7' height='11' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23f5f5f5'%3E%3Cuse href='%23s'/%3E%3Cuse href='%23s' y='5' /%3E%3Cuse href='%23s' x='1' y='10'/%3E%3Cuse href='%23s' x='2' y='1'/%3E%3Cuse href='%23s' x='2' y='4'/%3E%3Cuse href='%23s' x='3' y='8'/%3E%3Cuse href='%23s' x='4' y='3'/%3E%3Cuse href='%23s' x='4' y='7'/%3E%3Cuse href='%23s' x='5' y='2'/%3E%3Cuse href='%23s' x='5' y='6'/%3E%3Cuse href='%23s' x='6' y='9'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='h' width='5' height='13' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23f5f5f5'%3E%3Cuse href='%23s' y='5'/%3E%3Cuse href='%23s' y='8'/%3E%3Cuse href='%23s' x='1' y='1'/%3E%3Cuse href='%23s' x='1' y='9'/%3E%3Cuse href='%23s' x='1' y='12'/%3E%3Cuse href='%23s' x='2'/%3E%3Cuse href='%23s' x='2' y='4'/%3E%3Cuse href='%23s' x='3' y='2'/%3E%3Cuse href='%23s' x='3' y='6'/%3E%3Cuse href='%23s' x='3' y='11'/%3E%3Cuse href='%23s' x='4' y='3'/%3E%3Cuse href='%23s' x='4' y='7'/%3E%3Cuse href='%23s' x='4' y='10'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='c' width='17' height='13' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23f2f2f2'%3E%3Cuse href='%23s' y='11'/%3E%3Cuse href='%23s' x='2' y='9'/%3E%3Cuse href='%23s' x='5' y='12'/%3E%3Cuse href='%23s' x='9' y='4'/%3E%3Cuse href='%23s' x='12' y='1'/%3E%3Cuse href='%23s' x='16' y='6'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='d' width='19' height='17' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23ffffff'%3E%3Cuse href='%23s' y='9'/%3E%3Cuse href='%23s' x='16' y='5'/%3E%3Cuse href='%23s' x='14' y='2'/%3E%3Cuse href='%23s' x='11' y='11'/%3E%3Cuse href='%23s' x='6' y='14'/%3E%3C/g%3E%3Cg fill='%23efefef'%3E%3Cuse href='%23s' x='3' y='13'/%3E%3Cuse href='%23s' x='9' y='7'/%3E%3Cuse href='%23s' x='13' y='10'/%3E%3Cuse href='%23s' x='15' y='4'/%3E%3Cuse href='%23s' x='18' y='1'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='e' width='47' height='53' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23F60'%3E%3Cuse href='%23s' x='2' y='5'/%3E%3Cuse href='%23s' x='16' y='38'/%3E%3Cuse href='%23s' x='46' y='42'/%3E%3Cuse href='%23s' x='29' y='20'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='f' width='59' height='71' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23F60'%3E%3Cuse href='%23s' x='33' y='13'/%3E%3Cuse href='%23s' x='27' y='54'/%3E%3Cuse href='%23s' x='55' y='55'/%3E%3C/g%3E%3C/pattern%3E%3Cpattern id='g' width='139' height='97' patternUnits='userSpaceOnUse' patternTransform='rotate(246 1000 750) scale(41.75) translate(-976.05 -732.04)'%3E%3Cg fill='%23F60'%3E%3Cuse href='%23s' x='11' y='8'/%3E%3Cuse href='%23s' x='51' y='13'/%3E%3Cuse href='%23s' x='17' y='73'/%3E%3Cuse href='%23s' x='99' y='57'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23a)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23b)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23h)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23c)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23d)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23e)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23f)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23g)' width='100%25' height='100%25'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-position: center center;
+    padding: 140px 20px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.05);
+  }
+
+  .hero-section::before,
+  .hero-section::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.6;
+  }
+
+  .hero-section::before {
+    top: -20%;
+    left: -10%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(
+      circle,
+      rgba(242, 153, 74, 0.35),
+      transparent 70%
+    );
+    animation: float 18s ease-in-out infinite;
+  }
+
+  .hero-section::after {
+    bottom: -25%;
+    right: -5%;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(
+      circle,
+      rgba(242, 201, 76, 0.3),
+      transparent 70%
+    );
+    animation: float 22s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(25px, -20px);
+    }
+  }
+
+  .hero-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--quizera-dark);
+    margin-bottom: 20px;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .hero-subtitle {
+    font-size: 1.5rem;
+    color: #2d3e5f;
+    max-width: 750px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+  }
+
+  /* Removed numbers section entirely */
+
+  .content-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 20px;
+  }
+
+  .section-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--quizera-dark);
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .section-title::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(
+      135deg,
+      var(--quizera-accent1),
+      var(--quizera-accent2)
+    );
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+
+  .mission-box {
+    background: linear-gradient(135deg, #ffffff 0%, #fff9ef 100%);
+    border-left: 6px solid var(--quizera-accent1);
+    border-radius: 15px;
+    padding: 40px;
+    margin: 60px 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  }
+
+  .mission-text {
+    font-size: 1.35rem;
+    color: #2d3e5f;
+    line-height: 1.85;
+    font-style: italic;
+  }
+
+  /* Feature Cards */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 60px;
+  }
+
+  .feature-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 45px;
+    border: 1px solid #f3e3c8;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  }
+
+  .feature-icon {
+    width: 75px;
+    height: 75px;
+    background: linear-gradient(
+      135deg,
+      var(--quizera-accent1),
+      var(--quizera-accent2)
+    );
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 18px rgba(242, 153, 74, 0.4);
+  }
+
+  /* Core Values Section */
+  .values-section {
+    background: linear-gradient(135deg, #fff 0%, #fef9ef 100%);
+    border-radius: 30px;
+    padding: 70px 45px;
+    margin-top: 80px;
+    border: 1px solid #f3e3c8;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  /* CTA - Enhanced Sleek Design */
+  .cta-section {
+    background-color: #f18527;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cpolygon fill='%23cc0000' points='957 450 539 900 1396 900'/%3E%3Cpolygon fill='%2324107a' points='957 450 872.9 900 1396 900'/%3E%3Cpolygon fill='%23d6002b' points='-60 900 398 662 816 900'/%3E%3Cpolygon fill='%233e0e7e' points='337 900 398 662 816 900'/%3E%3Cpolygon fill='%23d9004b' points='1203 546 1552 900 876 900'/%3E%3Cpolygon fill='%23530b81' points='1203 546 1552 900 1162 900'/%3E%3Cpolygon fill='%23d3006c' points='641 695 886 900 367 900'/%3E%3Cpolygon fill='%23650784' points='587 900 641 695 886 900'/%3E%3Cpolygon fill='%23c4008c' points='1710 900 1401 632 1096 900'/%3E%3Cpolygon fill='%23770386' points='1710 900 1401 632 1365 900'/%3E%3Cpolygon fill='%23aa00aa' points='1210 900 971 687 725 900'/%3E%3Cpolygon fill='%23880088' points='943 900 1210 900 971 687'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    border-radius: 40px;
+    padding: 100px 60px;
+    text-align: center;
+    margin-top: 100px;
+    color: #ffffff;
+    box-shadow: 0 20px 60px rgba(255, 119, 0, 0.25),
+      0 8px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: ctaGlow 4s ease-in-out infinite alternate;
+  }
+
+  .cta-section::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+    animation: ctaShimmer 6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes ctaGlow {
+    0% {
+      box-shadow: 0 20px 60px rgba(255, 119, 0, 0.25),
+        0 8px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    100% {
+      box-shadow: 0 25px 70px rgba(255, 119, 0, 0.4),
+        0 12px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  @keyframes ctaShimmer {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .cta-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 25px;
+    color: #000000;
+    text-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cta-text {
+    font-size: 1.4rem;
+    margin-bottom: 45px;
+    color: #000000;
+    font-weight: 500;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: linear-gradient(135deg, var(--quizera-dark) 0%, #1a2332 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 22px 50px;
+    border-radius: 60px;
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(10, 22, 40, 0.3), 0 3px 10px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cta-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: 60px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(10, 22, 40, 0.4),
+      0 6px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .cta-button:hover::before {
+    opacity: 1;
+  }
+
+  .cta-button:active {
+    transform: translateY(-1px);
+  }
+
+  .cta-button i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .cta-button:hover i {
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.7rem;
+    }
+    .hero-subtitle {
+      font-size: 1.25rem;
+    }
+    .section-title {
+      font-size: 2rem;
+    }
+
+    .cta-section {
+      padding: 70px 30px;
+      margin-top: 70px;
+      border-radius: 30px;
+    }
+
+    .cta-title {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .cta-text {
+      font-size: 1.2rem;
+      margin-bottom: 35px;
+    }
+
+    .cta-button {
+      padding: 18px 35px;
+      font-size: 1rem;
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cta-title {
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+
+    .cta-text {
+      font-size: 1.1rem;
+    }
+
+    .cta-button {
+      padding: 16px 30px;
+      font-size: 0.95rem;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">About Quizera</h1>
+    <p class="hero-subtitle">
+      Transforming education through intelligent assessment and interactive
+      learning experiences
+    </p>
+    <!-- Removed stats numbers as requested -->
+  </div>
+</div>
+
+<div class="content-section">
+  <div class="section-header text-center">
+    <h2 class="section-title">Our Mission</h2>
+  </div>
+
+  <div class="mission-box">
+    <p class="mission-text">
+      "At Quizera, we're on a mission to revolutionize education by making
+      assessment engaging, accessible, and actionable. We empower educators with
+      cutting-edge tools to create meaningful learning experiences, while
+      helping students build confidence and master Computer Science concepts
+      through interactive practice and instant feedback."
+    </p>
+  </div>
+
+  <div class="section-header text-center">
+    <h2 class="section-title">Why Choose Quizera?</h2>
+    <p class="section-description">
+      We've built a comprehensive platform that puts the power of personalized
+      learning in your hands
+    </p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-brain"></i></div>
+      <h3 class="feature-title">Smart Assessment</h3>
+      <p class="feature-description">
+        Create intelligent quizzes with automatic grading, instant feedback, and
+        detailed analytics to track learning outcomes
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+      <h3 class="feature-title">Progress Analytics</h3>
+      <p class="feature-description">
+        Comprehensive dashboards that visualize student progress, identify
+        knowledge gaps, and highlight areas for improvement
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-users-cog"></i></div>
+      <h3 class="feature-title">Educator Dashboard</h3>
+      <p class="feature-description">
+        Powerful tools for managing classes, creating custom quizzes, and
+        monitoring student engagement in real-time
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-laptop-code"></i></div>
+      <h3 class="feature-title">CS Focused</h3>
+      <p class="feature-description">
+        Specialized content library covering programming, algorithms, data
+        structures, and computer science fundamentals
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-clock"></i></div>
+      <h3 class="feature-title">Flexible Learning</h3>
+      <p class="feature-description">
+        Practice anytime, anywhere with mobile-friendly quizzes and personalized
+        study schedules that adapt to your pace
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-award"></i></div>
+      <h3 class="feature-title">Gamification</h3>
+      <p class="feature-description">
+        Earn badges, track streaks, and compete on leaderboards to make learning
+        fun and maintain motivation
+      </p>
+    </div>
+  </div>
+
+  <div class="values-section">
+    <div class="section-header text-center">
+      <h2 class="section-title">Our Core Values</h2>
+      <p class="section-description">
+        The principles that guide everything we do at Quizera
+      </p>
+    </div>
+
+    <div
+      class="values-grid"
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        margin-top: 40px;
+      "
+    >
+      <div class="value-item">
+        <h3 class="value-title">
+          <i class="fas fa-shield-alt"></i> <strong>Integrity</strong>
+        </h3>
+        <p class="value-text">
+          Honest feedback, transparent practices, and ethical assessment methods
+          that promote genuine learning
+        </p>
+      </div>
+
+      <div class="value-item">
+        <h3 class="value-title">
+          <i class="fas fa-lightbulb"></i> <strong>Innovation</strong>
+        </h3>
+        <p class="value-text">
+          Continuously evolving our platform with cutting-edge features that
+          enhance the learning experience
+        </p>
+      </div>
+
+      <div class="value-item">
+        <h3 class="value-title">
+          <i class="fas fa-heart"></i> <strong>Accessibility</strong>
+        </h3>
+        <p class="value-text">
+          Making quality education available to everyone, regardless of
+          background or learning style
+        </p>
+      </div>
+
+      <div class="value-item">
+        <h3 class="value-title">
+          <i class="fas fa-hands-helping"></i> <strong>Community</strong>
+        </h3>
+        <p class="value-text">
+          Fostering collaboration between students and educators to create a
+          supportive learning environment
+        </p>
+      </div>
+
+      <div class="value-item">
+        <h3 class="value-title">
+          <i class="fas fa-award"></i> <strong>Technical Excellence</strong>
+        </h3>
+        <p class="value-text">
+          We deliver high-quality tools that support deep understanding of core
+          CS foundations, from programming and algorithms to data structures and
+          system design.
+        </p>
+      </div>
+
+      <div class="value-item">
+        <h3 class="value-title">
+          <i class="fas fa-laptop-code"></i>
+          <strong>Innovation in Computing Education</strong>
+        </h3>
+        <p class="value-text">
+          We integrate modern technologies and evolving CS learning
+          methodologies to help students stay ahead in an ever-changing tech
+          landscape.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2 class="cta-title">Ready to Transform Your Learning?</h2>
+    <p class="cta-text">
+      Join thousands of students and educators who are already experiencing the
+      future of education
+    </p>
+    <a href="{{ url_for('signup') }}" class="cta-button">
+      <i class="fas fa-rocket"></i>
+      Start Your Journey
+    </a>
+  </div>
+</div>
+{% endblock %}

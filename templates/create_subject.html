@@ -1,0 +1,640 @@
+{% extends "base.html" %} {% block title %}Create Subject - Quizera{% endblock
+%} {% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/createsubject.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Split background - left yellow, right white */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #ffa73b;
+    z-index: -1;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: -1;
+  }
+
+  .content-wrapper {
+    background: transparent !important;
+    min-height: calc(100vh - 100px);
+    padding: 40px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .split-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 1200px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: 600px;
+  }
+
+  /* Left panel - WHITE box on YELLOW background */
+  .left-panel {
+    background-color: #ffffff;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Right panel - YELLOW box on WHITE background */
+  .right-panel {
+    background-color: #ffa73b;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .form-title {
+    color: #1a1a1a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    margin-bottom: 15px;
+    text-align: left;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #d48432;
+  }
+
+  .form-subtitle {
+    color: #666666;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    margin-bottom: 30px;
+    text-align: left;
+    margin-top: 15px;
+  }
+
+  .welcome-title {
+    color: #ffffff;
+    font-family: "Paytone One", sans-serif;
+    font-weight: 800;
+    font-size: 70px;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .welcome-subtitle {
+    color: #ffffff;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .label-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .label-icon {
+    color: #d48432;
+    font-size: 16px;
+  }
+
+  .input-field {
+    background-color: #f5f5f5 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 15px 20px !important;
+    width: 100% !important;
+    font-size: 15px !important;
+    color: #333333 !important;
+    font-family: "Poppins", sans-serif !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    min-height: 50px !important;
+  }
+
+  .input-field::placeholder {
+    color: #999999 !important;
+    font-size: 15px !important;
+  }
+
+  .input-field:focus {
+    outline: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-1px);
+  }
+
+  textarea.input-field {
+    min-height: 120px !important;
+    max-height: 120px !important;
+    resize: none !important;
+    overflow-y: auto !important;
+  }
+
+  .label-text {
+    color: #1a1a1a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .btn-draft {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 15px 0;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-draft:hover {
+    background-color: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-cancel {
+    background-color: transparent;
+    color: #1a1a1a;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 15px 0;
+    border-radius: 12px;
+    border: 2px solid #1a1a1a;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .btn-cancel:hover {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .info-text {
+    color: #666666;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+    margin-top: 20px;
+  }
+
+  .btn-create-main {
+    background-color: #ffffff;
+    color: #d48432;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 18px 60px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+  }
+
+  .btn-create-main:hover:not(:disabled) {
+    background-color: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .draft-indicator {
+    background-color: #d4f4dd;
+    border-left: 4px solid #28a745;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .draft-indicator.show {
+    display: block;
+  }
+
+  .draft-text {
+    color: #155724;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .error-message.show {
+    display: block;
+  }
+
+  .input-field.error {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15) !important;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Webkit autofill fix */
+  .input-field:-webkit-autofill,
+  .input-field:-webkit-autofill:hover,
+  .input-field:-webkit-autofill:focus,
+  .input-field:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #f5f5f5 inset !important;
+    box-shadow: 0 0 0 30px #f5f5f5 inset !important;
+    -webkit-text-fill-color: #333333 !important;
+  }
+
+  /* Responsive */
+  @media (max-width: 968px) {
+    body::before,
+    body::after {
+      width: 100%;
+    }
+
+    body::before {
+      height: 50%;
+    }
+
+    body::after {
+      top: 50%;
+      height: 50%;
+    }
+
+    .split-container {
+      grid-template-columns: 1fr;
+    }
+
+    .right-panel {
+      order: -1;
+      min-height: 300px;
+    }
+
+    .left-panel {
+      padding: 40px 30px;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="content-wrapper">
+  <div class="split-container">
+    <!-- Left Panel - WHITE box on YELLOW background -->
+    <div class="left-panel">
+      <h1 class="form-title">Create Subject</h1>
+      <p class="form-subtitle">Add a new subject to your teaching portfolio</p>
+
+      <!-- Draft Indicator -->
+      <div class="draft-indicator" id="draftIndicator">
+        <p class="draft-text">
+          <i class="fas fa-check-circle"></i> Draft restored from previous
+          session
+        </p>
+      </div>
+
+      <form method="POST" id="subjectForm">
+        <div class="input-group">
+          <div class="label-with-icon">
+            <i class="fas fa-book label-icon"></i>
+            <label for="name" class="label-text">Subject Name</label>
+          </div>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter subject name"
+            required
+            class="input-field"
+            autocomplete="off"
+          />
+          <span class="error-message" id="nameError"
+            >Subject name is required</span
+          >
+        </div>
+
+        <div class="input-group">
+          <div class="label-with-icon">
+            <i class="fas fa-align-left label-icon"></i>
+            <label for="description" class="label-text">Description</label>
+          </div>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Enter subject description"
+            required
+            class="input-field"
+            autocomplete="off"
+          ></textarea>
+          <span class="error-message" id="descriptionError"
+            >Description is required</span
+          >
+        </div>
+
+        <div class="button-group">
+          <a href="{{ url_for('dashboard') }}" class="btn-cancel"> Cancel </a>
+          <button type="button" class="btn-draft" id="draftBtn">
+            Save as Draft
+          </button>
+        </div>
+      </form>
+
+      <p class="info-text">
+        Start organizing your curriculum with custom subjects
+      </p>
+    </div>
+
+    <!-- Right Panel - YELLOW box on WHITE background -->
+    <div class="right-panel">
+      <h2 class="welcome-title">Welcome To<br />Quizera!</h2>
+      <p class="welcome-subtitle">Build your subjects easily.</p>
+      <button type="button" class="btn-create-main" id="createBtn">
+        Create Subject
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const DRAFT_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
+  let draftTimer = null;
+  let draftEndTime = null;
+
+  const nameInput = document.getElementById("name");
+  const descriptionInput = document.getElementById("description");
+  const createBtn = document.getElementById("createBtn");
+  const draftBtn = document.getElementById("draftBtn");
+  const draftIndicator = document.getElementById("draftIndicator");
+  const form = document.getElementById("subjectForm");
+  const nameError = document.getElementById("nameError");
+  const descriptionError = document.getElementById("descriptionError");
+
+  // Check for existing draft on page load
+  window.addEventListener("load", function () {
+    const savedDraft = localStorage.getItem("subjectDraft");
+    const draftExpiry = localStorage.getItem("subjectDraftExpiry");
+
+    if (savedDraft && draftExpiry) {
+      const expiry = parseInt(draftExpiry);
+      const now = Date.now();
+
+      if (now < expiry) {
+        // Draft is still valid
+        const draft = JSON.parse(savedDraft);
+        nameInput.value = draft.name || "";
+        descriptionInput.value = draft.description || "";
+        draftEndTime = expiry;
+        draftIndicator.classList.add("show");
+        validateForm();
+      } else {
+        // Draft expired, clear it
+        clearDraft();
+      }
+    }
+  });
+
+  // Validate form inputs
+  function validateForm() {
+    const nameValue = nameInput.value.trim();
+    const descriptionValue = descriptionInput.value.trim();
+
+    // Always keep button enabled, just check on click
+    return nameValue && descriptionValue;
+  }
+
+  // Listen for input changes
+  nameInput.addEventListener("input", function () {
+    validateForm();
+    // Remove error state when user starts typing
+    if (nameInput.value.trim()) {
+      nameInput.classList.remove("error");
+      nameError.classList.remove("show");
+    }
+  });
+
+  descriptionInput.addEventListener("input", function () {
+    validateForm();
+    // Remove error state when user starts typing
+    if (descriptionInput.value.trim()) {
+      descriptionInput.classList.remove("error");
+      descriptionError.classList.remove("show");
+    }
+  });
+
+  // Create Subject button - submit form with validation
+  createBtn.addEventListener("click", function () {
+    const nameValue = nameInput.value.trim();
+    const descriptionValue = descriptionInput.value.trim();
+
+    let hasError = false;
+
+    // Check subject name
+    if (!nameValue) {
+      nameInput.classList.add("error");
+      nameError.classList.add("show");
+      hasError = true;
+    } else {
+      nameInput.classList.remove("error");
+      nameError.classList.remove("show");
+    }
+
+    // Check description
+    if (!descriptionValue) {
+      descriptionInput.classList.add("error");
+      descriptionError.classList.add("show");
+      hasError = true;
+    } else {
+      descriptionInput.classList.remove("error");
+      descriptionError.classList.remove("show");
+    }
+
+    // If there are errors, don't submit
+    if (hasError) {
+      return;
+    }
+
+    // Clear draft when creating subject
+    clearDraft();
+    form.submit();
+  });
+  // Save as Draft functionality
+  draftBtn.addEventListener("click", function () {
+    const nameValue = nameInput.value.trim();
+    const descriptionValue = descriptionInput.value.trim();
+
+    let hasError = false;
+
+    // Check subject name
+    if (!nameValue) {
+      nameInput.classList.add("error");
+      nameError.classList.add("show");
+      hasError = true;
+    } else {
+      nameInput.classList.remove("error");
+      nameError.classList.remove("show");
+    }
+
+    // Check description
+    if (!descriptionValue) {
+      descriptionInput.classList.add("error");
+      descriptionError.classList.add("show");
+      hasError = true;
+    } else {
+      descriptionInput.classList.remove("error");
+      descriptionError.classList.remove("show");
+    }
+
+    // If there are errors, don't save
+    if (hasError) {
+      return;
+    }
+
+    const draft = {
+      name: nameValue,
+      description: descriptionValue,
+      savedAt: Date.now(),
+    };
+
+    draftEndTime = Date.now() + DRAFT_DURATION;
+
+    localStorage.setItem("subjectDraft", JSON.stringify(draft));
+    localStorage.setItem("subjectDraftExpiry", draftEndTime.toString());
+
+    // Redirect to dashboard
+    window.location.href = "{{ url_for('dashboard') }}";
+  });
+
+  // Start draft timer
+  function startDraftTimer() {
+    draftIndicator.classList.add("show");
+
+    if (draftTimer) {
+      clearInterval(draftTimer);
+    }
+
+    draftTimer = setInterval(function () {
+      const now = Date.now();
+      const remaining = draftEndTime - now;
+
+      if (remaining <= 0) {
+        clearDraft();
+        alert("Draft expired! Please save your work again.");
+      } else {
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        draftTimerDisplay.textContent = `${minutes}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+      }
+    }, 1000);
+  }
+
+  // Clear draft
+  function clearDraft() {
+    localStorage.removeItem("subjectDraft");
+    localStorage.removeItem("subjectDraftExpiry");
+    draftIndicator.classList.remove("show");
+    if (draftTimer) {
+      clearInterval(draftTimer);
+      draftTimer = null;
+    }
+    draftEndTime = null;
+  }
+
+  // Clear draft when navigating away
+  window.addEventListener("beforeunload", function (e) {
+    const nameValue = nameInput.value.trim();
+    const descriptionValue = descriptionInput.value.trim();
+
+    // If there's unsaved content and no active draft, warn user
+    if (
+      (nameValue || descriptionValue) &&
+      !localStorage.getItem("subjectDraft")
+    ) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
